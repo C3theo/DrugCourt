@@ -57,3 +57,30 @@ class AssesmentForm(forms.Form):
     assessed_by = forms.CharField()
     date_completed = forms.DateField(input_formats=['%m/%d/%y'])
     assessment = forms.CharField()
+
+
+class ReferralForm(forms.Form):
+    # TODO: inherit from client form
+    # new fields
+    els = forms.CharField(label='ELS')
+    cell = forms.CharField()
+    arrests = forms.CharField()
+    felonies = forms.CharField()
+    misdemeanors = forms.CharField()
+    first_arrest_year = forms.DateField(label='First Arrest Year', input_formats=['%m/%d/%y'])
+    enroll_date = forms.DateField(label='Enrollment Date', input_formats=['%m/%d/%y'])
+    status = forms.ChoiceField(choices=[('1', 'Status_1'),
+                                               ('2', 'Status_2'),
+                                               ('3', 'Status_3')])
+    reject_reason = forms.ChoiceField(label='Rejection Reason', choices=[('1', 'Reason_1'),
+                                               ('2', 'Reason_2'),
+                                               ('3', 'Reason_3')])
+    # TODO: Add larger input field
+    court_notes = forms.CharField(label='Court Notes')
+
+class CourtForm(forms.Form):
+    # TODO: Create Tabbed Headers
+    pass
+
+class EmployerForm(forms.Form):
+    pass

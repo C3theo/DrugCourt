@@ -1,8 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic.edit import FormView
 from django.contrib.auth.decorators import login_required
-from .forms import ClientForm, ReviewForm, TeamReviewForm, AssesmentForm
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.views.generic.edit import FormView
+
+from .forms import (AssesmentForm, ClientForm, ReferralForm, ReviewForm,
+                    TeamReviewForm)
+
 
 @login_required
 def home(request):
@@ -47,3 +50,16 @@ def assess_client(request):
     else:
         form = AssesmentForm()
     return render(request, 'cases/assessment.html', {'form': form})
+
+@login_required
+def refer_client(request):
+
+    if request.method == 'POST':
+        form = ReferralForm(request.POST)
+        if form.is_valid():
+
+            #TODO: add client to database
+            return HttpResponseRedirect('')
+    else:
+        form = ReferralForm()
+    return render(request, 'cases/referral.html', {'form': form})
