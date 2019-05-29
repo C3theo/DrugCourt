@@ -32,17 +32,17 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary" id="staticNav">
-		<a class="navbar-brand" href="">Drug Court Case Managment</a>
+		<a class="navbar-brand" href="{% url 'cases-home' %}">Drug Court Case Managment</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active">
-					<a class="nav-link" href="">Home <span class="sr-only">(current)</span></a>
+					<a class="nav-link" href=" {% url 'cases-home' %}">Home <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{% url 'clients' %}">Add Client</a>
+					<a class="nav-link" href="{% url 'add-client' %}">Add Client</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -51,10 +51,14 @@
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						{% if user.is_authenticated %}
 						<a class="dropdown-item" href="{% url 'logout' %}">Log Out</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="{% url 'review-client' %}">Review Client</a>
+						<a class="dropdown-item" href="{% url 'assess-client' %}">Assess Client</a>
 						{% else %}
 						<a class="dropdown-item" href="{% url 'login' %}">Log In</a>
 						{% endif %}
-						<div class="dropdown-divider"></div>
+
+						
 					</div>
 				</li>
 			</ul>
