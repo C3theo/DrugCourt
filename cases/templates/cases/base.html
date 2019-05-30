@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!doctype html>
 <html lang="en">
 
@@ -10,7 +11,9 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-	<title>Drug Court</title>
+	<title>
+		{% block title %} Drug Court {% endblock %}
+	</title>
 	<style>
 		.bd-placeholder-img {
 			font-size: 1.125rem;
@@ -39,9 +42,11 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<!-- TODO: change current with request context -->
-					<a class="nav-link" href=" {% url 'cases-home' %}">Home <span class="sr-only">(current)</span></a>
+				<li class="nav-item">
+					<!-- TODO: add 'active' to nav bar class with request context -->
+					<a class="nav-link" href=" {% url 'cases-home' %}">Home</a>
+					<!-- <span class="sr-only">{{ current }}</span> -->
+					
 				</li>
 				<li class="nav-item">
 					{% if user.is_authenticated %}
@@ -49,6 +54,9 @@
 					{% else %}
 					<a class="nav-link" href="{% url 'login' %}">Log In</a>
 					{% endif %}
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'client-tabs' %}">Client Forms</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -81,8 +89,13 @@
 			</ul>
 		</div>
 	</nav>
+	<main role="main" class="container mx-auto" style="width:50">
+			<div class="jumbotron">
+				{% block content %}{% endblock %}
+			</div>    
+	</main>
 		<!-- Content filled in here -->
-		{% block content %}{% endblock %}
+		
 
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -95,6 +108,7 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
 		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 		crossorigin="anonymous"></script>
+	<script type="text/javascript" src="{% static 'bootstrap-tab.js' %}"> </script>
 </body>
 
 </html>

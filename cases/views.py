@@ -5,12 +5,17 @@ from django.views.generic.edit import FormView
 
 from .forms import (AssesmentForm, ClientForm, CourtDateForm, CourtFeeForm,
                     CourtPhaseForm, EmployerForm, ReferralForm, ReviewForm,
-                    SanctionForm, TeamReviewForm, DrugScreenForm, CommunityServiceForm)
+                    SanctionForm, TeamReviewForm, DrugScreenForm, CommunityServiceForm, ReferralTabForm)
 
 
 @login_required
 def home(request):
-    return render(request, 'cases/base.html')
+    return render(request, 'cases/home.html', context={'current':'(current)'})
+
+@login_required()
+def client_tabs(request):
+    form = ReferralTabForm()
+    return render(request, 'cases/client_tabs.html', {'form': form})
 
 @login_required
 def add_client(request):
