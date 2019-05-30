@@ -1,9 +1,7 @@
 dj-database-url==0.5.0
 Django==2.1.8
 django-crispy-forms==1.7.2
-django-pyodbc-azure==2.1.0.0
 gunicorn==19.9.0
-pyodbc==4.0.26
 python-dotenv==0.10.2
 pytz==2019.1
 sqlparse==0.3.0
