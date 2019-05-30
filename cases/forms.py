@@ -31,45 +31,15 @@ class ClientForm(forms.Form):
                                    coerce=int, empty_value=None)
 
 
-class ReferralTabForm(ClientForm):
-    # TODO: Create Tabbed Headers
-
-    def __init__(self, *args, **kwargs):
-        super(ReferralTabForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-
-            bootstrap.TabHolder(
-                bootstrap.Tab('Client Info',
-                              'first_name',
-                              'middle_name',
-                              'last_name',
-                              'email',
-                              'ssn',
-                              'ethnicity',
-                              'gender',
-                              'date_of_birth'),
-
-                bootstrap.Tab('Case Info',
-                              'spn',
-                              'state_id',
-                              'division',
-                              'location',
-                              'case_numbers',
-                              'referred_by',
-                              'track'
-                              )
-            )
-        )
-
-
 class ReviewForm(forms.Form):
     """
-        Pretrial, Defense, DA
+        Pretrial, Defense, DA, Team
     """
-    review_type = forms.ChoiceField(label='Review Type', choices=[('1', 'Pretrial'),
-                                                                  ('2', 'Defense'),
-                                                                  ('3', 'DA')])
+    review_type = forms.ChoiceField(label='Review Type', choices=[(1, 'Pretrial'),
+                                                                  (2, 'Defense'),
+                                                                  (3, 'DA'),
+                                                                  (4, 'Team'),
+                                                                  (5, 'Assessment')])
     review_by = forms.CharField(label='Review By')
     date_received = forms.DateField(
         label='Date Received', input_formats=['%m/%d/%y'])
@@ -112,6 +82,59 @@ class ReferralForm(forms.Form):
                                                                          ('3', 'Reason_3')])
 
     court_notes = forms.CharField(label='Court Notes', widget=forms.Textarea)
+
+
+class ClientTabForm(ClientForm, ReviewForm, ReferralForm):
+    # TODO: Create Tabbed Headers
+
+    def __init__(self, *args, **kwargs):
+        super(ClientTabForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+
+            bootstrap.TabHolder(
+                bootstrap.Tab('Client Info',
+                              'first_name',
+                              'middle_name',
+                              'last_name',
+                              'email',
+                              'ssn',
+                              'ethnicity',
+                              'gender',
+                              'date_of_birth',
+                              Submit('save', 'Save Changes')),
+                bootstrap.Tab('Case Info',
+                              'spn',
+                              'state_id',
+                              'division',
+                              'location',
+                              'case_numbers',
+                              'referred_by',
+                              'track',
+                              Submit('save', 'Save Changes')),
+                bootstrap.Tab('Reviews',
+                              'review_type',
+                              'review_by',
+                              'date_received',
+                              'decision',
+                              Submit('save', 'Save Changes')),
+                bootstrap.Tab('Criminal History',
+                              'arrests',
+                              'felonies',
+                              'misdemeanors',
+                              'first_arrest_year',
+                              Submit('save', 'Save Changes')),
+                bootstrap.Tab('Referrals',
+                              'els',
+                              'cell',
+                              'enroll_date',
+                              'status',
+                              'reject_reason',
+                              'court_notes',
+                              Submit('save', 'Save Changes'))
+            )
+        )
+        # TODO: remove review_by field if type == team
 
 
 class EmployerForm(forms.Form):
@@ -251,6 +274,29 @@ class CommunityServiceForm(forms.Form):
     total_hours = forms.DurationField(label='Total Hours Worked')
 
 # class OutreachForm(forms.Form):
+
+
+class CourtTabForm(CourtPhaseForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CourtTabForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+
+            bootstrap.TabHolder(
+                bootstrap.Tab('Court Phases',
+                              'user_id',
+                              'client_id',
+                              'phase',
+                              'phase_start',
+                              'phase_end',
+                              'complete',
+                              'freeze_start',
+                              'freeze_end',
+                              'discharge',
+                              Submit('save', 'Save Changes'))
+            )
+        )
 
 
 class TreatmentForm(forms.Form):

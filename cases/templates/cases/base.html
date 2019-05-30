@@ -36,7 +36,12 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary" id="staticNav">
-		<a class="navbar-brand" href="{% url 'cases-home' %}">Drug Court Case Managment</a>
+			<a class="navbar-brand" href="{% url 'cases-home' %}">
+				Case Management <br> <small>Drug Court</small>
+			</a>
+
+		
+		<!-- TODO: add Drug Court underneath Case Management -->
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -58,34 +63,9 @@
 				<li class="nav-item">
 					<a class="nav-link" href="{% url 'client-tabs' %}">Client Forms</a>
 				</li>
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Client
-					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="{% url 'add-client' %}">Add</a>
-						<a class="dropdown-item" href="{% url 'review-client' %}">Review</a>
-						<a class="dropdown-item" href="{% url 'assess-client' %}">Assess</a>
-						<a class="dropdown-item" href="{% url 'refer-client' %}">Refer</a>
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="{% url 'add-employer' %}">Employer</a>			
-					</div>
+				<li class="nav-item">
+						<a class="nav-link" href="{% url 'court-tabs' %}">Court Forms</a>
 				</li>
-				<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							Court
-						</a>
-						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item" href="{% url 'add-sanction' %}">Sanction</a>
-							<a class="dropdown-item" href="{% url 'court-phase' %}">Phase</a>
-							<a class="dropdown-item" href="{% url 'court-date' %}">Date</a>
-							<a class="dropdown-item" href="{% url 'court-fee' %}">Fee</a>
-							<a class="dropdown-item" href="{% url 'drug-screen' %}">Drug Screen</a>
-							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="{% url 'comm-service' %}">Community Service</a>
-							<a class="dropdown-item" href="#">Socialization/Outreach</a>
-						</div>
-					</li>
 			</ul>
 		</div>
 	</nav>

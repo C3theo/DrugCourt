@@ -1,6 +1,6 @@
 {% extends "cases/base.html" %}
 {% block content %}
-    <h3>Client ID:</h3>
+    <h3>{% block form-header %} {% endblock %}</h3>
     <div class="border-top pt-3">
         {% block client-forms %} {% endblock %}
     </div>
