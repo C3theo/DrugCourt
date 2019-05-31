@@ -35,9 +35,12 @@ ALLOWED_HOSTS = ['courtcasemanagement.herokuapp.com', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    
     'crispy_forms',
     'users.apps.UsersConfig',
     'cases.apps.CaseConfig',
+    'django_filters',
+    'django_tables2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -81,11 +84,24 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'CaseMgmt',
+        'HOST': 'DESKTOP-9AN0D63',
+        'INTEGRATED SECURITY': 'SSPI',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 13 for SQL Server',
+        },
+
     }
+
 }
 
 
@@ -133,6 +149,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'cases-home'
 LOGIN_URL = 'login'
 
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+# import dj_database_url
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)

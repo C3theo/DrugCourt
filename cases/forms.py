@@ -1,7 +1,38 @@
 from django import forms
+from django.forms import ModelForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, Field
 from crispy_forms import bootstrap
+
+from .models import Clients
+
+
+class ClientsForm(ModelForm):
+
+    class Meta:
+        model = Clients
+        fields = ('clientid', 'cellphone', 'email')
+        labels = {
+            'clientid': 'Client ID',
+            'cellphone': 'Phone Number'
+        }
+
+
+class ClientsTabForm(ClientsForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ClientsTabForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+
+            bootstrap.TabHolder(
+                bootstrap.Tab('Contact Info',
+                              'clientid',
+                              'cellphone',
+                              'email',
+                              Submit('save', 'Save Changes')),
+            )
+        )
 
 
 class ClientForm(forms.Form):
@@ -173,7 +204,7 @@ class SanctionForm(forms.Form):
 
 class CourtPhaseForm(forms.Form):
     user_id = forms.CharField(label='User ID')
-    client_id = forms.CharField(label='User ID')
+    client_id = forms.CharField(label='Client ID')
     phase = forms.ChoiceField(choices=[('1', 'Phase 1')])
     phase_start = forms.DateField(
         label='Phase Start', input_formats=['%m/%d/%y'])
