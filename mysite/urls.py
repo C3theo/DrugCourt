@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import RedirectView
-
 from cases import views as case_views
 
 urlpatterns = [
@@ -26,5 +25,13 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('', RedirectView.as_view(url='/cases/')),
     path('cases/', include('cases.urls')),
-
 ]
+
+# from django.conf.urls import include, url
+# from django.views import generic
+# from material.frontend import urls as frontend_urls
+
+# urlpatterns = [
+#     url(r'^$', generic.RedirectView.as_view(url='/workflow/', permanent=False)),
+#     url(r'', include(frontend_urls)),
+# ]

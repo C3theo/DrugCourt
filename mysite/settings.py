@@ -35,12 +35,22 @@ ALLOWED_HOSTS = ['courtcasemanagement.herokuapp.com', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    
-    'crispy_forms',
+    # my apps
     'users.apps.UsersConfig',
     'cases.apps.CaseConfig',
+    'bpmn.apps.BpmnConfig',
+
+    # third-party apps
+    'material',
+    'material.frontend',
+    'viewflow',
+    'viewflow.frontend',
+    'crispy_forms',
     'django_filters',
     'django_tables2',
+    'django_fsm',
+
+    # standard django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,6 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+MATERIAL_FRONTEND_AUTOREGISTER = True
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -73,6 +84,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'material.frontend.context_processors.modules'
             ],
         },
     },
