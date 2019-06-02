@@ -27,7 +27,7 @@ def client_tabs(request):
 class ReferralsCreate(CreateView, LoginRequiredMixin):
     model = Referrals
     form_class = ReferralsTabs
-    # success_url = reverse('client-tabs')
+    # success_url = reverse('referrals-tabs')
     template_name ='cases/referrals_tabs.html'
 
     def form_valid(self, form):

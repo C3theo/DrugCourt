@@ -2220,8 +2220,8 @@ class Referrals(models.Model):
     #     # if all source statuses are TRUE:
     #     # Approved elif rejected else waiting
     
-    # def get_absolute_url(self):
-    #     return reverse('referrals-update', kwargs={'pk': self.refid})
+    def get_absolute_url(self):
+        return reverse('referrals-update', kwargs={'pk': self.refid})
 
 class Rejectreasons(models.Model):
     # Field name made lowercase.

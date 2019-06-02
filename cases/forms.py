@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, Field
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, Field, Row, HTML
 from crispy_forms import bootstrap
 
 from .models import Clients, Referrals
@@ -11,12 +11,15 @@ class ReferralsClientForm(ModelForm):
 
     class Meta:
         model = Referrals
+        # how to change field type
         fields = ('clientid', 'firstname', 'middlename', 'lastname',
                   'ssn', 'sex', 'race', 'dob', 'referredby', 'referreddate', 'pretrialname', 'pretrialreceived', 'pretrialcompleted',
                   'pretrialdecision', 'defensename', 'defensereceived', 'defensecompleted', 'defensedecision',
                   'daname', 'dareceived', 'dacompleted', 'dadecision', 'assessname', 'assessreceived', 'assesscompleted',
-                  'teamreceived', 'teamcompleted', 'teamdecision')
+                  'teamreceived', 'teamcompleted', 'teamdecision', 'created')
+        # list comprehension
         labels = {
+            'created': 'CreatedDate',
             # Client Info
             'clientid': 'ClientID',
             'firstname': 'First Name',
@@ -37,16 +40,20 @@ class ReferralsClientForm(ModelForm):
             'defensecompleted': 'Date Completed',
             'defensedecision': 'Decision',
             'daname': 'Name',
-            'dareceived': 'Received',
+            'dareceived': 'Date Received',
             'dacompleted': 'Date Completed',
             'dadecision': 'Decision',
             'assessname': 'Name',
             'assessreceived': 'Date Recieved',
-            'teamreceived': 'Received',
-            'teamcompleted': 'Completed',
+            'assesscompleted': 'Date Completed',
+            'teamreceived': 'Date Received',
+            'teamcompleted': 'Date Completed',
             'teamdecision': 'Decision'
         }
 
+# sender = forms.EmailField(help_text='A valid email address, please.')
+
+# Field.disabled¶
     # refid
     # autoincrement ClientID and refID
     # clientid
@@ -104,40 +111,82 @@ class ReferralsTabs(ReferralsClientForm):
     def __init__(self, *args, **kwargs):
         super(ReferralsTabs, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.field_class = 'form-control-md'
+# add created date
         self.helper.layout = Layout(
-            #   'referredby',
-            #   'referreddate',
+            # HTML("{% if saved %}Data saved{% endif %}"),
+            
+            Div(
+                Field('clientid', readonly=True, css_class='col-3'),
+                Field('created', css_class='col-3', readonly=True),
+                Field('referreddate', css_class='col-3'),
+                Field('referredby', css_class='col-3'),
+                # Field('created', css_class='col-3', readonly=True),
+                css_class='container border mb-4'
+            ),
             bootstrap.TabHolder(
+                # Buttons with dropdowns
                 bootstrap.Tab('Client Info',
-                              'clientid',
-                              'firstname',
-                              'middlename',
-                              'lastname',
-                              'ssn',
-                              'sex',
-                              'race',
-                              'dob',
-                              Submit('save', 'Save Changes')),
+                              Div(
+                                  Row(
+                                      Field('firstname', wrapper_class='col'),
+                                      Field('middlename',
+                                            wrapper_class='col-3', ),
+                                      Field('lastname', wrapper_class='col')
+                                  ),
+                                  Field('ssn', css_class='col-3'),
+                                  Field('sex', css_class='col-1'),
+                                  Field('race', css_class='col-3'),
+                                  Field('dob', css_class='col-4'),
+                                  css_class='container border')
+                              ),
                 bootstrap.Tab('Pretrial',
-                              'pretrialname',
-                              'pretrialreceived',
-                              'pretrialdecision',
-                              Submit('save', 'Save Changes')),
+                              Div(
+                                  Field('pretrialname', css_class='col-6'),
+                                  Row(
+                                      Field('pretrialreceived',
+                                            wrapper_class='col'),
+                                      Field('pretrialcompleted',
+                                            wrapper_class='col')
+                                  ),
+                                  Field('pretrialdecision', css_class='col-6'),
+
+                                  css_class='container border')),
                 bootstrap.Tab('Defense',
-                              'defensename',
-                              'defensereceived',
-                              'defensecompleted', 'defensedecision',
-                              Submit('save', 'Save Changes')),
+                              Div(
+                                  Field('defensename', css_class='col-6'),
+                                  Row(Field('defensereceived', wrapper_class='col'),
+                                      Field('defensecompleted', wrapper_class='col')),
+                                  Field('defensedecision', css_class='col-6'),
+                                  css_class='container border'
+
+                              )),
                 bootstrap.Tab('DA',
-                              'daname', 'dareceived', 'dacompleted', 'dadecision',
-                              Submit('save', 'Save Changes')),
+                              Div(
+                                  Field('daname', css_class='col-6'),
+                                  Row(Field('dareceived', wrapper_class='col'),
+                                      Field('dacompleted', wrapper_class='col')
+                                      ),
+                                  Field('dadecision', css_class='col-6'),
+                                  css_class='container border'
+                              )),
                 bootstrap.Tab('Team',
-                              'teamreceived', 'teamcompleted', 'teamdecision',
-                              Submit('save', 'Save Changes')),
-                bootstrap.Tab('Assessment', 'assessname', 'assessreceived', 'assesscompleted',
-                              Submit('save', 'Save Changes')),
+                              Div(
+                                  Row(Field('teamreceived', wrapper_class='col'),
+                                      Field('teamcompleted', wrapper_class='col')),
+                                  Field('teamdecision', css_class='col-6'),
+                                  css_class='container border'
+                              )),
+                bootstrap.Tab('Assessment',
+                Div(
+                              Field('assessname', css_class='col-6'),
+                              Row(Field('assessreceived', wrapper_class='col'),
+                                  Field('assesscompleted', wrapper_class='col')),
+                                css_class='container border'
+                              )),
 
             )
+            ,(Submit('save', 'Save Changes'))
         )
 
 
