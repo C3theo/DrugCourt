@@ -2034,29 +2034,35 @@ class Ratinghistory(models.Model):
 
 
 class Referrals(models.Model):
-    # STATUS_CREATED = 0
-    # STATUS_PRETRIAL = 1
-    # STATUS_DEFENSE = 2
-    # STATUS_DA = 3
-    # STATUS_ASSESSMENT = 4
-    # STATUS_TEAM = 5
-    # STATUS_APPROVED = 6
-    # STATUS_REJECTED = 7
-    # STATUS_WAITING = 8
 
-    # STATUS_CHOICES = (
-    #     (STATUS_CREATED, 'created'),
-    #     (STATUS_PRETRIAL, 'pretrial'),
-    #     (STATUS_DEFENSE, 'defense'),
-    #     (STATUS_DA, 'district_attorney'),
-    #     (STATUS_ASSESSMENT, 'assessment'),
-    #     (STATUS_TEAM, 'assessment'),
-    #     (STATUS_APPROVED, 'approved'),
-    #     (STATUS_REJECTED, 'rejected'),
-    #     (STATUS_WAITING, 'waiting')
-    # )
+    STATUS_PENDING = 'Pending'
+    STATUS_REJECTED = 'Rejected'
+    STATUS_ACTIVE = 'Active'
+    STATUS_TERMINATED = 'Terminated'
 
-    # status = FSMField(choices=STATUS_CHOICES, default=STATUS_CREATED)
+    STATUS_CHOICES = (
+
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_REJECTED, 'Rejected'),
+        (STATUS_ACTIVE, 'Active'),
+        (STATUS_TERMINATED, 'Terminated'),
+    )
+
+
+# Pending
+# Terminated
+# Graduated
+# AWOL
+# Medical Leave
+# Declined
+
+# Rejected
+# In Custody
+# Pending Termination
+# Active
+
+    # ref_status = FSMField(choices=STATUS_CHOICES, default=STATUS_WAITING, protected=True)
+    # test_col = models.CharField(max_length)
 
     # Field name made lowercase.
     refid = models.AutoField(db_column='RefID', primary_key=True)
@@ -2104,8 +2110,11 @@ class Referrals(models.Model):
     # Field name made lowercase.
     sex = models.CharField(db_column='Sex', max_length=1,
                            blank=True, null=True)
-    # Field name made lowercase.
-    status = models.CharField(db_column='Status', max_length=50)
+    # Changed to FSM field
+
+    status = FSMField(db_column='Status', choices=STATUS_CHOICES,
+                      max_length=50, protected=True, help_text='Current Referral Status')
+
     # Field name made lowercase.
     division = models.IntegerField(db_column='Division', blank=True, null=True)
     # Field name made lowercase.
@@ -2205,12 +2214,23 @@ class Referrals(models.Model):
     class Meta:
         managed = False
         db_table = 'Referrals'
+        app_label = 'cases'
 
-    # @transition(field=status, source=STATUS_CREATED, target=STATUS_DA)
-    # def client_created(self):
-    #     # initial client form filled out
-    #     if self.clientid:
-    #         return
+    def reviews_complete(self):
+        return self.dadecision and self.defensedecision and self.teamdecision
+
+    @transition(field=status, source=STATUS_PENDING, target=STATUS_ACTIVE, conditions=[reviews_complete], on_error=STATUS_PENDING)
+    def approve_client(self):
+        # send email to client for acceptance
+        print('Client Approved')
+
+    @transition(field=status, source=STATUS_TERMINATED, target=STATUS_ACTIVE, on_error=STATUS_PENDING)
+    def activate_client(self):
+        # error message for activate - when called in view
+        print('Client Activated')
+
+    def __str__(self):
+        return f'Referral self.refid'
 
     # @transition(field=status,
     #     source=[STATUS_DA, STATUS_DEFENSE, STATUS_PRETRIAL, STATUS_TEAM],
@@ -2219,9 +2239,10 @@ class Referrals(models.Model):
     #     pass
     #     # if all source statuses are TRUE:
     #     # Approved elif rejected else waiting
-    
+
     def get_absolute_url(self):
         return reverse('referrals-update', kwargs={'pk': self.refid})
+
 
 class Rejectreasons(models.Model):
     # Field name made lowercase.
@@ -2272,6 +2293,7 @@ class Sanctionlevels(models.Model):
     class Meta:
         managed = False
         db_table = 'SanctionLevels'
+        app_label = 'cases'
 
 
 class Sanctions(models.Model):

@@ -8,18 +8,26 @@ from .models import Clients, Referrals
 
 
 class ReferralsClientForm(ModelForm):
+  
 
     class Meta:
+
         model = Referrals
-        # how to change field type
-        fields = ('clientid', 'firstname', 'middlename', 'lastname',
+        # how to change field widget
+        fields = ('clientid', 'status', 'firstname', 'middlename', 'lastname',
                   'ssn', 'sex', 'race', 'dob', 'referredby', 'referreddate', 'pretrialname', 'pretrialreceived', 'pretrialcompleted',
                   'pretrialdecision', 'defensename', 'defensereceived', 'defensecompleted', 'defensedecision',
                   'daname', 'dareceived', 'dacompleted', 'dadecision', 'assessname', 'assessreceived', 'assesscompleted',
                   'teamreceived', 'teamcompleted', 'teamdecision', 'created')
-        # list comprehension
+        
+        widget = {
+            'status': forms.Textarea,
+        }
+        
         labels = {
-            'created': 'CreatedDate',
+            'created': 'Created Date',
+            'status': 'Referral Status',
+
             # Client Info
             'clientid': 'ClientID',
             'firstname': 'First Name',
@@ -114,15 +122,19 @@ class ReferralsTabs(ReferralsClientForm):
         self.helper.field_class = 'form-control-md'
 # add created date
         self.helper.layout = Layout(
-            # HTML("{% if saved %}Data saved{% endif %}"),
             
             Div(
                 Field('clientid', readonly=True, css_class='col-3'),
+                # Only display Field
+                HTML("<div class=\"border\">Status: {{ object.status }}</div>"),
+                # Field('status', css_class='col-4', readonly=True),
                 Field('created', css_class='col-3', readonly=True),
                 Field('referreddate', css_class='col-3'),
                 Field('referredby', css_class='col-3'),
-                # Field('created', css_class='col-3', readonly=True),
-                css_class='container border mb-4'
+                # All Decicision displayed on main page
+                HTML("<div class=\"border pb-5\">Decisions:</div>"),
+
+                css_class='container border border-dark mb-4'
             ),
             bootstrap.TabHolder(
                 # Buttons with dropdowns
@@ -138,7 +150,7 @@ class ReferralsTabs(ReferralsClientForm):
                                   Field('sex', css_class='col-1'),
                                   Field('race', css_class='col-3'),
                                   Field('dob', css_class='col-4'),
-                                  css_class='container border')
+                                  css_class='container border border-dark')
                               ),
                 bootstrap.Tab('Pretrial',
                               Div(
@@ -151,14 +163,14 @@ class ReferralsTabs(ReferralsClientForm):
                                   ),
                                   Field('pretrialdecision', css_class='col-6'),
 
-                                  css_class='container border')),
+                                  css_class='container border border-dark')),
                 bootstrap.Tab('Defense',
                               Div(
                                   Field('defensename', css_class='col-6'),
                                   Row(Field('defensereceived', wrapper_class='col'),
                                       Field('defensecompleted', wrapper_class='col')),
                                   Field('defensedecision', css_class='col-6'),
-                                  css_class='container border'
+                                  css_class='container border border-dark'
 
                               )),
                 bootstrap.Tab('DA',
@@ -168,21 +180,21 @@ class ReferralsTabs(ReferralsClientForm):
                                       Field('dacompleted', wrapper_class='col')
                                       ),
                                   Field('dadecision', css_class='col-6'),
-                                  css_class='container border'
+                                  css_class='container border border-dark'
                               )),
                 bootstrap.Tab('Team',
                               Div(
                                   Row(Field('teamreceived', wrapper_class='col'),
                                       Field('teamcompleted', wrapper_class='col')),
                                   Field('teamdecision', css_class='col-6'),
-                                  css_class='container border'
+                                  css_class='container border border-dark'
                               )),
                 bootstrap.Tab('Assessment',
                 Div(
                               Field('assessname', css_class='col-6'),
                               Row(Field('assessreceived', wrapper_class='col'),
                                   Field('assesscompleted', wrapper_class='col')),
-                                css_class='container border'
+                                css_class='container border border-dark'
                               )),
 
             )
