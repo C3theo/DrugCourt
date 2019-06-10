@@ -5,10 +5,12 @@
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
 #   * Remove `managed = True` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+
 from django.db import models
-from django_fsm import FSMField, transition, ConcurrentTransitionMixin
+from django_fsm import FSMField, transition, ConcurrentTransitionMixin, TransitionNotAllowed
 from django.urls import reverse
 from datetime import datetime, date
+from django.db.models import F
 
 
 class Appinfo(models.Model):
@@ -1942,11 +1944,6 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
 
     refid = models.AutoField(db_column='RefID', primary_key=True)
 
-    # clientid = models.OneToOneField(
-    #     Clients,
-    #     on_delete=models.CASCADE,
-    #     db_column='ClientID', unique=True, max_length=15)
-
     clientid = models.CharField(
         db_column='ClientID', unique=True, max_length=15)
 
@@ -2107,20 +2104,15 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
         db_table = 'Referrals'
         app_label = 'cases'
 
-    def save(self, *args, **kwargs):
-        # TODO: not sure if this works how I think it does
-        if not self.refid:
-            self.clientid = self.create_clientid()
-        self.clientid = self.create_clientid()
-        super(Referrals, self).save(*args, **kwargs)
     
-# TODO: use post save signal to check decisions
+
 # Conditions
+# TODO: use post save signal to check decisions
     def reviews_approve(self):
-        return self.dadecision == 'Approved' and self.defensedecision == 'Approved' and self.teamdecision == 'Approved'
+        return self.dadecision == 'Approved' and self.defensedecision == 'Approved' and self.pretrialdecision == 'Approved'
 
     def reviews_reject(self):
-        return self.dadecision != 'Approved' or self.defensedecision != 'Approved' or self.teamdecision != 'Approved'
+        return self.dadecision != 'Approved' or self.defensedecision != 'Approved' or self.pretrialdecision != 'Approved'
 
     def assess_approve(self):
         # TODO: this will need a decision field
@@ -2140,10 +2132,9 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
     # TODO: put source back to STATUS_NULL - causing sql.IntegrityError
     @transition(field=status, source='*', target=STATUS_PENDING)
     def add_referral(self):
-        # TODO: this needs to be created when first saved??
-        self.created = datetime.now()
-        # TODO: send notifications/ add to logs
-
+         # TODO: send notifications/ add to logs
+        pass
+       
     # TODO: link this to button in form
     @transition(field=status, source=STATUS_PENDING, target=STATUS_PENDING_ASSESS, conditions=[reviews_approve], on_error=STATUS_PENDING)
     def approve_referral(self):
@@ -2193,11 +2184,9 @@ class Clients(models.Model):
 
     id = models.AutoField(db_column='ID', primary_key=True)
 
-    clientid = models.OneToOneField(Referrals, on_delete=models.CASCADE,
-         db_column='ClientID', parent_link=True)
-
-    # clientid = models.CharField(
-    #     db_column='ClientID', unique=True, max_length=15)
+# TODO: make foreign key to Referrals table
+    clientid = models.CharField(
+        db_column='ClientID', unique=True, max_length=15)
 
     startdate = models.DateField(db_column='StartDate', blank=True, null=True)
 

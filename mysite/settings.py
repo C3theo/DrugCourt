@@ -23,14 +23,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'jnq#vs9tmq!3-dll70l^m^!2j*%i+#o*+8v)21d@l^c91tls=1')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
+                       'jnq#vs9tmq!3-dll70l^m^!2j*%i+#o*+8v)21d@l^c91tls=1')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', 'courtcasemanagement.herokuapp.com',]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost',
+                 'testserver', 'courtcasemanagement.herokuapp.com', ]
 INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
@@ -50,6 +52,8 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_fsm',
     'debug_toolbar',
+    'dal',
+    'dal_select2',
 
 
     # standard django apps
@@ -61,14 +65,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-MATERIAL_FRONTEND_AUTOREGISTER = True
+# MATERIAL_FRONTEND_AUTOREGISTER = True
 MIDDLEWARE = [
-    
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -88,7 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'material.frontend.context_processors.modules'
+                # 'material.frontend.context_processors.modules'
             ],
         },
     },

@@ -7,6 +7,7 @@ from django_fsm import TransitionNotAllowed
 
 from .models import Clients, Referrals
 
+
 import pdb
 
 
@@ -15,24 +16,22 @@ class ReferralsClientForm(ModelForm):
     class Meta:
 
         model = Referrals
-        fields = ('refid', 'status', 'firstname', 'middlename', 'lastname',
-                  'ssn', 'sex', 'race', 'dob', 'referredby', 'referreddate', 'pretrialname', 'pretrialreceived', 'pretrialcompleted',
-                  'pretrialdecision', 'defensename', 'defensereceived', 'defensecompleted', 'defensedecision',
-                  'daname', 'dareceived', 'dacompleted', 'dadecision', 'assessname', 'assessreceived', 'assesscompleted',
-                  'teamreceived', 'teamcompleted', 'teamdecision', 'created')
-        # pdb.set_trace()
-        # This isn't working
-        # widget = {
-        #     'status': forms.Textarea,
-        # }
+        # refid should never be editable
+        # status should be editable based off permission - used to check progress (buttons for now)
+       
+        fields = ['firstname', 'middlename', 'lastname',
+                  'ssn', 'sex', 'race', 'dob', 'referredby', 'referreddate', 
+                  'pretrialname', 'pretrialreceived', 'pretrialcompleted', 'pretrialdecision', 
+                  'defensename', 'defensereceived', 'defensecompleted', 'defensedecision',
+                  'daname', 'dareceived', 'dacompleted', 'dadecision',
+                  'teamreceived', 'teamcompleted', 'teamdecision',
+                  'assessname', 'assessreceived', 'assesscompleted',
+                  ]
+    
 
         labels = {
-            'created': 'Created Date',
-            'status': 'Referral Status',
-
+          
             # Client Info
-            # 'clientid': 'ClientID',
-            'refid': 'RefID',
             'firstname': 'First Name',
             'middlename': 'Middle Name',
             'lastname': 'Last Name',
@@ -46,20 +45,24 @@ class ReferralsClientForm(ModelForm):
             'pretrialreceived': 'Date Received',
             'pretrialcompleted': 'Date Completed',
             'pretrialdecision': 'Decision',
+
             'defensename': 'Name',
             'defensereceived': 'Date Received',
             'defensecompleted': 'Date Completed',
-            'defensedecision': 'Decision',
+            'defensedecision': 'Defense Decision',
+
             'daname': 'Name',
             'dareceived': 'Date Received',
             'dacompleted': 'Date Completed',
-            'dadecision': 'Decision',
+            'dadecision': 'DA Decision',
+
             'assessname': 'Name',
             'assessreceived': 'Date Recieved',
             'assesscompleted': 'Date Completed',
+
             'teamreceived': 'Date Received',
             'teamcompleted': 'Date Completed',
-            'teamdecision': 'Decision'
+            'teamdecision': 'Team Decision'
         }
 
 # sender = forms.EmailField(help_text='A valid email address, please.')
@@ -114,35 +117,31 @@ class ReferralsClientForm(ModelForm):
     # termreason
 
 # TODO" make formset factory
-
+# why??
 
 class ReferralsTabs(ReferralsClientForm):
 
     def __init__(self, *args, **kwargs):
         super(ReferralsTabs, self).__init__(*args, **kwargs)
+
         self.helper = FormHelper()
         self.helper.field_class = 'form-control-md'
-
         self.helper.layout = Layout(
 
             Div(
-                # Only display Field
                 HTML(
                     "<div class=\"border\">Status: {{ object.status }}</div>"),
                 HTML(
                     "<div class=\"border\">ClientID: {{ object.clientid }}</div>"),
                 HTML(
                     "<div class=\"border\">RefID: {{ object.refid }}</div>"),
-                # Field('refid', css_class='col-4'),
-                # TODO: need a way to change all assessments
-                # Field('status', css_class='col-4'),
-                Field('created', css_class='col-3'),
+                HTML(
+                    "<div class=\"border\">Date Created: {{ object.created }}</div>"),
+                # All Decicisions displayed on main page
+                HTML("<div class=\"border pb-5\">Decisions:</div>"),
+
                 Field('referreddate', css_class='col-3'),
                 Field('referredby', css_class='col-3'),
-
-                # All Decicision displayed on main page
-                HTML("<div class=\"border pb-5\">Decisions:</div>"),
-                Submit('approve', 'Approve Client', css_class='btn btn-dark'),
                 css_class='container border border-dark mb-4'
             ),
             bootstrap.TabHolder(
@@ -209,21 +208,11 @@ class ReferralsTabs(ReferralsClientForm):
             ),
             Submit(
                 'save', 'Save Changes', css_class='btn btn-success mt-3'),
-            # Button('cancel', 'Cancel', css_class='btn btn-secondary mt-3'),
+            Button('cancel', 'Cancel', css_class='btn btn-secondary mt-3'),
 
         )
 
-    # https://stackoverflow.com/questions/2432489/django-overwrite-form-clean-method
-    # def clean(self, *args, **kwargs):
-    #     if 'approve' in self.data:
-    #         try:
-    #             self.instance.approve_referral()
-    #             # self.instance.save() cannot save instance like this
-    #         except TransitionNotAllowed:
-    #             pass
-
-    #     super().clean(*args, **kwargs)
-
+    
 
 class ClientsForm(ModelForm):
 

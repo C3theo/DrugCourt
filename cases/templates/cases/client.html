@@ -9,20 +9,6 @@
     </div>
     <div class="panel-body border border-dark rounded">
         <!-- Approve Client Button -->
-        <div>
-            <form action="{% url 'referrals-approve' %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" name="approve"> Approve Client </button>
-            </form>
-        </div>
-
-        <div>
-            <form action="activate/" method="POST">
-                {% csrf_token %}
-                <button type="submit" name="activate"> Activate Client </button>
-            </form>
-        </div>
-
 
         {% block form %}
         {% endblock %}

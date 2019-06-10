@@ -3,6 +3,7 @@ import logging
 import factory
 from cases.models import Referrals, Clients
 from datetime import date
+from django.utils import timezone
 
 from random import randrange
 
@@ -14,6 +15,8 @@ def create_fake_referrals(size=None):
     ReferralsFactory.create_batch(size=size)
 
 
+tzinfo = timezone.get_current_timezone()
+
 class ReferralsFactory(DjangoModelFactory):
     class Meta:
         model = Referrals
@@ -21,6 +24,7 @@ class ReferralsFactory(DjangoModelFactory):
         django_get_or_create = ('refid', 'clientid', 'firstname', 'middlename', 'lastname', 'created', 'ssn', 'status', 'track', 'sex',
                                 'dadecision', 'teamdecision', 'defensedecision', 'pretrialdecision')
 
+    
     refid = factory.Sequence(lambda n: f'{n}')
     clientid = factory.Sequence(lambda n: f'{int(2019000) + n}')
     # clientid = factory.RelatedFactory(ClientsFactory, 'clientid')
@@ -28,7 +32,7 @@ class ReferralsFactory(DjangoModelFactory):
     firstname = factory.Faker('first_name')
     middlename = factory.Faker('first_name')
     lastname = factory.Faker('last_name')
-    created = factory.Faker('date_time_this_month')
+    created = factory.Faker('date_time_this_month', tzinfo=tzinfo)
     
     ssn = factory.Faker('ssn')
     status = factory.Faker('random_element', elements=[
@@ -52,28 +56,28 @@ class ReferralsFactory(DjangoModelFactory):
 
     pretrialname = factory.Faker('name')
     pretrialreceived = factory.Faker('past_date', start_date='-30d')
-    pretrialcompleted = date.today()
+    pretrialcompleted = timezone.now()
     pretrialdecision = factory.Faker('random_element', elements=[
                                      x[0] for x in Referrals.STATUS_DECISION])
 
     defensename = factory.Faker('name')
     defensereceived = factory.Faker('past_date', start_date='-30d')
-    defensecompleted = date.today()
+    defensecompleted = timezone.now()
     defensedecision = factory.Faker('random_element', elements=[
                                     x[0] for x in Referrals.STATUS_DECISION])
 
     daname = factory.Faker('name')
     dareceived = factory.Faker('past_date', start_date='-30d')
-    dacompleted = date.today()
+    dacompleted = timezone.now()
     dadecision = factory.Faker('random_element', elements=[
                                x[0] for x in Referrals.STATUS_DECISION])
 
     assessname = factory.Faker('name')
     assessreceived = factory.Faker('past_date', start_date='-30d')
-    assesscompleted = date.today()
+    assesscompleted = timezone.now()
 
     teamreceived = factory.Faker('past_date', start_date='-30d')
-    teamcompleted = date.today()
+    teamcompleted = timezone.now()
     teamdecision = factory.Faker('random_element', elements=[
                                  x[0] for x in Referrals.STATUS_DECISION])
 
@@ -233,10 +237,10 @@ class ClientsFactory(DjangoModelFactory):
 
 
 
-with factory.debug():
-    obj = ReferralsFactory()
+# with factory.debug():
+#     obj = ReferralsFactory()
 
 
-logger = logging.getLogger('factory')
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
+# logger = logging.getLogger('factory')
+# logger.addHandler(logging.StreamHandler())
+# logger.setLevel(logging.DEBUG)

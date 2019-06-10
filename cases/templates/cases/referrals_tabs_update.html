@@ -1,0 +1,14 @@
+{% extends "cases/client.html" %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block form %}
+<form action="{% url 'referrals-update' pk=object.refid %}"  method="POST">
+    {% csrf_token %}
+        <button class="btn btn-primary" type="submit" name="approve">Approve Button</button>
+        <button class="btn btn-primary" type="submit" name="add">Add Button</button>
+    </form> 
+{% crispy form %}
+{% endblock %}

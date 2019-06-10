@@ -11,6 +11,4 @@ urlpatterns = [
     path('referrals/add/', ReferralsCreate.as_view(), name='referrals-add'),
     path('referrals/<int:pk>/', ReferralsUpdate.as_view(), name='referrals-update'),
     path('referrals/<int:pk>/delete/', ReferralsDelete.as_view(), name='referrals-delete'),
-    # path('referrals/<int:pk>/approve/', ReferralsUpdate.set_approval, name='referrals-approve'),
-    path('referrals/approve/', views.approve_ref, name='referrals-approve')
 ]
