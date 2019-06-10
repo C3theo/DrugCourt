@@ -18,6 +18,9 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import RedirectView
 from cases import views as case_views
+from django.conf import settings
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +29,14 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/cases/')),
     path('cases/', include('cases.urls')),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
+
+
 
 # from django.conf.urls import include, url
 # from django.views import generic

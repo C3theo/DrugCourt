@@ -30,7 +30,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'jnq#vs9tmq!3-dll70l^m^!2j*%i+#o*+8v
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 
-ALLOWED_HOSTS = ['courtcasemanagement.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', 'courtcasemanagement.herokuapp.com',]
+INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
 
@@ -38,17 +39,18 @@ INSTALLED_APPS = [
     # my apps
     'users.apps.UsersConfig',
     'cases.apps.CaseConfig',
-    'bpmn.apps.BpmnConfig',
 
     # third-party apps
-    'material',
-    'material.frontend',
-    'viewflow',
-    'viewflow.frontend',
+    # 'material',
+    # 'material.frontend',
+    # 'viewflow',
+    # 'viewflow.frontend',
     'crispy_forms',
     'django_filters',
     'django_tables2',
     'django_fsm',
+    'debug_toolbar',
+
 
     # standard django apps
     'django.contrib.admin',
@@ -61,10 +63,12 @@ INSTALLED_APPS = [
 
 MATERIAL_FRONTEND_AUTOREGISTER = True
 MIDDLEWARE = [
+    
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -96,26 +100,27 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'CaseMgmt',
-        'HOST': 'DESKTOP-9AN0D63',
-        'INTEGRATED SECURITY': 'SSPI',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 13 for SQL Server',
-        },
-
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-
 }
+
+# SQL Server
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'sql_server.pyodbc',
+#         'NAME': 'CaseMgmt',
+#         'HOST': 'DESKTOP-9AN0D63',
+#         'INTEGRATED SECURITY': 'SSPI',
+#         'OPTIONS': {
+#             'driver': 'ODBC Driver 13 for SQL Server',
+#         },
+
+#     }
+
+# }
 
 # DATABASE_URL="Server=localhost;Database=master;Trusted_Connection=True"
 
@@ -163,6 +168,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'cases-home'
 LOGIN_URL = 'login'
 
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+# import dj_database_url
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)
