@@ -51,9 +51,9 @@ INSTALLED_APPS = [
     'django_filters',
     'django_tables2',
     'django_fsm',
-    'debug_toolbar',
-    'dal',
-    'dal_select2',
+    # 'debug_toolbar',
+    # 'dal',
+    # 'dal_select2',
 
 
     # standard django apps
