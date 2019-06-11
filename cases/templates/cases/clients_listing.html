@@ -1,5 +1,13 @@
 {% extends "cases/base.html" %}
 {% load crispy_forms_tags django_tables2 %}
 {% block content %}
-{% render_table table %}
+<div class="card text-center">
+        <h5 class="card-header bg-dark text-white">Referrals Table</h5>
+        <div class="card-body">
+            <p class="card-text lead">Click the column headers to sort a column by Ascending or Descending order. </h5>
+            
+            {% render_table table %}
+        </div>
+    </div>
+
 {% endblock %}
