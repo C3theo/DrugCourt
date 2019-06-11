@@ -18,7 +18,7 @@ class ReferralsTable(tables.Table):
     class Meta:
         model = Referrals
         template_name = 'django_tables2/bootstrap4.html'
-        fields = ['refid', 'clientid', 'firstname', 'middlename', 'lastname']
+        fields = ['refid', 'clientid', 'firstname', 'lastname', 'status']
         attrs = {'th': {'class': 'table-light'},
         'class': 'table table-striped table-light'
         }

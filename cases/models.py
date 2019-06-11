@@ -1886,6 +1886,7 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
     STATUS_PENDING_ACCEPT = 'Pending Client Acceptance'
     STATUS_PENDING_TERMINATION = 'Pending Termination'
     STATUS_PENDING = 'Pending'
+
     STATUS_REJECTED = 'Rejected'
     STATUS_ACTIVE = 'Active'
     STATUS_TERMINATED = 'Terminated'
@@ -1934,13 +1935,19 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
         (REJECT_OTHER, REJECT_OTHER),
     )
 
-    STATUS_ACCEPTED = 'Accepted'
-    STATUS_REJECTED = 'Rejected'
+    DECISION_APPROVED = 'Approved'
+    DECISION_REJECTED = 'Rejected'
 
-    STATUS_DECISION = (
-        (STATUS_ACCEPTED, STATUS_ACCEPTED),
-        (STATUS_REJECTED, STATUS_REJECTED)
+    DECISION_CHOICES = (
+        (DECISION_APPROVED, DECISION_APPROVED),
+        (DECISION_REJECTED, DECISION_REJECTED)
     )
+
+    CLIENT_ACCEPTED = 'Client Accepted'
+    CLIENT_REJECTED = 'Client Rejected'
+
+    CLIENT_DECISION = ((CLIENT_ACCEPTED, CLIENT_ACCEPTED),
+    (CLIENT_REJECTED, CLIENT_REJECTED))
 
     refid = models.AutoField(db_column='RefID', primary_key=True)
 
@@ -1985,12 +1992,12 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
     race = models.CharField(
         db_column='Race', max_length=35, blank=True, null=True)
 
-    sex = models.CharField(db_column='Sex', max_length=1,
+    sex = models.CharField(db_column='Sex', choices=(('M', 'Male'), ('F', 'Female')), max_length=1,
                            blank=True, null=True)
     # Changed to FSM field
 
     status = FSMField(db_column='Status', choices=STATUS_CHOICES,
-                      max_length=50, help_text='Current Referral Status')
+                      max_length=50)
 
     division = models.IntegerField(db_column='Division', blank=True, null=True)
 
@@ -2016,7 +2023,7 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
         db_column='PretrialCompleted', blank=True, null=True)
 
     pretrialdecision = models.CharField(
-        db_column='PretrialDecision', max_length=10, blank=True, null=True)
+        db_column='PretrialDecision', choices=DECISION_CHOICES, max_length=10, blank=True, null=True)
 
     defensename = models.CharField(
         db_column='DefenseName', max_length=50, blank=True, null=True)
@@ -2028,7 +2035,7 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
         db_column='DefenseCompleted', blank=True, null=True)
 
     defensedecision = models.CharField(
-        db_column='DefenseDecision', max_length=10, blank=True, null=True)
+        db_column='DefenseDecision', choices=DECISION_CHOICES, max_length=10, blank=True, null=True)
 
     daname = models.CharField(
         db_column='DAName', max_length=50, blank=True, null=True)
@@ -2040,7 +2047,7 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
         db_column='DACompleted', blank=True, null=True)
 
     dadecision = models.CharField(
-        db_column='DADecision', max_length=10, blank=True, null=True)
+        db_column='DADecision', choices=DECISION_CHOICES, max_length=10, blank=True, null=True)
 
     assessname = models.CharField(
         db_column='AssessName', max_length=50, blank=True, null=True)
@@ -2058,7 +2065,7 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
         db_column='TeamCompleted', blank=True, null=True)
 
     teamdecision = models.CharField(
-        db_column='TeamDecision', max_length=10, blank=True, null=True)
+        db_column='TeamDecision', choices=DECISION_CHOICES, max_length=10, blank=True, null=True)
 
     arrests = models.IntegerField(db_column='Arrests', blank=True, null=True)
 
@@ -2098,6 +2105,9 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
             new_id = f'{pre_text}000{1}'
        
         return new_id
+    
+    def __init__(self, *args, **kwargs):
+        super(Referrals, self).__init__(*args, **kwargs)
 
     class Meta:
         managed = True
@@ -2109,10 +2119,11 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
 # Conditions
 # TODO: use post save signal to check decisions
     def reviews_approve(self):
-        return self.dadecision == 'Approved' and self.defensedecision == 'Approved' and self.pretrialdecision == 'Approved'
+        return self.dadecision == self.DECISION_APPROVED and self.defensedecision == self.DECISION_APPROVED  and self.pretrialdecision == self.DECISION_APPROVED 
 
     def reviews_reject(self):
-        return self.dadecision != 'Approved' or self.defensedecision != 'Approved' or self.pretrialdecision != 'Approved'
+        # unnecessary condition
+        return self.dadecision != self.DECISION_APPROVED  or self.defensedecision != self.DECISION_APPROVED  or self.pretrialdecision != self.DECISION_APPROVED 
 
     def assess_approve(self):
         # TODO: this will need a decision field
@@ -2144,7 +2155,6 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
 
     @transition(field=status, source=STATUS_PENDING, target=STATUS_PENDING_TERMINATION, conditions=[reviews_reject], on_error=STATUS_PENDING)
     def reject_referral(self):
-        # TODO: side effect -> send notification for assessment
         pass
 
     @transition(field=status, source=STATUS_PENDING_ASSESS, target=STATUS_PENDING_ACCEPT, conditions=[assess_approve], on_error=STATUS_PENDING_ASSESS)
@@ -2152,22 +2162,24 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
         # TODO: side effect ->
         pass
 
-    @transition(field=status, source=STATUS_PENDING_ASSESS, target=STATUS_PENDING_TERMINATION, conditions=[assess_reject], on_error=STATUS_PENDING_ASSESS)
+    @transition(field=status, source=STATUS_PENDING_ASSESS, target=STATUS_REJECTED, conditions=[assess_reject], on_error=STATUS_PENDING_ASSESS)
     def reject_assess_referral(self):
         # TODO: side effect ->
         pass
 
-    @transition(field=status, source=STATUS_PENDING_ACCEPT, target=STATUS_ACCEPTED, on_error=STATUS_PENDING_ASSESS)
+    @transition(field=status, source=STATUS_PENDING_ACCEPT, target=CLIENT_ACCEPTED, on_error=STATUS_PENDING_ASSESS)
     def client_accept(self):
         # TODO: side effect ->
+        # Add phase
+        # Get Created Date 
         pass
 
-    @transition(field=status, source=STATUS_PENDING_ACCEPT, target=STATUS_DECLINED, on_error=STATUS_PENDING_ACCEPT)
+    @transition(field=status, source=STATUS_PENDING_ACCEPT, target=CLIENT_REJECTED, on_error=STATUS_PENDING_ACCEPT)
     def client_decline(self):
         # TODO: side effect ->
         pass
 
-    @transition(field=status, source=STATUS_ACCEPTED, target=STATUS_ACTIVE)
+    @transition(field=status, source=CLIENT_ACCEPTED, target=STATUS_ACTIVE)
     def activate_client(self):
         # error message for activate - when called in view
         # print('Client Activated')
@@ -2175,6 +2187,16 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
 
     def __str__(self):
         return f'Referral {self.refid}'
+    
+    def clean(self):
+        if not self.reviews_approve() and self.status == self.STATUS_PENDING_ASSESS:
+            self.add_referral()
+        # TODO need to check assesment state
+        elif self.reviews_approve() and self.status == self.STATUS_PENDING:
+            self.approve_referral()
+
+        return super().clean()
+        
 
     def get_absolute_url(self):
         return reverse('referrals-update', kwargs={'pk': self.refid})
@@ -2314,7 +2336,7 @@ class Clients(models.Model):
         db_column='UserID', max_length=50, blank=True, null=True)
 
     created = models.DateTimeField(db_column='Created', blank=True, null=True)
-    # This field type is a guess.
+ 
     ssma_timestamp = models.TextField(db_column='SSMA_TimeStamp')
 
     lastpositive = models.DateField(

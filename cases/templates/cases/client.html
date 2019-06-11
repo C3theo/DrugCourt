@@ -1,14 +1,17 @@
 {% extends "cases/base.html" %}
 {% block content %}
 
-<div class="panel panel-default">
-    <div class="panel-heading pb-3 border border-dark rounded">
-        <h3>
-            {% block form-header %}Referrals{% endblock %}
-        </h3>
+<div class="card">
+    <div class="card-header bg-dark text-white text-center rounded-top">
+        
+        {% block form-header %}<h4>Add Referral</h4>{% endblock %}
+        
+        
     </div>
-    <div class="panel-body border border-dark rounded">
-        <!-- Approve Client Button -->
+    <div class="card-body rounded">
+        {% block card-body %}
+            
+        {% endblock %}
 
         {% block form %}
         {% endblock %}

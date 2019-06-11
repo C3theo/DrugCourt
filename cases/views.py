@@ -19,6 +19,9 @@ from .tables import ClientsTable, ReferralsTable
 
 # TODO: add logging
 
+@login_required
+def home(request):
+    return render(request, 'cases/home.html')
 
 class ReferralsCreate(LoginRequiredMixin, CreateView):
     model = Referrals
@@ -49,25 +52,6 @@ class ReferralsUpdate(LoginRequiredMixin, UpdateView):
     form_class = ReferralsTabs
     template_name = 'cases/referrals_tabs_update.html'
 
-# issue saving over data
-    # def form_valid(self, form, ):
-    #     if 'approve' in form.data:
-    #         # cls.f
-    #         try:
-    #             form.instance.approve_referral()
-    #             form.instance.save()
-    #             return HttpResponseRedirect(form.instance.get_absolute_url())
-    #         except TransitionNotAllowed:
-    #             pass
-    #             # TODO: redirect to home page
-
-    #     if 'add' in form.data:
-    #         form.instance.add_referral()
-    #         form.instance.save()
-    #         return HttpResponseRedirect(form.instance.get_absolute_url())
-        
-
-    #     return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
