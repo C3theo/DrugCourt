@@ -58,19 +58,19 @@ class ReferralsFactory(DjangoModelFactory):
     pretrialreceived = factory.Faker('past_date', start_date='-30d')
     pretrialcompleted = timezone.now()
     pretrialdecision = factory.Faker('random_element', elements=[
-                                     x[0] for x in Referrals.STATUS_DECISION])
+                                     x[0] for x in Referrals.DECISION_CHOICES])
 
     defensename = factory.Faker('name')
     defensereceived = factory.Faker('past_date', start_date='-30d')
     defensecompleted = timezone.now()
     defensedecision = factory.Faker('random_element', elements=[
-                                    x[0] for x in Referrals.STATUS_DECISION])
+                                    x[0] for x in Referrals.DECISION_CHOICES])
 
     daname = factory.Faker('name')
     dareceived = factory.Faker('past_date', start_date='-30d')
     dacompleted = timezone.now()
     dadecision = factory.Faker('random_element', elements=[
-                               x[0] for x in Referrals.STATUS_DECISION])
+                               x[0] for x in Referrals.DECISION_CHOICES])
 
     assessname = factory.Faker('name')
     assessreceived = factory.Faker('past_date', start_date='-30d')
@@ -79,7 +79,7 @@ class ReferralsFactory(DjangoModelFactory):
     teamreceived = factory.Faker('past_date', start_date='-30d')
     teamcompleted = timezone.now()
     teamdecision = factory.Faker('random_element', elements=[
-                                 x[0] for x in Referrals.STATUS_DECISION])
+                                 x[0] for x in Referrals.DECISION_CHOICES])
 
     # arrests = factory.Faker('random_element', elements=range(0, 50))
     arrests = randrange(1, 20)
