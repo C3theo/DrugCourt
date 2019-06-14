@@ -1,17 +1,26 @@
 {% extends "cases/base.html" %}
-{% block current %}(current){% endblock %}
+
 {% block content %}
 
 <div class="card-columns">
     <div>
         <div class="card text-center">
-            <h5 class="card-header bg-dark text-white"><i class="fas fa-user"></i> User</h5>
+            <h5 class="card-header bg-dark text-white"><i class="fas fa-user"></i> Admin</h5>
             <div class="card-body">
                 <!-- TODO: Say good morning based off meeting - use context -->
-                <h5 class="card-title"> Hello, {{ user.first_name }}</h5>
+                <h5 class="card-title">{{ user.profile.get_user_role_display }}</h5>
                 <ul class="list-group list-group-flush pb-3">
-                    <li class="list-group-item"> Last Login:</li>
-                    <li class="list-group-item"> Date: </li>
+                    <li class="list-group-item">{{ user.get_full_name }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="card text-center ">
+            <h5 class="card-header bg-dark text-white"><i class="fas fa-address-card"></i> Referrals</h5>
+            <div class="card-body ">
+                <h5 class="card-title"> Title</h5>
+                <ul class="list-group list-group-flush pb-3">
                 </ul>
                 <a href="{% url 'referrals-all' %}" class="btn btn-info"> View All Referrals</a>
             </div>
@@ -21,49 +30,31 @@
         <div class="card text-center ">
             <h5 class="card-header bg-dark text-white"><i class="fas fa-user-graduate"></i> Client</h5>
             <div class="card-body ">
-                <h5 class="card-title"> UserID: {{ user.username }} </h5>
+                <h5 class="card-title"> Title </h5>
                 <ul class="list-group list-group-flush pb-3">
-                    <li class="list-group-item"> Total Clients: </li>
-                    <li class="list-group-item"> Most Recent Client: </li>
-                    <li class="list-group-item"> Schedule: </li>
                 </ul>
-                <a href="#" class="btn btn-info">View All Clients</a>
             </div>
         </div>
     </div>
     <div>
-        <div class="card text-center ">
+        <div class="card text-center">
             <h5 class="card-header bg-dark text-white"><i class="fas fa-notes-medical"></i> Treatment</h5>
             <div class="card-body ">
-                <h5 class="card-title"> UserID: {{ user.username }} </h5>
+                <h5 class="card-title"> Title </h5>
                 <ul class="list-group list-group-flush pb-3">
-                    <li class="list-group-item"> Schedule: </li>
                 </ul>
-                <a href="#" class="btn btn-info">View All Clients</a>
             </div>
         </div>
     </div>
-    <div>
-        <div class="card text-center ">
-            <h5 class="card-header bg-dark text-white"><i class="fas fa-address-card"></i> Referrals</h5>
-            <div class="card-body ">
-                <h5 class="card-title"> UserID: {{ user.username }} </h5>
-                <ul class="list-group list-group-flush pb-3">
-                    <li class="list-group-item"> Schedule: </li>
-                </ul>
-                <a href="#" class="btn btn-info">View All Clients</a>
-            </div>
-        </div>
-    </div>
+
     <div>
         <div class="card text-center ">
             <h5 class="card-header bg-dark text-white"><i class="fas fa-gavel"></i> Court</h5>
             <div class="card-body ">
-                <h5 class="card-title"> UserID: {{ user.username }} </h5>
+                <h5 class="card-title"> Title </h5>
                 <ul class="list-group list-group-flush pb-3">
-                    <li class="list-group-item"> Schedule: </li>
                 </ul>
-                <a href="#" class="btn btn-info">View All Clients</a>
+
             </div>
         </div>
     </div>

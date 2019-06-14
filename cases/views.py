@@ -28,23 +28,21 @@ class ReferralsCreate(LoginRequiredMixin, CreateView):
     form_class = ReferralsTabs
     template_name = 'cases/referrals_tabs.html'
 
+#  Business Logic??
     def form_valid(self, form):
-        # Set created fields
+
         if not form.instance.userid:
             form.instance.userid = self.request.user.username
 
         if not form.instance.created:
             form.instance.created = timezone.now()
-            # log date
-        
+
         if form.instance.clientid == '':
             form.instance.clientid = form.instance.create_clientid()
         
         if not form.instance.status:
             form.instance.add_referral()
 
-        form.instance.save()
-# TODO: check on this super call - calling CreateViews super()
         return super().form_valid(form)
 
 class ReferralsUpdate(LoginRequiredMixin, UpdateView):
@@ -52,7 +50,7 @@ class ReferralsUpdate(LoginRequiredMixin, UpdateView):
     form_class = ReferralsTabs
     template_name = 'cases/referrals_tabs_update.html'
 
-
+# TODO: move this to a Mixin
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
@@ -71,8 +69,6 @@ class ReferralsUpdate(LoginRequiredMixin, UpdateView):
 
         return super().post(self, request, *args, **kwargs)
 
-
-       
 class ReferralsDelete(LoginRequiredMixin, DeleteView):
     model = Referrals
     success_url = reverse_lazy('referrals-list')
@@ -93,8 +89,6 @@ class ClientListView(LoginRequiredMixin, SingleTableView):
     context_object_name = 'clients'
 
 # login required not working for filtered view
-
-
 class FilteredClientsListView(LoginRequiredMixin, FilterView):
     table_class = ClientsTable
     model = Clients

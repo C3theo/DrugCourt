@@ -1,0 +1,53 @@
+from django.db import models
+from django.contrib.auth.models import User
+from django.conf import settings
+
+
+class BaseProfile(models.Model):
+
+    USER_ROLES = (
+        (0, 'Drug Court Team'),
+        (1, 'DA'),
+        (2, 'Defense'),
+        (3, 'Pretrial'),
+        (4, 'Screener'),
+        (5, 'Developer'),)
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
+    user_role = models.IntegerField('User Role',
+                                    null=True, choices=USER_ROLES)
+
+    def __str__(self):
+        return f"{self.user} - {self.get_user_role_display()}"
+
+    class Meta:
+        abstract = True
+
+
+class DrugCourtProfile(models.Model):
+    pass
+
+    class Meta:
+        abstract = True
+
+
+class DAProfile(models.Model):
+    pass
+
+    class Meta:
+        abstract = True
+
+
+class DefenseProfile(models.Model):
+    pass
+
+    class Meta:
+        abstract = True
+
+
+class Profile(DrugCourtProfile, BaseProfile):
+    pass
+
+    class Meta:
+        verbose_name = 'profile'

@@ -37,7 +37,6 @@ class ReferralsClientForm(ModelForm):
             'ssn': 'Social Security Number',
             'sex': '<i class="fas fa-venus-mars"></i> Sex',
 
-
             # Reviews
             'referredby': 'Referred By',
             'referreddate': 'Referred Date',
@@ -127,19 +126,21 @@ class ReferralsTabs(ReferralsClientForm):
         self.fields['firstname'].required = True
         self.fields['sex'].required = True
         self.fields['lastname'].required = True
+        self.fields['referredby'].required = True
+        self.fields['referreddate'].required = True
+
         self.helper = FormHelper()
         self.helper.field_class = 'form-control-md'
         self.helper.add_input(
             Submit('submit', 'Submit', css_class='mt-3', style='width:100px'))
         self.helper.layout = Layout(
 
-            Field('referreddate', wrapper_class='col-4'),
-            Field('referredby', wrapper_class='col-4'),
+            
 
             Div(
                 bootstrap.TabHolder(
                     # TODO: Buttons with dropdowns
-                    bootstrap.Tab('Client Info',
+                    bootstrap.Tab('Contact Info',
                                   Div(
                                       Row(
                                           Field('firstname',
@@ -156,6 +157,8 @@ class ReferralsTabs(ReferralsClientForm):
                                  <i class="fas fa-birthday-cake"></i> Date of Birth</label> <div class="form-control-md">
                                 <input type="text" name="dob" class="col-4 dateinput form-control" id="id_dob"> </div> </div>
                                   """),
+                                  Field('referreddate', wrapper_class='col-4'),
+                Field('referredby', wrapper_class='col-4'),
                                       css_class=tab_class)
                                   ),
                     bootstrap.Tab('Pretrial',

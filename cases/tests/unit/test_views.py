@@ -1,18 +1,22 @@
-from cases.views import ReferralsCreate, ReferralsUpdate
-from django.test import Client, TestCase, SimpleTestCase, TransactionTestCase, RequestFactory
-from cases.models import Referrals
-from .factories import ReferralsFactory
-from unittest.mock import patch
-import pytest
-from cases.forms import ReferralsTabs
-from django.contrib.auth.models import User
 import pdb
+from unittest.mock import patch
+
+import pytest
+from django.contrib.auth.models import User
+from django.test import (Client, RequestFactory, SimpleTestCase, TestCase,
+                         TransactionTestCase)
+
+from cases.forms import ReferralsTabs
+from cases.models import Referrals
+from cases.models.factories import ReferralsFactory
+from cases.views import ReferralsCreate, ReferralsUpdate
 from django_webtest import WebTest
 
 # unitttests
 # from youtube talk
 
 pytestmark = pytest.mark.django_db
+
 
 def setup_viewTest(view, request, *args, **kwargs):
     """
@@ -44,12 +48,12 @@ class ReferralsDetailTest(WebTest):
     # @patch(target='cases.forms.ReferralsDetail.post', autospec=True, ) # mock model imported from views.py
     def test_post_approve_button(self):
          # check if post with different name attributes are handled differently
-        
+
         # this is going to throw a db access error
         form = ReferralsTabs()
         r = ReferralsFactory(refid=1000, status='Pending',
-                         dadecision='Approved', defensedecision='Approved', teamdecision='Approved')
-        
+                             dadecision='Approved', defensedecision='Approved', teamdecision='Approved')
+
         # GET detail page response
         # get_response = self.client.get(f'/referrals/{r.refid}')
         # self.assertEqual(get_response.status, 200)
@@ -61,8 +65,6 @@ class ReferralsDetailTest(WebTest):
     def test_post_approve(self):
         r = ReferralsFactory(pretrialdecision='Approved')
         response = self.app.get(r.get_absolute_url(), user='john')
-      
-       
 
         self.assertNotEqual(response.status_code, 404)
 
@@ -70,5 +72,5 @@ class ReferralsDetailTest(WebTest):
         form['dadecision'] = 'Approved'
         submit_form = form.submit('approve')
         pdb.set_trace()
-        
+
         self.assertRedirects(submit_form, r.get_absolute_url())

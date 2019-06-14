@@ -1,11 +1,13 @@
-from factory import DjangoModelFactory
 import logging
-import factory
-from cases.models import Referrals, Clients
 from datetime import date
+from random import randrange
+
 from django.utils import timezone
 
-from random import randrange
+import factory
+from factory import DjangoModelFactory
+
+from .case_models import Clients, Referrals
 
 def delete_all_Referrals():
     for obj in Referrals.objects.all():
