@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 
+def get_anonymous_user_instance(User):
+    return User(real_username='Anonymous', user_role=None)
+
 class BaseProfile(models.Model):
 
     USER_ROLES = (
@@ -24,9 +27,11 @@ class BaseProfile(models.Model):
     class Meta:
         abstract = True
 
-
+# TODO: future profiles - court etc
+# TODO: add to group based off user_role?
 class DrugCourtProfile(models.Model):
-    pass
+    # TODO: make Foreign Key Field
+    division = models.CharField(max_length=20)
 
     class Meta:
         abstract = True

@@ -3,18 +3,12 @@
 
 <div class="card">
     <div class="card-header bg-dark text-white text-center rounded-top">
-        
-        {% block form-header %}<h4>Add Referral</h4>{% endblock %}
-        
-        
+
+        <h4>{% block form-header %}Add Referral{% endblock %}</h4>
     </div>
     <div class="card-body rounded">
-        {% block card-body %}
-            
-        {% endblock %}
-
-        {% block form %}
-        {% endblock %}
+        {% block card-body %}{% endblock %}
+        {% block form %}{% endblock %}
 
     </div>
 </div>

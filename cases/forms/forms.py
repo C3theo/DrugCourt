@@ -5,8 +5,7 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, Ro
 from crispy_forms import bootstrap
 from django_fsm import TransitionNotAllowed
 
-from .models import Clients, Referrals
-
+from ..models import Clients, Referrals
 
 import pdb
 
@@ -114,10 +113,6 @@ class ReferralsClientForm(ModelForm):
     # county
     # type
     # termreason
-
-# TODO" make formset factory
-# why??
-
 
 class ReferralsTabs(ReferralsClientForm):
     def __init__(self, *args, **kwargs):
@@ -247,29 +242,29 @@ class ReferralsTabs(ReferralsClientForm):
         )
 
 
-class ClientsForm(ModelForm):
+# class ClientsForm(ModelForm):
 
-    class Meta:
-        model = Clients
-        fields = ('clientid', 'cellphone', 'email')
-        labels = {
-            'clientid': 'Client ID',
-            'cellphone': 'Phone Number'
-        }
+#     class Meta:
+#         model = Clients
+#         fields = ('clientid', 'cellphone', 'email')
+#         labels = {
+#             'clientid': 'Client ID',
+#             'cellphone': 'Phone Number'
+#         }
 
 
-class ClientsTabForm(ClientsForm):
+# class ClientsTabForm(ClientsForm):
 
-    def __init__(self, *args, **kwargs):
-        super(ClientsTabForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
+#     def __init__(self, *args, **kwargs):
+#         super(ClientsTabForm, self).__init__(*args, **kwargs)
+#         self.helper = FormHelper()
+#         self.helper.layout = Layout(
 
-            bootstrap.TabHolder(
-                bootstrap.Tab('Contact Info',
-                              'clientid',
-                              'cellphone',
-                              'email',
-                              Submit('save', 'Save Changes')),
-            )
-        )
+#             bootstrap.TabHolder(
+#                 bootstrap.Tab('Contact Info',
+#                               'clientid',
+#                               'cellphone',
+#                               'email',
+#                               Submit('save', 'Save Changes')),
+#             )
+#         )

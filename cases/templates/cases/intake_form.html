@@ -1,0 +1,111 @@
+{% extends "cases/client.html" %}
+{% load crispy_forms_tags %}
+
+
+
+{% block form %}
+<input class="form-control col-6 mb-3" type="text" placeholder="{{ form.instance.clientid }}" readonly>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="add-tab" data-toggle="tab" href="#add" role="tab" aria-controls="add"
+            aria-selected="true">Add</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+            aria-selected="false">Referral</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes"
+            aria-selected="false">Notes</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings"
+            aria-selected="false">Settings</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="add" role="tabpanel" aria-labelledby="add-tab">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-3">
+                    {{ client_form.first_name|as_crispy_field }}
+                </div>
+                <!-- TODO: make field collapse with smaller screen sizes -->
+                <div class="form-group col-1">
+                    {{ client_form.middle_initial|as_crispy_field }}
+                </div>
+                <div class="form-group col-">
+                    {{ client_form.last_name|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-2">
+                    {{ client_form.gender|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-3">
+                    {{ client_form.birth_date|as_crispy_field }}
+                </div>
+
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+    <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group col-4">
+                    {{ referral_form.provider|as_crispy_field }}
+                </div>
+
+            </div>
+            <div class="form-row">
+                <div class="form-group col-4">
+                    {{ referral_form.referrer|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-4">
+                    {{ referral_form.status|as_crispy_field }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+    <div class="tab-pane" id="notes" role="tabpanel" aria-labelledby="notes-tab">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group col-4">
+                    {{ note_form.created_date|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col">
+                    {{ note_form.text|as_crispy_field }}
+                </div>
+
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+    <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">...</div>
+</div>
+
+<script>
+    $(function () {
+        $('#myTab li:last-child a').tab('show')
+    })
+</script>
+
+
+
+{% endblock %}

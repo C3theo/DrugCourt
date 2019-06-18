@@ -17,12 +17,13 @@
     </div>
     <div>
         <div class="card text-center ">
-            <h5 class="card-header bg-dark text-white"><i class="fas fa-address-card"></i> Referrals</h5>
+            <h5 class="card-header bg-dark text-white"><i class="fas fa-address-card"></i> Intake</h5>
             <div class="card-body ">
                 <h5 class="card-title"> Title</h5>
                 <ul class="list-group list-group-flush pb-3">
+                    <a href="{% url 'cases:intake' %}" class="list-group-item list-group-item-action"> Add Referral</a>
+                    <a href="{% url 'cases:all' %}" class="list-group-item list-group-item-action"> View All Referrals</a>
                 </ul>
-                <a href="{% url 'referrals-all' %}" class="btn btn-info"> View All Referrals</a>
             </div>
         </div>
     </div>

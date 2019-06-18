@@ -1,10 +1,16 @@
+from datetime import date, datetime
+
 from django.db import models
-from django_fsm import FSMField, transition, ConcurrentTransitionMixin, TransitionNotAllowed
-from django.urls import reverse
-from datetime import datetime, date
 from django.db.models import F
+from django.urls import reverse
+from django.utils import timezone
+
+from django_fsm import (ConcurrentTransitionMixin, FSMField,
+                        TransitionNotAllowed, transition)
 from profiles.models import Profile
 
+
+tzinfo = timezone.get_current_timezone()
 
 class IntakeStatus:
 
@@ -25,6 +31,22 @@ class IntakeStatus:
 # class ScreenInstrument:
 #     pass
 
+class Note(models.Model):
+    """
+        Model to represent user notes
+    """
+    # TODO: add logic to automatically create author from signed in user
+    # pre_save signal??
+    # need to make sure it's saved only once
+    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, default=False)
+    text = models.TextField(help_text='Enter notes here.')
+    created_date = models.DateTimeField(default=timezone.now)
+    # TODO: add different note_types
+    # note_type = models.CharField(choices=[])
+    # client_id
+    
+
+
 
 class Client(ConcurrentTransitionMixin, models.Model):
     """
@@ -34,17 +56,17 @@ class Client(ConcurrentTransitionMixin, models.Model):
     client_id = models.CharField(max_length=20, unique=True)
     # constraint/ clean
     status = FSMField(choices=IntakeStatus.CHOICES)
-    birth_date = models.DateField()
+    birth_date = models.DateField(null=True)
     # constraint
-    created_date = models.DateTimeField()
+    created_date = models.DateTimeField(default=date.today)
     gender = models.CharField(max_length=1,)
     first_name = models.CharField(max_length=20,)
-    middle_name = models.CharField(max_length=20,)
+    middle_initial = models.CharField(max_length=1, null=True)
     last_name = models.CharField(max_length=20,)
     # provider = models.ManyToManyField(Provider, through='Referral')
     # How to import??
 
-    def create_clienti_id(self):
+    def create_client_id(self):
         """
             Return unique id for client consisting of gender, birth date, SSN, and last name.
         """
@@ -57,6 +79,14 @@ class Client(ConcurrentTransitionMixin, models.Model):
             new_id = f'{pre_text}000{1}'
 
         return new_id
+
+    @property
+    def age(self):
+
+        today = date.today()
+        return (today.year - self.birth_date.year) - int(
+            (today.month, today.day) <
+            (self.birth_date.month, self.birth_date.day))
 
     def get_absolute_url(self):
         # TODO add client detail view
@@ -83,7 +113,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
                 permission=lambda instance, user: user.has_perm())
     def eval_client(self):
         pass
-        # This is just a check for 
+        # This is just a check for
 
 
 class Provider(models.Model):
@@ -132,13 +162,13 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         pass
 
     @transition(field=status, source=STATUS_PENDING, target=STATUS_APPROVED, conditions=[screens_approved],
-    permission=lambda instance, user: user.has_perm('can_approve'))
+                permission=lambda instance, user: user.has_perm('can_approve'))
     def approve_referral(self):
         pass
         # TODO signals
 
     @transition(field=status, source=STATUS_PENDING, target=STATUS_REJECTED, conditions=[screens_rejected],
-    permission=lambda instance, user: user.has_perm('can_reject'))
+                permission=lambda instance, user: user.has_perm('can_reject'))
     def reject_referral(self):
         pass
         # TODO: add signals

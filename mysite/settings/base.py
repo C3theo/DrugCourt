@@ -151,3 +151,4 @@ LOGIN_REDIRECT_URL = 'cases-home'
 LOGIN_URL = 'login'
 
 
+GUARDIAN_GET_INIT_ANONYMOUS_USER = 'profiles.models.get_anonymous_user_instance'

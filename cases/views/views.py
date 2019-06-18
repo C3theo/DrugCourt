@@ -12,10 +12,10 @@ from django.utils import timezone
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableView
 
-from .filters import ClientsFilter
-from .forms import ClientsForm, ClientsTabForm, ReferralsTabs
-from .models import Clients, Referrals, TransitionNotAllowed
-from .tables import ClientsTable, ReferralsTable
+from ..filters import ClientsFilter
+from ..forms import ClientForm, ReferralsTabs
+from ..models import Clients, Referrals, TransitionNotAllowed, Client
+from ..tables import ClientsTable, ReferralsTable
 
 # TODO: add logging
 
@@ -26,9 +26,8 @@ def home(request):
 class ReferralsCreate(LoginRequiredMixin, CreateView):
     model = Referrals
     form_class = ReferralsTabs
-    template_name = 'cases/referrals_tabs.html'
+    template_name = 'cases/forms_base.html'
 
-#  Business Logic??
     def form_valid(self, form):
 
         if not form.instance.userid:
@@ -48,7 +47,7 @@ class ReferralsCreate(LoginRequiredMixin, CreateView):
 class ReferralsUpdate(LoginRequiredMixin, UpdateView):
     model = Referrals
     form_class = ReferralsTabs
-    template_name = 'cases/referrals_tabs_update.html'
+    template_name = 'cases/forms_base_update.html'
 
 # TODO: move this to a Mixin
     def post(self, request, *args, **kwargs):
@@ -72,7 +71,7 @@ class ReferralsUpdate(LoginRequiredMixin, UpdateView):
 class ReferralsDelete(LoginRequiredMixin, DeleteView):
     model = Referrals
     success_url = reverse_lazy('referrals-list')
-    template_name = 'cases/referrals_tabs.html'
+    template_name = 'cases/forms_base.html'
 
 
 class ReferralsListView(LoginRequiredMixin, SingleTableView):
