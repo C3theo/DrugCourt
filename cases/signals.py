@@ -8,6 +8,7 @@ from .models import Referral
 
 
 # TODO: check conditions
+# DO this another way - check 2 Scoops
 @receiver(post_save, sender=Referral)
 def referral_status_handler(sender, instance, **kwargs):
     try:

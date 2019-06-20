@@ -17,6 +17,7 @@ load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# print(f'BASE_DIR={BASE_DIR}')
 
 
 # Quick-start development settings - unsuitable for production
@@ -150,5 +151,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'cases-home'
 LOGIN_URL = 'login'
 
+ANONYMOUS_USER_NAME = None
+# GUARDIAN_MONKEY_PATCH = False
 
-GUARDIAN_GET_INIT_ANONYMOUS_USER = 'profiles.models.get_anonymous_user_instance'
+# For fields added to custom user model
+# GUARDIAN_GET_INIT_ANONYMOUS_USER = 'profiles.models.get_anonymous_user_instance'

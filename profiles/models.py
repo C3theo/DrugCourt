@@ -2,9 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 
+from guardian.mixins import GuardianUserMixin
 
-def get_anonymous_user_instance(User):
-    return User(real_username='Anonymous', user_role=None)
+# This is for when subclassing AbstractUser
+# def get_anonymous_user_instance(User):
+#     return User(user_role=None)
 
 class BaseProfile(models.Model):
 
@@ -31,7 +33,7 @@ class BaseProfile(models.Model):
 # TODO: add to group based off user_role?
 class DrugCourtProfile(models.Model):
     # TODO: make Foreign Key Field
-    division = models.CharField(max_length=20)
+    # division = models.CharField(max_length=20)
 
     class Meta:
         abstract = True
@@ -51,7 +53,7 @@ class DefenseProfile(models.Model):
         abstract = True
 
 
-class Profile(DrugCourtProfile, BaseProfile):
+class Profile(GuardianUserMixin, DrugCourtProfile, BaseProfile):
     pass
 
     class Meta:

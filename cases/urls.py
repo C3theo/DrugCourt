@@ -8,8 +8,9 @@ from django.contrib.auth.decorators import login_required
 
 app_name = 'cases'
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('intake/', IntakeView.as_view() , name='intake'),
+
+    path('', views.home , name='home'),
+    path('intake/', IntakeView.as_view(), name='intake'),
     # path('search/', login_required(FilterView.as_view(filterset_class=ClientsFilter)), name='search'),
     path('all/', ReferralsListView.as_view(), name='all'),
     path('add/', ReferralsCreate.as_view(), name='add'),

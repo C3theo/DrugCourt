@@ -12,6 +12,7 @@ from profiles.models import Profile
 
 tzinfo = timezone.get_current_timezone()
 
+
 class IntakeStatus:
 
     STATUS_PENDING = 'Pending'
@@ -24,12 +25,19 @@ class IntakeStatus:
         (2, STATUS_ADMIT),
     )
 
+
+class GenderOption:
+
+    CHOICES = (('M', 'Male'),
+               ('F', 'Female'), ('T', 'Trans'),)
+
 # TODO:
 # class EligibiltyCriteria:
 #     pass
 
 # class ScreenInstrument:
 #     pass
+
 
 class Note(models.Model):
     """
@@ -38,14 +46,13 @@ class Note(models.Model):
     # TODO: add logic to automatically create author from signed in user
     # pre_save signal??
     # need to make sure it's saved only once
-    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, default=False)
+    author = models.ForeignKey(
+        Profile, on_delete=models.SET_NULL, null=True, default=False)
     text = models.TextField(help_text='Enter notes here.')
     created_date = models.DateTimeField(default=timezone.now)
     # TODO: add different note_types
     # note_type = models.CharField(choices=[])
     # client_id
-    
-
 
 
 class Client(ConcurrentTransitionMixin, models.Model):
@@ -59,7 +66,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
     birth_date = models.DateField(null=True)
     # constraint
     created_date = models.DateTimeField(default=date.today)
-    gender = models.CharField(max_length=1,)
+    gender = models.CharField(max_length=1, choices=GenderOption.CHOICES)
     first_name = models.CharField(max_length=20,)
     middle_initial = models.CharField(max_length=1, null=True)
     last_name = models.CharField(max_length=20,)
@@ -172,6 +179,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     def reject_referral(self):
         pass
         # TODO: add signals
+
 
 class Referrals(ConcurrentTransitionMixin, models.Model):
 

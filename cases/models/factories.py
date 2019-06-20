@@ -7,17 +7,53 @@ from django.utils import timezone
 import factory
 from factory import DjangoModelFactory
 
-from .case_models import Clients, Referrals
+from .intake import Clients, Referrals, Client, Referral, IntakeStatus, GenderOption
+
+
+class ClientFactory(DjangoModelFactory):
+
+    class Meta:
+        model = Client
+        django_get_or_create = ('client_id', 'birth_date',
+                                'created_date', 'gender', 'first_name', 'middle_initial', 'last_name',
+                                )
+
+    client_id = factory.Sequence(lambda n: f'{int(2019000) + n}')
+    # TODO: figure out how to generate this based off decisions
+    # status = factory.Faker('random_element', elements=[
+    #                        x[0] for x in IntakeStatus.CHOICES])
+    birth_date = factory.Faker('date_of_birth')
+    created_date = timezone.now()
+    gender = factory.Faker('random_element', elements=[
+                           x[0] for x in GenderOption.CHOICES])
+    first_name = factory.Faker('first_name')
+    middle_initial = 'H.'
+    last_name = factory.Faker('last_name')
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        try:
+            return Client.objects.latest('client_id').id + 1
+        except Client.DoesNotExist:
+            return 1
+
+
+# class ReferralFactory(DjangoModelFactory):
+
+#     class Meta:
+#         model = Referral
 
 def delete_all_Referrals():
     for obj in Referrals.objects.all():
         obj.delete()
+
 
 def create_fake_referrals(size=None):
     ReferralsFactory.create_batch(size=size)
 
 
 tzinfo = timezone.get_current_timezone()
+
 
 class ReferralsFactory(DjangoModelFactory):
     class Meta:
@@ -26,7 +62,6 @@ class ReferralsFactory(DjangoModelFactory):
         django_get_or_create = ('refid', 'clientid', 'firstname', 'middlename', 'lastname', 'created', 'ssn', 'status', 'track', 'sex',
                                 'dadecision', 'teamdecision', 'defensedecision', 'pretrialdecision')
 
-    
     refid = factory.Sequence(lambda n: f'{n}')
     clientid = factory.Sequence(lambda n: f'{int(2019000) + n}')
     # clientid = factory.RelatedFactory(ClientsFactory, 'clientid')
@@ -35,7 +70,7 @@ class ReferralsFactory(DjangoModelFactory):
     middlename = factory.Faker('first_name')
     lastname = factory.Faker('last_name')
     created = factory.Faker('date_time_this_month', tzinfo=tzinfo)
-    
+
     ssn = factory.Faker('ssn')
     status = factory.Faker('random_element', elements=[
                            x[0] for x in Referrals.STATUS_CHOICES])
@@ -169,7 +204,7 @@ class ClientsFactory(DjangoModelFactory):
                                 )
 
     id = factory.Sequence(lambda n: f'{n}')
-    
+
     # clientid = factory.RelatedFactory(ReferralsFactory, 'clientid')
     # Create client when referral created
     # clientid = factory.SubFactory(ReferralsFactory, 'clientid')
@@ -235,8 +270,6 @@ class ClientsFactory(DjangoModelFactory):
             return Clients.objects.latest('id').id + 1
         except Clients.DoesNotExist:
             return 1
-
-
 
 
 # with factory.debug():

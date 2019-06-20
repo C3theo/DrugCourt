@@ -2,6 +2,7 @@
 from django.forms.models import formset_factory
 from django.forms import ModelForm
 
+from braces.forms import UserKwargModelFormMixin
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, Row, HTML
 from crispy_forms import bootstrap
@@ -48,23 +49,20 @@ class ReferralForm(ModelForm):
         fields = '__all__'
 
 
-class NoteForm(ModelForm):
+class NoteForm(UserKwargModelFormMixin, ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NoteForm, self).__init__(*args, **kwargs)
 
-        # If you pass FormHelper constructor a form instance
-        # It builds a default layout with all its fields
         self.helper = FormHelper(self)
         self.helper.form_tag = False
 
-        # You can dynamically adjust your layout
-    
     def save(self, *args, **kwargs):
 
         if not self.instance.pk:
-            self.author = self.request.user
-        super().save()
+            self.instance.author = self.user
+
+        return super().save()
 
     class Meta:
         model = Note

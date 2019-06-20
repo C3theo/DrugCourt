@@ -5,11 +5,9 @@ import pytest
 from django.contrib.auth.models import User
 from django.test import TestCase, TransactionTestCase
 
-from cases.models import Clients, Referrals
+from cases.models import Clients, Referrals, factories
 from django_fsm import TransitionNotAllowed
 
-# from .factories import ReferralsFactory, ClientsFactory
-from . import factories
 
 # @pytest.mark.skip()
 # class ReferralsModelTest(TransactionTestCase):
@@ -39,6 +37,4 @@ from . import factories
 #         r.status = 'Pending'
 #         self.assertRaises(TransitionNotAllowed, r.approve_client)
 
-    # TODO: add other FSM states
-
-
+# TODO: add other FSM states
