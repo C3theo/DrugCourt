@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'django_fsm',
     'django_extensions',
     'guardian',
+    'behave_django',
+    
+    
 
     # standard django apps
     'django.contrib.admin',

@@ -9,6 +9,18 @@ from cases.models import Clients, Referrals, factories
 from django_fsm import TransitionNotAllowed
 
 
+
+class ClientModelTest(TestCase):
+
+
+    def setUp(self):
+        pass
+    def test_client_id(self):
+        self.fail()
+
+
+
+
 # @pytest.mark.skip()
 # class ReferralsModelTest(TransactionTestCase):
 #     @classmethod
