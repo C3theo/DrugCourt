@@ -6,8 +6,8 @@ from functools import wraps
 from pathlib import Path
 
 from django.conf import settings
-from django.contrib.autho import (BACKEND_SESSION_KEY, SESSION_KEY,
-                                  get_user_model)
+from django.contrib.auth import (BACKEND_SESSION_KEY, SESSION_KEY,
+                                 get_user_model)
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from dotenv import load_dotenv
@@ -36,11 +36,13 @@ def wait(f):
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
+    return wrapper
 
 
 class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
+        self.create_pre_auth_session(email='hello_world@email.com')
         self.browser = webdriver.Chrome()
         self.username = os.environ['TEST_USERNAME']
         self.password = os.environ['TEST_PASSWORD']
@@ -51,9 +53,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
+    @wait
     def test_drug_court_user_login(self):
-        
-        pdb.set_trace()
+
         # User is redirected to Login Page
         self.assertIn('Log In', self.browser.title)
 
@@ -66,6 +68,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # TODO: send success message
 
+    @wait
     def test_drug_court_user_intake_note(self):
 
         self.login_user()
@@ -81,7 +84,6 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         text_elem.send_keys(msg)
 
-
     def create_pre_auth_session(self, email):
         user = User.objects.create(email=email)
         session = SessionStore()
@@ -96,14 +98,18 @@ class NewVisitorTest(StaticLiveServerTestCase):
             path='/'
         ))
 
-
     @wait
-    def login_user(self):
-        username_elem = self.browser.find_element_by_id('id_username')
-        username_elem.send_keys(self.username, Keys.TAB)
-        pw_elem = self.browser.find_element_by_id('id_password')
-        return pw_elem.send_keys(self.password, Keys.ENTER)
+    def wait_for_login_screen(self):
 
+        username_elem = self.browser.find_element_by_id('id_username')
+        pw_elem = self.browser.find_element_by_id('id_password')
+
+        return username_elem, pw_elem
+
+    def login_user(self):
+        user, pw = self.wait_for_login_screen()
+        user.send_keys(self.username, Keys.TAB)
+        pw.send_keys(self.password, Keys.ENTER)
 
 # User logs in as Drug Court User
 

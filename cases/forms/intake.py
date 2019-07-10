@@ -16,16 +16,15 @@ class ClientForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ClientForm, self).__init__(*args, **kwargs)
 
-        # If you pass FormHelper constructor a form instance
-        # It builds a default layout with all its fields
         self.helper = FormHelper(self)
         self.helper.form_tag = False
 
-        # You can dynamically adjust your layout
+    
 
     class Meta:
         model = Client
-        exclude = ['client_id', 'status', 'created_date']
+        fields = ['birth_date', 'gender', 'first_name',
+                  'middle_initial', 'last_name']
 
         labels = {
             'middle_initial': 'M.I.'
@@ -37,16 +36,13 @@ class ReferralForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ReferralForm, self).__init__(*args, **kwargs)
 
-        # If you pass FormHelper constructor a form instance
-        # It builds a default layout with all its fields
         self.helper = FormHelper(self)
+        self.helper.form_tag = False
 
-        # You can dynamically adjust your layout
 
     class Meta:
         model = Referral
-        # exclude = ['status']
-        fields = '__all__'
+        fields = ['referrer', 'client', 'provider']
 
 
 class NoteForm(UserKwargModelFormMixin, ModelForm):
@@ -66,7 +62,7 @@ class NoteForm(UserKwargModelFormMixin, ModelForm):
 
     class Meta:
         model = Note
-        fields = ['text', 'created_date']
+        fields = ['text', 'created_date', 'client']
 
         labels = {
             'text': 'Client Notes', }

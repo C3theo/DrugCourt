@@ -31,6 +31,11 @@ class GenderOption:
     CHOICES = (('M', 'Male'),
                ('F', 'Female'), ('T', 'Trans'),)
 
+
+class NoteOption(object):
+
+    CHOICES = (('Court', 'Court'), )
+
 # TODO:
 # class EligibiltyCriteria:
 #     pass
@@ -39,39 +44,21 @@ class GenderOption:
 #     pass
 
 
-class Note(models.Model):
-    """
-        Model to represent user notes
-    """
-    # TODO: add logic to automatically create author from signed in user
-    # pre_save signal??
-    # need to make sure it's saved only once
-    author = models.ForeignKey(
-        Profile, on_delete=models.SET_NULL, null=True, default=False)
-    text = models.TextField(help_text='Enter notes here.')
-    created_date = models.DateTimeField(default=timezone.now)
-    # TODO: add different note_types
-    # note_type = models.CharField(choices=[])
-    # client_id
-
-
 class Client(ConcurrentTransitionMixin, models.Model):
     """
         Model to represent inital elgibility client information in a Drug Court Program
     """
 
     client_id = models.CharField(max_length=20, unique=True)
-    # constraint/ clean
     status = FSMField(choices=IntakeStatus.CHOICES)
-    birth_date = models.DateField(null=True)
-    # constraint
     created_date = models.DateTimeField(default=date.today)
+
+    birth_date = models.DateField(null=True)
     gender = models.CharField(max_length=1, choices=GenderOption.CHOICES)
     first_name = models.CharField(max_length=20,)
     middle_initial = models.CharField(max_length=1, null=True)
     last_name = models.CharField(max_length=20,)
-    # provider = models.ManyToManyField(Provider, through='Referral')
-    # How to import??
+
 
     def create_client_id(self):
         """
@@ -80,9 +67,9 @@ class Client(ConcurrentTransitionMixin, models.Model):
 
         pre_text = date.today().year
         try:
-            latest_id = int(Referrals.objects.latest('clientid').clientid)
+            latest_id = int(Client.objects.latest('client_id').client_id)
             new_id = latest_id + 1
-        except Referrals.DoesNotExist:
+        except Client.DoesNotExist:
             new_id = f'{pre_text}000{1}'
 
         return new_id
@@ -96,14 +83,16 @@ class Client(ConcurrentTransitionMixin, models.Model):
             (self.birth_date.month, self.birth_date.day))
 
     def get_absolute_url(self):
-        # TODO add client detail view
+        
         return reverse('referrals-update', kwargs={'pk': self.id})
 
     def __str__(self):
         return f'Client: {self.client_id}'
 
     class Meta:
-        pass
+        managed = True
+        app_label = 'cases'
+        verbose_name_plural = 'clients'
 
     # Conditions
     def screens_approved(self):
@@ -120,13 +109,21 @@ class Client(ConcurrentTransitionMixin, models.Model):
                 permission=lambda instance, user: user.has_perm())
     def eval_client(self):
         pass
-        # This is just a check for
 
 
 class Provider(models.Model):
+
+    CHOICES = (('Treatment 1', 'Treatment 1'), )
+
     name = models.CharField(max_length=20,)
-    provider_type = models.CharField(max_length=20,)
+    provider_type = models.CharField(max_length=20, choices=CHOICES)
+    # TODO: Change to actual types of treatment
     clients = models.ManyToManyField(Client, through='Referral')
+
+    class Meta:
+        managed = True
+
+    # TODO: Add more provider fields
     # location
     # services (method??)
     # other criterion for assessment
@@ -146,11 +143,10 @@ class Referral(ConcurrentTransitionMixin, models.Model):
                (2, STATUS_REJECTED),)
 
     status = FSMField('Referral Status', choices=CHOICES, max_length=20,)
-    referrer = models.CharField(max_length=20,)
-    # TODO: make OneToOne(Profile)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     referrer = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
+    provider = models.ForeignKey(
+        Provider, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f'{self.client} {self.provider}'
@@ -179,6 +175,10 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     def reject_referral(self):
         pass
         # TODO: add signals
+
+    
+    class Meta:
+        managed = True
 
 
 class Referrals(ConcurrentTransitionMixin, models.Model):
@@ -490,7 +490,7 @@ class Referrals(ConcurrentTransitionMixin, models.Model):
     def clean(self):
         if not self.reviews_approve() and self.status == self.STATUS_PENDING_ASSESS:
             self.add_referral()
-        # TODO need to check assesment state
+        # TODO: need to check assesment state 7/11
         elif self.reviews_approve() and self.status == self.STATUS_PENDING:
             self.approve_referral()
 
@@ -655,3 +655,28 @@ class Clients(models.Model):
         managed = True
         db_table = 'Clients'
         verbose_name_plural = 'clients'
+
+
+class Note(models.Model):
+    """
+        Model to represent user notes
+    """
+    # TODO: add logic to automatically create author from signed in user
+    # pre_save signal??
+    # need to make sure it's saved only once
+
+    author = models.ForeignKey(
+        Profile, on_delete=models.SET_NULL, null=True, default=False)
+    text = models.TextField(help_text='Enter notes here.')
+    created_date = models.DateTimeField(default=timezone.now)
+    note_type = models.CharField(
+        choices=NoteOption.CHOICES, max_length=25, default='Court')
+        
+    # Many clients to one note
+    client = models.ForeignKey(
+        Client, on_delete=models.SET_NULL, null=True, default=False)
+
+    class Meta:
+        managed = True
+        db_table = 'Notes'
+        verbose_name_plural = 'notes'

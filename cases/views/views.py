@@ -12,12 +12,11 @@ from django.utils import timezone
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableView
 
-from ..filters import ClientsFilter
 from ..forms import ClientForm, ReferralsTabs
-from ..models import Clients, Referrals, TransitionNotAllowed, Client
-from ..tables import ClientsTable, ReferralsTable
+from ..models import Clients, Referrals, TransitionNotAllowed, Client, Note
+from .tables import ClientTable, ReferralsTable, NoteTable
 
-# TODO: add logging
+# TODO: add logging 7/11
 
 @login_required
 def home(request):
@@ -82,14 +81,13 @@ class ReferralsListView(LoginRequiredMixin, SingleTableView):
 
 
 class ClientListView(LoginRequiredMixin, SingleTableView):
-    model = Clients
-    table_class = ClientsTable
+    model = Client
+    table_class = ClientTable
     template_name = 'cases/clients_listing.html'
     context_object_name = 'clients'
 
-# login required not working for filtered view
-class FilteredClientsListView(LoginRequiredMixin, FilterView):
-    table_class = ClientsTable
-    model = Clients
-    template_name = 'cases/clients_filter.html'
-    filterset_class = ClientsFilter
+class NoteListView(LoginRequiredMixin, SingleTableView):
+    model = Note
+    table_class = NoteTable
+    template_name = 'cases/clients_listing.html'
+    context_object_name = 'notes'
