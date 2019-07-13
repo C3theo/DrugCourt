@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Clients, Referrals
+from .models import Client
 
-# Register your models here.
-# TODO: Register Auth_
-admin.site.register(Referrals)
+
+# admin.site.register(Client)

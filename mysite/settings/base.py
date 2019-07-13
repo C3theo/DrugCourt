@@ -19,7 +19,6 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # print(f'BASE_DIR={BASE_DIR}')
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -37,8 +36,11 @@ INTERNAL_IPS = ['127.0.0.1']
 
 INSTALLED_APPS = [
     # my apps
+    'intake.apps.IntakeConfig',
+    'core.apps.CoreConfig',
     'profiles.apps.ProfileConfig',
-    'cases.apps.CaseConfig',
+    
+    # 'cases.apps.CaseConfig',
 
     # third-party apps
     'crispy_forms',
@@ -49,8 +51,6 @@ INSTALLED_APPS = [
     'guardian',
     'behave_django',
     
-    
-
     # standard django apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -151,7 +151,7 @@ STATIC_URL = '/static/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = 'cases-home'
+LOGIN_REDIRECT_URL = 'core:home'
 LOGIN_URL = 'login'
 
 ANONYMOUS_USER_NAME = None

@@ -19,8 +19,6 @@ class ClientForm(ModelForm):
         self.helper = FormHelper(self)
         self.helper.form_tag = False
 
-    
-
     class Meta:
         model = Client
         fields = ['birth_date', 'gender', 'first_name',

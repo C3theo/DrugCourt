@@ -8,8 +8,6 @@ from django.urls import resolve
 from django.http.request import QueryDict
 
 from cases.forms import ReferralsTabs
-from cases.models import Referrals
-from cases.models.factories import ReferralsFactory
 from cases.views import ReferralsCreate, ReferralsUpdate, IntakeFormView, intake, home
 from mysite.urls import RedirectView
 

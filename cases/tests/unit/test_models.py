@@ -8,6 +8,7 @@ from django.test import TestCase, TransactionTestCase
 from cases.models import Clients, Referrals, factories
 from django_fsm import TransitionNotAllowed
 
+from cases.models import factories
 
 
 class ClientModelTest(TestCase):
@@ -15,9 +16,12 @@ class ClientModelTest(TestCase):
 
     def setUp(self):
         pass
-    def test_client_id(self):
-        self.fail()
 
+    def test_client_id(self):
+        import pdb
+        pdb.set_trace()
+        clients = factories.ClientFactory.create_batch(5)
+        
 
 
 

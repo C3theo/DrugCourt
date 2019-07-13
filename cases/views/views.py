@@ -14,13 +14,13 @@ from django_tables2.views import SingleTableView
 
 from ..forms import ClientForm, ReferralsTabs
 from ..models import Clients, Referrals, TransitionNotAllowed, Client, Note
-from .tables import ClientTable, ReferralsTable, NoteTable
+from .tables import ReferralsTable
 
 # TODO: add logging 7/11
 
 @login_required
 def home(request):
-    return render(request, 'cases/home.html')
+    return render(request, 'core/home.html')
 
 class ReferralsCreate(LoginRequiredMixin, CreateView):
     model = Referrals
@@ -80,14 +80,3 @@ class ReferralsListView(LoginRequiredMixin, SingleTableView):
     context_object_name = 'referrals'
 
 
-class ClientListView(LoginRequiredMixin, SingleTableView):
-    model = Client
-    table_class = ClientTable
-    template_name = 'cases/clients_listing.html'
-    context_object_name = 'clients'
-
-class NoteListView(LoginRequiredMixin, SingleTableView):
-    model = Note
-    table_class = NoteTable
-    template_name = 'cases/clients_listing.html'
-    context_object_name = 'notes'

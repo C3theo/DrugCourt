@@ -1,2 +1,2 @@
-# TODO: add imports
-from .intake import Referrals, Clients, TransitionNotAllowed, Referral, Client, Provider, Note
+from .intake import TransitionNotAllowed, Referral, Client, Provider, Note
+from .legacy import Referrals, Clients

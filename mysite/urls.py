@@ -17,17 +17,17 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import RedirectView
-from cases import views as case_views
 from django.conf import settings
 
 admin.site.site_header = "Court Case Management Admin"
 
 urlpatterns = [
-    path('admin/', admin.site.urls), # name not usable???
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
-    path('', RedirectView.as_view(url='/cases/')),
-    path('cases/', include('cases.urls', namespace='cases')),
+    path('admin/', admin.site.urls),
+    path('login/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='core/logout.html'), name='logout'),
+    path('', RedirectView.as_view(url='/home/')),
+    path('home/', include('core.urls', namespace='core')),
+    path('intake/', include('intake.urls', namespace='intake')),
 ]
 
 if settings.DEBUG:

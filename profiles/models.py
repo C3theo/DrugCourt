@@ -21,7 +21,7 @@ class BaseProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE)
     user_role = models.IntegerField('User Role',
-                                    null=True, choices=USER_ROLES)
+                                    null=True, choices=USER_ROLES, default=0)
 
     def __str__(self):
         return f"{self.user} - {self.get_user_role_display()}"

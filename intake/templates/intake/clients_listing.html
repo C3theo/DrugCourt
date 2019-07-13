@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}
+{% load crispy_forms_tags django_tables2 %}
+{% block main %}
+<div class="card text-center">
+    <h5 class="card-header bg-dark text-white">Clients</h5>
+    <div class="card-body">
+        <p class="card-text lead">Click the column headers to sort a column by Ascending or Descending order. </h5>
+
+            {% render_table table %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "core/client.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block form-header %}
+<h5> Update Referral <br> <small class="text-muted">RefID: {{ object.refid }}</small></h5>
+{% endblock %}
+
+{% block card-body %}
+
+
+
+<div id="accordion">
+  <div class="card mb-5 mt-3">
+    <div class="card-header text-center" id="headingOne">
+      <!-- <a class="" href="#collapseOne" data-toggle="collapse"><i class="fas fa-angle-down"></i></a> -->
+      <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+        aria-controls="collapseOne">
+        <h5><i class="fas fa-gavel"></i> Current Status: {{ object.status }} </h5>      
+      </button>
+      <div class="progress">
+          <div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{ object.status }}</div>
+      </div>  
+    </div>
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body text-center">
+        <h5 class="card-title">Decisions</h5>
+        <ul class="list-group shadow-lg">
+          <li
+            class="list-group-item {% if object.defensedecision == 'Approved' %} list-group-item-success {% elif object.defensedecision == 'Rejected' %} list-group-item-danger {% endif %}">
+            <span class="font-weight-bold">Defense:</span> {{ object.defensedecision }}</li>
+          <li
+            class="list-group-item {% if object.pretrialdecision == 'Approved' %} list-group-item-success {% elif object.pretrialdecision == 'Rejected' %} list-group-item-danger {% endif %}">
+            <span class="font-weight-bold">Pretrial:</span> {{ object.pretrialdecision }}</li>
+          <li
+            class="list-group-item {% if object.dadecision == 'Approved' %} list-group-item-success {% elif object.dadecision == 'Rejected' %} list-group-item-danger {% endif %}">
+            <span class="font-weight-bold">DA:</span> {{ object.dadecision }}</li>
+          <li
+            class="list-group-item {% if object.teamdecision == 'Approved' %} list-group-item-success {% elif object.teamdecision == 'Rejected' %} list-group-item-danger {% endif %}">
+            <span class="font-weight-bold">Team:</span> {{ object.teamdecision }}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header text-center" id="headingTwo">
+        <form action="{% url 'referrals-update' pk=object.refid %}" method="POST">
+          {% csrf_token %}
+          <div class="btn-group" role="group">
+            <button class="btn btn-primary mt-2" type="submit" name="approve"> Change Status</button>
+            <button class="btn btn-primary mt-2" type="submit" name="add">Reset Status</button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block form %}
+{% crispy form %}
+{% endblock %}

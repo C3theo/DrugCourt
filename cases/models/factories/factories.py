@@ -7,35 +7,9 @@ from django.utils import timezone
 import factory
 from factory import DjangoModelFactory
 
-from .intake import Clients, Referrals, Client, Referral, IntakeStatus, GenderOption
+from ..legacy import Clients, Referrals
 
 
-class ClientFactory(DjangoModelFactory):
-
-    class Meta:
-        model = Client
-        django_get_or_create = ('client_id', 'birth_date',
-                                'created_date', 'gender', 'first_name', 'middle_initial', 'last_name',
-                                )
-
-    client_id = factory.Sequence(lambda n: f'{int(2019000) + n}')
-    # TODO: figure out how to generate this based off decisions
-    # status = factory.Faker('random_element', elements=[
-    #                        x[0] for x in IntakeStatus.CHOICES])
-    birth_date = factory.Faker('date_of_birth')
-    created_date = timezone.now()
-    gender = factory.Faker('random_element', elements=[
-                           x[0] for x in GenderOption.CHOICES])
-    first_name = factory.Faker('first_name')
-    middle_initial = 'H.'
-    last_name = factory.Faker('last_name')
-
-    @classmethod
-    def _setup_next_sequence(cls):
-        try:
-            return Client.objects.latest('client_id').id + 1
-        except Client.DoesNotExist:
-            return 1
 
 
 # class ReferralFactory(DjangoModelFactory):

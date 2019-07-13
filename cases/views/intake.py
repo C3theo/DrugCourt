@@ -2,10 +2,24 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django_tables2.views import SingleTableView
 
 from ..forms import ClientForm, NoteForm, ReferralForm
 from ..models import Client, Note, Referral
+from .tables import ClientTable, NoteTable
 
+
+class ClientListView(LoginRequiredMixin, SingleTableView):
+    model = Client
+    table_class = ClientTable
+    template_name = 'cases/clients_listing.html'
+    context_object_name = 'clients'
+
+class NoteListView(LoginRequiredMixin, SingleTableView):
+    model = Note
+    table_class = NoteTable
+    template_name = 'cases/clients_listing.html'
+    context_object_name = 'notes'
 
 class IntakeFormView(LoginRequiredMixin, TemplateView):
     template_name = 'cases/intake_form.html'
