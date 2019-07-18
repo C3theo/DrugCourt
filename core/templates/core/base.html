@@ -1,4 +1,6 @@
 {% load static %}
+{% load crispy_forms_tags django_tables2 %}
+
 <!doctype html>
 <html lang="en">
 
@@ -10,7 +12,7 @@
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.6/css/mdb.min.css" />
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.6/css/mdb.min.css" /> -->
 
 	<title>
 		{% block title %} Drug Court {% endblock %}
@@ -36,7 +38,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'core/staticnav.css' %}">
 
 	<script src="https://kit.fontawesome.com/6e20f2b51a.js"></script>
-	
+
 </head>
 
 <body>
@@ -60,27 +62,27 @@
 				</li>
 				<li class="nav-item">
 					{% url 'core:home' as referrals_url%}
-
-					<a class="nav-link {% if request.path == referrals_url %} active {% endif %}"
+					<!-- <a class="nav-link {% if request.path == referrals_url %} active {% endif %}"
 						href="{{ referrals_url }}">
 						<h5><i class="fas fa-business-time"></i>
 							Referrals</h5>
-					</a>
+					</a> -->
 				</li>
 				<li class="nav-item">
 					{# url 'core:home' as search_url #}
-					<a class="nav-link {% if request.path == search_url %} active {% endif %}" href="#">
+					<!-- <a class="nav-link {% if request.path == search_url %} active {% endif %}" href="#">
 						<h5><i class="fas fa-search"></i> Search</h5>
-					</a>
+					</a> -->
 				</li>
 				<li class='nav-item'>
 					<a class="nav-link" href='#'>
 						<h5><i class="far fa-question-circle"></i></h5>
 					</a>
+				</li>
 
 			</ul>
 			<ul class="navbar-nav justify-content-end">
-				<!-- <li class=" navbar-nav navbar-text ">{{ user.username}} </li> -->
+				<li class=" navbar-nav navbar-text ">{{ user.username}} </li>
 				<li class="nav-item">
 					{% url 'logout' as logout_url %}
 					{% url 'login' as login_url %}
@@ -105,7 +107,9 @@
 	</nav>
 	<main role="main" class="container mx-auto" style="width:50">
 		<div class="jumbotron">
-			{% block main %}{% endblock %}
+			{% block main-header %}
+			{% endblock main-header %}
+			{% block main %}{% endblock main %}
 		</div>
 	</main>
 
@@ -120,8 +124,6 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
 		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 		crossorigin="anonymous"></script>
-	<script type="text/javascript"
-		src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.6/js/mdb.min.js"></script>
 </body>
 
 </html>

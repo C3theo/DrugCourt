@@ -4,10 +4,13 @@ from django.db import models
 from django.db.models import F
 from django.urls import reverse
 from django.utils import timezone
+from model_utils import Choices
+
 
 from django_fsm import (ConcurrentTransitionMixin, FSMField,
                         TransitionNotAllowed, transition)
 from profiles.models import Profile
+from .bpmn import Phase
 
 tzinfo = timezone.get_current_timezone()
 
@@ -18,29 +21,13 @@ class IntakeStatus:
     STATUS_SCREEN = 'Screening'
     STATUS_ADMIT = 'In Program'
 
-    CHOICES = (
-        (0, STATUS_PENDING),
-        (1, STATUS_SCREEN),
-        (2, STATUS_ADMIT),
-    )
+    CHOICES = Choices(STATUS_PENDING, STATUS_SCREEN, STATUS_ADMIT)
 
 
 class GenderOption:
 
     CHOICES = (('M', 'Male'),
                ('F', 'Female'), ('T', 'Trans'),)
-
-
-class NoteOption(object):
-
-    CHOICES = (('Court', 'Court'), )
-
-# TODO:
-# class EligibiltyCriteria:
-#     pass
-
-# class ScreenInstrument:
-#     pass
 
 
 class Client(ConcurrentTransitionMixin, models.Model):
@@ -51,12 +38,14 @@ class Client(ConcurrentTransitionMixin, models.Model):
     client_id = models.CharField(max_length=20, unique=True)
     status = FSMField(choices=IntakeStatus.CHOICES)
     created_date = models.DateTimeField(default=timezone.now)
-
     birth_date = models.DateField(null=True)
     gender = models.CharField(max_length=1, choices=GenderOption.CHOICES)
     first_name = models.CharField(max_length=20,)
     middle_initial = models.CharField(max_length=1, null=True)
     last_name = models.CharField(max_length=20,)
+    ssn = models.CharField(max_length=20, null=True, blank=True)
+    phase = models.ForeignKey(
+        'intake.Phase', on_delete=models.CASCADE, blank=True, null=True)
 
     def create_client_id(self):
         """
@@ -94,7 +83,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
 
     def get_absolute_url(self):
 
-        return reverse('referrals-update', kwargs={'pk': self.id})
+        return reverse('intake:detail', kwargs={'pk': self.id})
 
     def __str__(self):
         return f'Client: {self.client_id}'
@@ -143,69 +132,25 @@ class Client(ConcurrentTransitionMixin, models.Model):
     # other criterion for assessment
 
 
-STATUS_PENDING = 'Pending'
-STATUS_APPROVED = 'Approved'
-STATUS_REJECTED = 'Rejected'
-
-STATUS_CHOICES = ((0, STATUS_PENDING),
-                  (1, STATUS_APPROVED),
-                  (2, STATUS_REJECTED),)
-
-
-class Decision(ConcurrentTransitionMixin, models.Model):
-    """
-        Model to represent decisions about client eligibility.
-    """
-
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    date_received = models.DateTimeField()
-    date_completed = models.DateTimeField()
-    verdict = FSMField('Verdict', choices=STATUS_CHOICES,
-                       max_length=20, default=0)
-    referral = models.ForeignKey(
-        'intake.Referral', on_delete=models.CASCADE)
-
-    def get_absolute_url(self):
-        pass
-
-    class Meta:
-        managed = True
-        permissions = [('can_decide', 'Can Decide')
-                       ]
-
-    def one_decision_per_group(self, role):
-        """
-            FSM transition to check whether a decision from user's group has
-            already been made.
-        """
-        # role = self.user.user_role
-        decisions = Decision.objects.filter(
-            referral=self.referral, user__user_role=role)
-    
-        return len(decisions.values_list()) == 1 
-        # When this condition needs to be checked a user has not made decision (return value makes no sense)
-        # seems like it should go with Referral status, but it does not have a user attribute (needed to check user role)
-        # Needs to be passed in from view function
-
-    @transition(field=verdict, source=STATUS_PENDING, target=STATUS_APPROVED,
-                conditions=[one_decision_per_group], permission=lambda instance, user: user.has_perm('can_decide'))
-    def approve(self):
-        pass
-
-
 class Referral(ConcurrentTransitionMixin, models.Model):
     """
         Model to represent the state of a Drug Court's Referrral for a specific client.
     """
+    STATUS_PENDING = 'Pending'
+    STATUS_APPROVED = 'Approved'
+    STATUS_REJECTED = 'Rejected'
 
-    status = FSMField('Referral Status', choices=STATUS_CHOICES,
-                      max_length=20, default=0)
+    STATUS_CHOICES = Choices(STATUS_PENDING, STATUS_APPROVED, STATUS_REJECTED)
+
+    status = FSMField('Referral Status',
+                      max_length=20, default=STATUS_PENDING)
 
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE)
-    referrer = models.ForeignKey(Profile, on_delete=models.CASCADE, default=0)
-    # provider = models.ForeignKey(
-    #     Provider, on_delete=models.CASCADE, null=True, blank=True)
+    referrer = models.CharField(max_length=20, null=True, blank=True)
+    # referrer = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+    provider = models.ForeignKey(
+        'intake.Provider', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f'Referral for {self.client}'
@@ -215,7 +160,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
 
     def screens_approved(self):
         # TODO: check decisions of all users assigned to referral
-        pass
+        return True
 
     def screens_rejected(self):
         # TODO: check all three
@@ -223,8 +168,10 @@ class Referral(ConcurrentTransitionMixin, models.Model):
 
     @transition(field=status, source=STATUS_PENDING, target=STATUS_APPROVED, conditions=[screens_approved])
     def approve_referral(self):
-        pass
-        # TODO signals
+        p = Phase(phase_id=Phase.CHOICES[1])
+        p.save()
+        self.client.phase = p
+        self.client.save()
 
     @transition(field=status, source=STATUS_PENDING, target=STATUS_REJECTED, conditions=[screens_rejected])
     def reject_referral(self):
@@ -243,19 +190,40 @@ class Note(models.Model):
     # pre_save signal??
     # need to make sure it's saved only once
 
+    CHOICES = Choices('Court', 'Treatment', 'General')
     author = models.ForeignKey(
-        Profile, on_delete=models.SET_NULL, null=True, default=False)
+        Profile, on_delete=models.SET_NULL, null=True, blank=True)
     text = models.TextField(help_text='Enter notes here.')
-    created_date = models.DateTimeField(default=timezone.now)
+    created_date = models.DateTimeField(auto_now_add=True)
     note_type = models.CharField(
-        choices=NoteOption.CHOICES, max_length=25, default='Court')
+        choices=CHOICES, max_length=25, default='Court')
 
     # Many clients to one note
     # TODO: remove default after db reset
     client = models.ForeignKey(
-        'intake.Client', on_delete=models.CASCADE)
+        'intake.Client', related_name='client_notes', on_delete=models.CASCADE)
 
     class Meta:
         managed = True
         app_label = 'intake'
         verbose_name_plural = 'notes'
+
+    def __str__(self):
+        return f'Note: {self.client.client_id}'
+
+
+class CriminalBackground(models.Model):
+    client = models.ForeignKey('intake.Client', on_delete=models.CASCADE)
+
+    arrests = models.IntegerField(db_column='Arrests', blank=True, null=True)
+
+    felonies = models.IntegerField(db_column='Felonies', blank=True, null=True)
+
+    misdemeanors = models.IntegerField(
+        db_column='Misdemeanors', blank=True, null=True)
+
+    firstarrestyear = models.IntegerField(
+        db_column='FirstArrestYear', blank=True, null=True)
+
+    def __str__(self):
+            return f'CriminalBackGround: {self.client.client_id}'

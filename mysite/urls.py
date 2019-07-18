@@ -19,6 +19,8 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 from django.conf import settings
 
+from material.frontend import urls as frontend_urls
+
 admin.site.site_header = "Court Case Management Admin"
 
 urlpatterns = [
@@ -28,6 +30,8 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/home/')),
     path('home/', include('core.urls', namespace='core')),
     path('intake/', include('intake.urls', namespace='intake')),
+    # path('', include(frontend_urls))
+    
 ]
 
 if settings.DEBUG:

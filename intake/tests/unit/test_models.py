@@ -11,8 +11,14 @@ from django_fsm import TransitionNotAllowed
 from dotenv import load_dotenv
 from faker import Faker
 
+from viewflow import flow
+from viewflow.base import this, Flow
+
+from intake.models.bpmn.flows import DecisionFlow
+
 from intake.models import Client, Decision, Note, Referral, factories
 from profiles.models import Profile
+
 
 User = get_user_model()
 load_dotenv()
@@ -23,7 +29,6 @@ class ClientModelTest(TestCase):
         # client = factories.ClientFactory.simple_generate(create=False)
 
     def test_client_id_created_automatically(self):
-        fake = Faker()
 
         client = Client(first_name='Jane',
                         middle_initial='D',
@@ -75,8 +80,6 @@ class NoteModelTest(TestCase):
     def test_note_time_stamped(self):
 
         self.assertIsNotNone(self.note.created_date)
-
-
 class ReferralModelTest(TestCase):
 
     def setUp(self):
@@ -90,9 +93,7 @@ class ReferralModelTest(TestCase):
 
     def test_referral_status_start(self):
 
-        assert self.referral.status == 0
-
-
+        assert self.referral.status == Referral.STATUS_PENDING
 class DecisionModelTest(TestCase):
     def setUp(self):
         client = factories.ClientFactory.create()
@@ -119,13 +120,30 @@ class DecisionModelTest(TestCase):
                      date_completed='2019-06-09',)
         self.assertRaises(IntegrityError, d.save)
 
-    def test_one_decision_fsm_condition(self):
-        """ This is a Functional test
-        """
+    def test_decision_assigned_to_user(self):
 
-        decisions = self.decision.one_decision_per_group()
+        # decisions = self.decision.one_decision_per_group()
+        active_node = DecisionFlow.start.run()
+        import pdb
+        pdb.set_trace()
 
-        self.assertTrue(decisions)
+        # task_1 = act.process.get_task()
+        # self.assertTrue(decisions)
+
+
+class PhaseModelTestCase(TestCase):
+
+    def setUp(self):
+        self.client = factories.ClientFactory.create()
+        self.referral = factories.ReferralFactory.create()
+        # self.referral = Referral(client=self.client)
+        # self.referral.save()
+
+    def test_approved_referral_adds_client_to_phase_one(self):
+
+        self.referral.approve_referral()
+        assert self.referral.client.phase != None
+        assert self.referral.client.phase.phase_id == (1, 'Phase One')
 
 
 # @pytest.mark.skip()

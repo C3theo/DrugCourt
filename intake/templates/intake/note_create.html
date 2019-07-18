@@ -1,0 +1,7 @@
+{% extends "core/module_base.html" %}
+{% load crispy_forms_tags %}
+{% block card-header %}Intake Module{% endblock %}
+{% block help-text %}Enter Client Notes{% endblock %}
+{% block card-body  %}
+{% crispy form %}
+{% endblock %}

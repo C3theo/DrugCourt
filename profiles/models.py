@@ -4,10 +4,6 @@ from django.conf import settings
 
 from guardian.mixins import GuardianUserMixin
 
-# This is for when subclassing AbstractUser
-# def get_anonymous_user_instance(User):
-#     return User(user_role=None)
-
 class BaseProfile(models.Model):
 
     USER_ROLES = (
@@ -24,7 +20,7 @@ class BaseProfile(models.Model):
                                     null=True, choices=USER_ROLES, default=0)
 
     def __str__(self):
-        return f"{self.user} - {self.get_user_role_display()}"
+        return f"{self.user} - Role:{self.get_user_role_display()}"
 
     class Meta:
         abstract = True

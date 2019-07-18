@@ -50,6 +50,10 @@ INSTALLED_APPS = [
     'django_extensions',
     'guardian',
     'behave_django',
+    'material',
+    'material.frontend',
+    'viewflow',
+    'viewflow.frontend',
     
     # standard django apps
     'django.contrib.admin',

@@ -52,7 +52,6 @@ class Client(ConcurrentTransitionMixin, models.Model):
     client_id = models.CharField(max_length=20, unique=True)
     status = FSMField(choices=IntakeStatus.CHOICES)
     created_date = models.DateTimeField(default=timezone.now)
-
     birth_date = models.DateField(null=True)
     gender = models.CharField(max_length=1, choices=GenderOption.CHOICES)
     first_name = models.CharField(max_length=20,)

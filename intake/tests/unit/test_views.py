@@ -26,6 +26,10 @@ def setup_viewTest(view, request, *args, **kwargs):
     return view
 
 
+class NoteForm(SimpleTestCase):
+    pass
+
+
 class IntakeFormViewTest(SimpleTestCase):
 
     def setUp(self):

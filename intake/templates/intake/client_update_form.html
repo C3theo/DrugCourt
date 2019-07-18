@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+{% block main %}
+{% load crispy_forms_tags %}
+
+<div class="card text-center">
+    <h5 class="card-header bg-dark text-white">Client: {{ object.client_id }}</h5>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-3">
+                    {{ form.first_name|as_crispy_field }}
+                </div>
+                <!-- TODO: make field collapse with smaller screen sizes -->
+                <div class="form-group col-1">
+                    {{ form.middle_initial|as_crispy_field }}
+                </div>
+                <div class="form-group col-3">
+                    {{ form.last_name|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-2">
+                    {{ form.gender|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-3">
+                    {{ form.birth_date|as_crispy_field }}
+                </div>
+
+            </div>
+            <input type="submit" value="Update" class="btn btn-primary">
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
