@@ -15,36 +15,42 @@ from intake.models import Client, Decision, Note, Referral
 
 from .tables import ClientTable, NoteTable
 
+
 class ReferralCreateView(LoginRequiredMixin, CreateView):
     model = Referral
     form_class = ReferralForm
     template_name = 'core/form_base.html'
+
 
 class ReferralDetailView(LoginRequiredMixin, UpdateView):
     model = Referral
     form_class = ReferralForm
     template_name = 'core/form_base.html'
 
-class DecisionCreateView(FlowMixin, CreateView):
+
+class DecisionCreateView(CreateView):
     model = Decision
     form_class = DecisionForm
+    template_name = 'core/form_base.html'
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
+        # self.object = form.save(commit=False)
 
-        self.object.user = self.request.user
-        self.object.process = self.activation.process
-        self.object.save()
+        # self.object.user = self.request.user
+        # self.object.process = self.activation.process
+        # self.object.save()
 
-        self.activation.done()
-        self.success('Task {task} has been completed.')
+        # self.activation.done()
+        # self.success('Task {task} has been completed.')
 
         return HttpResponseRedirect(self.get_success_url())
+
 
 class ClientCreateView(LoginRequiredMixin, CreateView):
     model = Client
     form_class = ClientForm
     template_name_suffix = '_update_form'
+
 
 class ClientDetailView(LoginRequiredMixin, UpdateView):
     model = Client
@@ -68,6 +74,7 @@ class ClientNoteListView(LoginRequiredMixin, ListView):
     # def get_queryset(self):
     #     user = get_object_or_404(User, username=self.kwargs.get('username'))
     #     return Post.objects.filter(author=user).order_by('-date_posted')
+
 
 class ClientNoteCreateView(CreateView):
     model = Client
@@ -160,8 +167,8 @@ class IntakeFormView(LoginRequiredMixin, SingleObjectMixin, TemplateView):
         decision_form = _get_form_submit(
             request, DecisionForm, prefix='decision')
 
-        import pdb
-        pdb.set_trace()
+        # import pdb
+        # pdb.set_trace()
 
         if client_form.is_bound and client_form.is_valid():
             instance = client_form.save()

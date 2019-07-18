@@ -1,26 +1,26 @@
+import os
 import pdb
 from datetime import date
-import os
+from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from django.test import TestCase, TransactionTestCase
+from django.utils import timezone
 from django_fsm import TransitionNotAllowed
 from dotenv import load_dotenv
 from faker import Faker
-
 from viewflow import flow
-from viewflow.base import this, Flow
-
-from intake.models.bpmn.flows import DecisionFlow
+from viewflow.base import Flow, this
 
 from intake.models import Client, Decision, Note, Referral, factories
+from intake.models.bpmn.flows import DecisionFlow
 from profiles.models import Profile
 
-
 User = get_user_model()
+tzinfo = timezone.get_current_timezone()
 load_dotenv()
 
 
@@ -80,6 +80,8 @@ class NoteModelTest(TestCase):
     def test_note_time_stamped(self):
 
         self.assertIsNotNone(self.note.created_date)
+
+
 class ReferralModelTest(TestCase):
 
     def setUp(self):
@@ -94,6 +96,14 @@ class ReferralModelTest(TestCase):
     def test_referral_status_start(self):
 
         assert self.referral.status == Referral.STATUS_PENDING
+
+    @patch('intake.models.intake.models.query.QuerySet.count', autospec=True, return_value=3)
+    def test_approved_referral_adds_client_to_phase_one(self, mock_count):
+        self.referral.approve_referral()
+        assert self.referral.client.phase != None
+        assert self.referral.client.phase.phase_id == 'Phase One'
+
+
 class DecisionModelTest(TestCase):
     def setUp(self):
         client = factories.ClientFactory.create()
@@ -119,31 +129,20 @@ class DecisionModelTest(TestCase):
         d = Decision(date_received='2019-06-08',
                      date_completed='2019-06-09',)
         self.assertRaises(IntegrityError, d.save)
-
-    def test_decision_assigned_to_user(self):
-
-        # decisions = self.decision.one_decision_per_group()
-        active_node = DecisionFlow.start.run()
-        import pdb
-        pdb.set_trace()
-
-        # task_1 = act.process.get_task()
-        # self.assertTrue(decisions)
+    
+    @patch('intake.models.intake.models.query.QuerySet.values_list', autospec=True, return_value=[])
+    def test_appprove_decision_condition(self, mock_query):
+        condition = self.decision.one_decision_per_role()
+        self.assertEqual(condition, True)
 
 
 class PhaseModelTestCase(TestCase):
 
     def setUp(self):
-        self.client = factories.ClientFactory.create()
+        # self.client = factories.ClientFactory.create()
         self.referral = factories.ReferralFactory.create()
         # self.referral = Referral(client=self.client)
         # self.referral.save()
-
-    def test_approved_referral_adds_client_to_phase_one(self):
-
-        self.referral.approve_referral()
-        assert self.referral.client.phase != None
-        assert self.referral.client.phase.phase_id == (1, 'Phase One')
 
 
 # @pytest.mark.skip()

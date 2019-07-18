@@ -22,9 +22,9 @@ urlpatterns = [
     path('court/<int:pk>', CourtDateDetailView.as_view(), name='court-detail'),
     path('court/all', CourtDateListView.as_view(), name='dates'),
     path('court/filter', views.court_date_client_list, name='court-filter'),
+    path('decision/', DecisionCreateView.as_view(), name='decision'),
     path('', generic.TemplateView.as_view(
         template_name="intake/index.html"), name="index")
-    # path('decision/', DecisionView.as_view(), name='decision'),
     # re_path(r'^decision/', FlowViewSet(DecisionFlow).urls, name='decisions')
 ]
 

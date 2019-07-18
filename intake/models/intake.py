@@ -10,7 +10,7 @@ from model_utils import Choices
 from django_fsm import (ConcurrentTransitionMixin, FSMField,
                         TransitionNotAllowed, transition)
 from profiles.models import Profile
-from .bpmn import Phase
+from .bpmn import Phase, Decision
 
 tzinfo = timezone.get_current_timezone()
 
@@ -158,17 +158,17 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     class Meta:
         managed = True
 
-    def screens_approved(self):
-        # TODO: check decisions of all users assigned to referral
-        return True
+    def all_decisions_approved(self):
+        decision_count = Decision.objects.filter(referral=self).count()
+        return decision_count == 3
 
     def screens_rejected(self):
         # TODO: check all three
         pass
 
-    @transition(field=status, source=STATUS_PENDING, target=STATUS_APPROVED, conditions=[screens_approved])
+    @transition(field=status, source=STATUS_PENDING, target=STATUS_APPROVED, conditions=[all_decisions_approved])
     def approve_referral(self):
-        p = Phase(phase_id=Phase.CHOICES[1])
+        p = Phase(phase_id='Phase One')
         p.save()
         self.client.phase = p
         self.client.save()
@@ -214,14 +214,10 @@ class Note(models.Model):
 
 class CriminalBackground(models.Model):
     client = models.ForeignKey('intake.Client', on_delete=models.CASCADE)
-
     arrests = models.IntegerField(db_column='Arrests', blank=True, null=True)
-
     felonies = models.IntegerField(db_column='Felonies', blank=True, null=True)
-
     misdemeanors = models.IntegerField(
         db_column='Misdemeanors', blank=True, null=True)
-
     firstarrestyear = models.IntegerField(
         db_column='FirstArrestYear', blank=True, null=True)
 

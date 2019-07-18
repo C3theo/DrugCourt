@@ -61,7 +61,6 @@ class ClientForm(ModelForm):
             'middle_initial': 'M.I.'
         }
 
-
 class NoteForm(ModelForm):
 
     class Meta:
