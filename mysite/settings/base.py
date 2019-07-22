@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'intake.apps.IntakeConfig',
     'core.apps.CoreConfig',
     'profiles.apps.ProfileConfig',
-    
     # 'cases.apps.CaseConfig',
 
     # third-party apps

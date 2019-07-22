@@ -6,7 +6,7 @@ import sys
 import time
 from functools import wraps
 
-MAX_WAIT = 20
+MAX_WAIT = 5
 
 def wait(f):
 
@@ -17,8 +17,7 @@ def wait(f):
         while True:
             try:
                 return f(*args, **kwargs)
-            # except (AssertionError, WebDriverException) as e:
-            except Exception as e:
+            except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
@@ -41,7 +40,6 @@ class FunctionalTest(StaticLiveServerTestCase):
     def setUp(self):
   
         self.browser = webdriver.Chrome()
-        # self.browser = webdriver.Firefox()
 
     def tearDown(self):
         self.browser.quit()

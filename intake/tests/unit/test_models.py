@@ -129,7 +129,7 @@ class DecisionModelTest(TestCase):
         d = Decision(date_received='2019-06-08',
                      date_completed='2019-06-09',)
         self.assertRaises(IntegrityError, d.save)
-    
+
     @patch('intake.models.intake.models.query.QuerySet.values_list', autospec=True, return_value=[])
     def test_appprove_decision_condition(self, mock_query):
         condition = self.decision.one_decision_per_role()

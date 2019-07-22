@@ -34,13 +34,14 @@ class IntakeFormViewTest(SimpleTestCase):
 
     def setUp(self):
         self.view = IntakeFormView()
-
-    @patch('cases.views.intake.NoteForm', autospec=True, return_value='note_form')
-    @patch('cases.views.intake.ReferralForm', autospec=True, return_value='referral_form')
-    @patch('cases.views.intake.ClientForm', autospec=True, return_value='client_form')
+    
+    @patch('intake.views.intake.DecisionForm', autospec=True, return_value='decision_form')
+    @patch('intake.views.intake.NoteForm', autospec=True, return_value='note_form')
+    @patch('intake.views.intake.ReferralForm', autospec=True, return_value='referral_form')
+    @patch('intake.views.intake.ClientForm', autospec=True, return_value='client_form')
     def test_get_forms(self, mock_client_form,
                        mock_referral_form,
-                       mock_note_form):
+                       mock_note_form, mock_decision_form):
         """
             Tests that all forms are added to context dictionary when get_context_data after view receives GET request.
         """
@@ -51,10 +52,11 @@ class IntakeFormViewTest(SimpleTestCase):
         mock_client_form.assert_called_once()
         mock_referral_form.assert_called_once()
         mock_note_form.assert_called_once()
+        mock_decision_form.assert_called_once()
 
-    @patch('cases.views.intake.messages.success')
-    @patch('cases.views.intake.TemplateView.render_to_response', autospec=True)
-    @patch('cases.views.intake._get_form_submit', autospec=True)
+    @patch('intake.views.intake.messages.success')
+    @patch('intake.views.intake.TemplateView.render_to_response', autospec=True)
+    @patch('intake.views.intake._get_form_submit', autospec=True)
     def test_post_valid_form_saved(self, mock_form, mock_response, mock_message):
         """
             Tests that valid bound forms are saved
@@ -75,9 +77,9 @@ class IntakeFormViewTest(SimpleTestCase):
         mock_form.return_value.save.assert_called_once()
         mock_response.assert_called_once()
 
-    @patch('cases.views.intake.messages.success')
-    @patch('cases.views.intake.TemplateView.render_to_response', autospec=True)
-    @patch('cases.views.intake._get_form_submit', autospec=True)
+    @patch('intake.views.intake.messages.success')
+    @patch('intake.views.intake.TemplateView.render_to_response', autospec=True)
+    @patch('intake.views.intake._get_form_submit', autospec=True)
     def test_post_invalid_form_not_saved(self, mock_form, mock_response, mock_message):
         """
             Test whether form instance is saved depending on form validation.
@@ -96,7 +98,7 @@ class IntakeFormViewTest(SimpleTestCase):
 
         mock_form.return_value.save.assert_not_called()
 
-    @patch('cases.views.intake.ClientForm', autospec=True, return_value=True)
+    @patch('intake.views.intake.ClientForm', autospec=True, return_value=True)
     def test_get_form_submit(self, mock_form):
         """
             Test that form is bound if prefix in POST QueryDict.
@@ -109,3 +111,7 @@ class IntakeFormViewTest(SimpleTestCase):
 
         self.assertNotIn(None, mock_form.call_args)
         self.assertIsInstance(mock_form.call_args[0][0], QueryDict)
+
+class IntakeFormViewUpdateTest(SimpleTestCase):
+    """
+    """
