@@ -9,7 +9,7 @@ from model_utils import Choices
 
 from django_fsm import (ConcurrentTransitionMixin, FSMField,
                         TransitionNotAllowed, transition)
-from profiles.models import Profile
+# from profiles.models import Profile
 from .bpmn import Phase, Decision
 
 tzinfo = timezone.get_current_timezone()
@@ -191,8 +191,8 @@ class Note(models.Model):
     # need to make sure it's saved only once
 
     CHOICES = Choices('Court', 'Treatment', 'General')
-    author = models.ForeignKey(
-        Profile, on_delete=models.SET_NULL, null=True, blank=True)
+    # author = models.ForeignKey(
+    #     Profile, on_delete=models.SET_NULL, null=True, blank=True)
     text = models.TextField(help_text='Enter notes here.')
     created_date = models.DateTimeField(auto_now_add=True)
     note_type = models.CharField(
@@ -213,6 +213,9 @@ class Note(models.Model):
 
 
 class CriminalBackground(models.Model):
+    """
+        Client arrest history
+    """
     client = models.ForeignKey('intake.Client', on_delete=models.CASCADE)
     arrests = models.IntegerField(db_column='Arrests', blank=True, null=True)
     felonies = models.IntegerField(db_column='Felonies', blank=True, null=True)
@@ -222,4 +225,7 @@ class CriminalBackground(models.Model):
         db_column='FirstArrestYear', blank=True, null=True)
 
     def __str__(self):
-            return f'CriminalBackGround: {self.client.client_id}'
+            return f'CriminalBackGround - Client: {self.client.client_id}'
+    
+    class Meta:
+        managed = True

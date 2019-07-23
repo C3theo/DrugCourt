@@ -1,10 +1,13 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.common.keys import Keys
 import sys
 import time
 from functools import wraps
+
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.keys import Keys
 
 MAX_WAIT = 5
 
@@ -27,23 +30,17 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        for arg in sys.argv:
-            if 'liveserver' in arg:
-                cls.server_host = arg.split('=')[1]
-                cls.server_url = 'http://' + cls.server_host
-                cls.against_staging = True
-                return
         super().setUpClass()
      
-        cls.server_url = cls.live_server_url
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
 
     def setUp(self):
-  
         self.browser = webdriver.Chrome()
 
     def tearDown(self):
         self.browser.quit()
-
 
     @wait
     def wait_for(self, fn):
@@ -81,13 +78,11 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     @wait
     def wait_to_be_logged_in(self):
-        self.browser.find_element_by_name('username')
-        navbar = self.browser.find_element_by_css_selector('.navbar')
-        self.assertIn('Log Out', navbar.text)
+        log_out_link = self.browser.find_element_by_id('user-logout')
+        self.assertIsNotNone(log_out_link)
 
 
     @wait
-    def wait_to_be_logged_out(self, email):
-        self.browser.find_element_by_name('email')
-        navbar = self.browser.find_element_by_css_selector('.navbar')
-        self.assertNotIn(email, navbar.text)
+    def wait_to_be_logged_out(self):
+        log_in_link = self.browser.find_element_by_id('user-login')
+        self.assertIsNotNone(log_in_link)

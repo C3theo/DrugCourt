@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from dotenv import load_dotenv
-
+import logging.config
+from mysite.logs import formatter
 load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -30,30 +31,10 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost',
-                 'testserver', ]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', ]
 INTERNAL_IPS = ['127.0.0.1']
 
 INSTALLED_APPS = [
-    # my apps
-    'intake.apps.IntakeConfig',
-    'core.apps.CoreConfig',
-    'profiles.apps.ProfileConfig',
-    # 'cases.apps.CaseConfig',
-
-    # third-party apps
-    'crispy_forms',
-    'django_filters',
-    'django_tables2',
-    'django_fsm',
-    'django_extensions',
-    'guardian',
-    'behave_django',
-    'material',
-    'material.frontend',
-    'viewflow',
-    'viewflow.frontend',
-    
     # standard django apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -61,12 +42,31 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # my apps
+    'intake.apps.IntakeConfig',
+    'core.apps.CoreConfig',
+    # 'profiles.apps.ProfileConfig',
+
+    # third-party apps
+    'crispy_forms',
+    'django_filters',
+    'django_tables2',
+    'django_fsm',
+    'django_extensions',
+    # 'guardian',
+    'behave_django',
+    # 'material',
+    # 'material.frontend',
+    # 'viewflow',
+    # 'viewflow.frontend',
+
 ]
 
 MIDDLEWARE = [
 
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,6 +104,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ATOMIC_REQUEST': True,
     }
 }
 
@@ -162,3 +163,91 @@ ANONYMOUS_USER_NAME = None
 
 # For fields added to custom user model
 # GUARDIAN_GET_INIT_ANONYMOUS_USER = 'profiles.models.get_anonymous_user_instance'
+
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'sql': {
+            '()': 'mysite.logs.formatter.SQLFormatter',
+            'format': '\n%(sql)s\n',
+        },
+        'sourcetrace': {
+            'format': '-'*80 + '\n%(sql)s\n' + '-'*80 + '\n\nStacktrace of SQL query producer:\n' + '-'*80 + '%(sourcetrace)s' + '-'*80 + '\n'+'-'*80 + '\n'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+        'sql': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'sql',
+            'level': 'DEBUG',
+        },
+        'django.db.sourcetrace': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'sourcetrace'
+        },
+    },
+    'root' : {
+        'level' : 'DEBUG',
+        'handlers' : ['console']
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['sql'], #django.db.sourcetrace
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        # 'django.db.backends.schema': {
+        #     'handlers': ['console'],
+        #     'level': 'DEBUG',
+        #     'propagate': False,
+        # },
+    }
+}
+
+# LOGLEVEL = os.environ.get('LOGLEVEL', 'debug').upper()
+# logging.config.dictConfig({
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'sql': {
+#             '()': 'mysite.logs.SQLFormatter',
+#             'format': '[%(duration).3f] %(statement)s]'
+#         }},
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#         'sql': {
+#             'class': 'logging.StreamHandler',
+#             'foramtter': 'sql',
+#             'level': 'DEBUG',
+#             # 'filename': 'logconfig.log',
+#             # 'formatter': 'precise',
+#             # 'maxBytes': 1024,
+#             # 'backupCount': 3,
+#         },
+#     },
+#     'loggers': {
+#         'djanog.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['sql'],
+#             # required to avoid double logging with root logger
+#             'propagate': False,
+#         },
+#     },
+#     'django.db.backends.schema': {
+#         'handlers': ['console'],
+#         'level': 'DEBUG',
+#         'propagate': False,
+#     },
+#     # 'root': {'handlers': ['console']},
+# },
+# )

@@ -1,18 +1,18 @@
-from viewflow import flow
-from viewflow.base import this, Flow
-from viewflow.flow.views import CreateProcessView, UpdateProcessView
+# from viewflow import flow
+# from viewflow.base import this, Flow
+# from viewflow.flow.views import CreateProcessView, UpdateProcessView
 from django.db import models
-from viewflow.models import Process
+# from viewflow.models import Process
 from model_utils import Choices
 
-from profiles.models import Profile
+# from profiles.models import Profile
 
 from django_fsm import (ConcurrentTransitionMixin, FSMField,
                         TransitionNotAllowed, transition)
 
 
-class DynamicSplitProcess(Process):
-    split_count = models.IntegerField(default=0)
+# class DynamicSplitProcess(Process):
+#     split_count = models.IntegerField(default=0)
 
 
 class Decision(models.Model):
@@ -25,8 +25,8 @@ class Decision(models.Model):
 
     STATUS_CHOICES = Choices(STATUS_PENDING, STATUS_APPROVED, STATUS_REJECTED)
 
-    user = models.ForeignKey(
-        Profile, null=True, blank=True, on_delete=models.CASCADE)
+    # user = models.ForeignKey(
+    #     Profile, null=True, blank=True, on_delete=models.CASCADE)
     date_received = models.DateField()
     date_completed = models.DateField()
     verdict = FSMField('Verdict', choices=STATUS_CHOICES,
@@ -76,6 +76,3 @@ class Phase(models.Model):
         return f'{self.phase_id}'
 
 
-class HelloWorldProcess(Process):
-    text = models.CharField(max_length=150)
-    approved = models.BooleanField(default=False)

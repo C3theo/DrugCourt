@@ -7,14 +7,19 @@ from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_tables2.views import SingleTableView
-from viewflow.flow.views import FlowMixin
 
+from intake import forms
 from intake.forms import (ClientForm, DecisionForm, NoteForm, NoteFormSet,
-                          ReferralForm, ClientFormset)
-from intake.models import Client, Decision, Note, Referral
+                          ReferralForm, ClientFormset, CriminalBackgroundForm)
+from intake.models import Client, Decision, Note, Referral, CriminalBackground
 
 from .tables import ClientTable, NoteTable
 
+
+class CriminalBackgroundCreateView(LoginRequiredMixin, CreateView):
+    model = CriminalBackground
+    form_class = forms.CriminalBackgroundForm
+    template_name = 'core/form_base.html'
 
 class ReferralCreateView(LoginRequiredMixin, CreateView):
     model = Referral
@@ -167,9 +172,6 @@ class IntakeFormView(LoginRequiredMixin, SingleObjectMixin, TemplateView):
         decision_form = _get_form_submit(
             request, DecisionForm, prefix='decision')
 
-        # import pdb
-        # pdb.set_trace()
-
         if client_form.is_bound and client_form.is_valid():
             instance = client_form.save()
             messages.success(
@@ -193,8 +195,7 @@ class IntakeFormView(LoginRequiredMixin, SingleObjectMixin, TemplateView):
                 request, f'Referral Decision saved.')
 
         return self.render_to_response({'client_form': client_form, 'note_form': note_form,
-                                        'referral_form': referral_form, })
-# 'decision_form': decision_form
+                                        'referral_form': referral_form, 'decision_form': decision_form})
 
 
 def _get_form_submit(request, formcls, prefix=None):

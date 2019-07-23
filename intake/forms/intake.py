@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django_fsm import TransitionNotAllowed
 
 from .custom_formset import Formset
-from intake.models import Client, Decision, Note, Referral
+from intake.models import Client, Decision, Note, Referral, CriminalBackground
 
 
 class ClientFormset(ModelForm):
@@ -61,6 +61,7 @@ class ClientForm(ModelForm):
             'middle_initial': 'M.I.'
         }
 
+
 class NoteForm(ModelForm):
 
     class Meta:
@@ -106,3 +107,24 @@ class DecisionForm(ModelForm):
 
         labels = {
             'verdict': 'Approved', }
+
+
+class CriminalBackgroundForm(ModelForm):
+    """
+        Form for CriminalBackground Model
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(CriminalBackgroundForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
+
+    class Meta:
+        model = CriminalBackground
+        fields = [
+            'client',
+            'arrests',
+            'felonies',
+            'misdemeanors',
+            'firstarrestyear']

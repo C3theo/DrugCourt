@@ -1,5 +1,5 @@
 from .base import *
-
+import os
 DEBUG = True
 
 INSTALLED_APPS += [
@@ -13,6 +13,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DEBUG_TOOLBAR_CONFIG = {
     'JQUERY_URL': '',
+    'SHOW_COLLAPSED': True,
 }
 
 # SQL Server
