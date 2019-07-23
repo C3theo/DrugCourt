@@ -21,6 +21,7 @@ class CriminalBackgroundCreateView(LoginRequiredMixin, CreateView):
     form_class = forms.CriminalBackgroundForm
     template_name = 'core/form_base.html'
 
+
 class ReferralCreateView(LoginRequiredMixin, CreateView):
     model = Referral
     form_class = ReferralForm
@@ -37,18 +38,6 @@ class DecisionCreateView(CreateView):
     model = Decision
     form_class = DecisionForm
     template_name = 'core/form_base.html'
-
-    def form_valid(self, form):
-        # self.object = form.save(commit=False)
-
-        # self.object.user = self.request.user
-        # self.object.process = self.activation.process
-        # self.object.save()
-
-        # self.activation.done()
-        # self.success('Task {task} has been completed.')
-
-        return HttpResponseRedirect(self.get_success_url())
 
 
 class ClientCreateView(LoginRequiredMixin, CreateView):

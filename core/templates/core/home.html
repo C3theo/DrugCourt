@@ -13,11 +13,9 @@
         <div class="card-body ">
             <p class="card-title lead"> Track Court Attendance and Payments </p>
             <ul class="list-group list-group-flush pb-3">
-                <a href="{% url 'intake:court' %}" class="list-group-item list-group-item-action"> Add Court Date </a>
-                <a href="{% url 'intake:dates' %}" class="list-group-item list-group-item-action"> View All Court
-                    Dates</a>
-                <a href="{% url 'intake:court-filter' %}" class="list-group-item list-group-item-action"> Search Court
-                    Dates</a>
+                <a href="{% url 'intake:court' %}" class="list-group-item list-group-item-action">Add</a>
+                <a href="{% url 'intake:dates' %}" class="list-group-item list-group-item-action"> Court Dates</a>
+                <a href="{% url 'intake:court-filter' %}" class="list-group-item list-group-item-action"> Search</a>
             </ul>
         </div>
     </div>
@@ -35,8 +33,7 @@
         <div class="card-body ">
             <p class="card-title lead"> Track Program Status </p>
             <ul class="list-group list-group-flush pb-3">
-                <a href="{% url 'intake:clients' %}" class="list-group-item list-group-item-action"> View All
-                    Clients</a>
+                <a href="{% url 'intake:clients' %}" class="list-group-item list-group-item-action">Clients</a>
             </ul>
         </div>
     </div>
@@ -47,10 +44,14 @@
         <div class="card-body ">
             <p class="card-title lead"> Track Intake Status </p>
             <ul class="list-group list-group-flush pb-3">
-                <a href="{% url 'intake:new' %}" class="list-group-item list-group-item-action" id="id_intake_add">Add Client</a>
-                <a href="{% url 'intake:note-add' %}" class="list-group-item list-group-item-action">Add Note</a>
-                <a href="{% url 'intake:legal' %}" class="list-group-item list-group-item-action">Add Criminal Background</a>
-                <a href="{% url 'intake:decision' %}" class="list-group-item list-group-item-action">Make Decision</a>
+                <a href="{% url 'intake:new' %}" class="list-group-item list-group-item-action"
+                    id="id_intake_add">Start</a>
+                <a href="{% url 'intake:new' %}" class="list-group-item list-group-item-action"
+                    id="id_intake_add">Clients</a>
+                <a href="{% url 'intake:note-add' %}" class="list-group-item list-group-item-action">Notes</a>
+                <a href="{% url 'intake:legal' %}" class="list-group-item list-group-item-action">Crimes</a>
+                <a href="{% url 'intake:referral' %}" class="list-group-item list-group-item-action">Referrals</a>
+                <a href="{% url 'intake:decision' %}" class="list-group-item list-group-item-action">Decsions</a>
             </ul>
         </div>
     </div>

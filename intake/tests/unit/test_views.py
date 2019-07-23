@@ -1,16 +1,17 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib.auth.models import User
-from django.test import TestCase, RequestFactory, SimpleTestCase
-from django.urls import resolve
 from django.http.request import QueryDict
-
-from intake.views import IntakeFormView, CriminalBackgroundCreateView, DecisionCreateView
-from intake.views.intake import _get_form_submit, CriminalBackgroundForm
-from mysite.urls import RedirectView
-
+from django.test import RequestFactory, SimpleTestCase, TestCase
+from django.urls import resolve
 from django_webtest import WebTest
+
+from intake.views import (ClientDetailView, CriminalBackgroundCreateView,
+                          DecisionCreateView, IntakeFormView,
+                          ReferralCreateView, ReferralDetailView)
+from intake.views.intake import _get_form_submit
+from mysite.urls import RedirectView
 
 
 def setup_viewTest(view, request, *args, **kwargs):
@@ -25,17 +26,245 @@ def setup_viewTest(view, request, *args, **kwargs):
     view.kwargs = kwargs
     return view
 
-# TODO: 
-# ClientDetailView, ClientListView, DecisionCreateView,
+# TODO:
 # NoteListView, ClientNoteCreateView,
+
+
+class ReferralCreateViewTest(SimpleTestCase):
+    """ CreateView """
+
+    def setUp(self):
+        self.view = ReferralCreateView()
+
+    @patch('django.views.generic.edit.FormMixin.get_form', autospec=True)
+    @patch('intake.views.intake.ReferralForm', autospec=True)
+    def test_get(self, mock_form, mock_get_form):
+        """
+            BasUpdateView:
+            def get(self, request, *args, **kwargs):
+                self.object = self.get_object()
+                return super().get(request, *args, **kwargs)
+
+            ProcessFormView:
+            def get(self, request, *args, **kwargs):
+                "Handle GET requests: instantiate a blank version of the form."
+                return self.render_to_response(self.get_context_data())
+        """
+        mock_get_form.return_value = mock_form
+
+        request = RequestFactory().get('/fake-path')
+        view = setup_viewTest(self.view, request)
+        response = view.get(request)
+        self.assertDictContainsSubset(
+            {'form': mock_form}, response.context_data)
+
+    @patch('intake.views.intake.CreateView', autospec=True)
+    @patch('intake.views.intake.ReferralForm', autospec=True, return_value=True)
+    def test_post_valid_form(self, mock_form, mock_view):
+        """
+        BaseCreateView:
+
+        def post(self, request, *args, **kwargs):
+            self.object = None
+            return super().post(request, *args, **kwargs)
+
+        ProcessFormView:
+
+        def post(self, request, *args, **kwargs):
+            form = self.get_form()
+            if form.is_valid():
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+        """
+
+        mock_form.is_valid.return_value = True
+        mock_view.get_form.return_value = mock_form
+        mock_view.form_valid.return_value = True
+
+        request = RequestFactory().get('/fake-path')
+        view = setup_viewTest(self.view, request)
+        response = view.post(request)
+
+        self.assertTrue(response)
+
+
+class ReferralDetailViewTest(SimpleTestCase):
+    """ UpdateView """
+
+    def setUp(self):
+        self.view = ReferralDetailView()
+
+    @patch('intake.views.intake.ReferralDetailView.get_object', autospec=True)
+    @patch('intake.views.intake.Referral', autospec=True)
+    def test_get(self, mock_object, mock_get_object):
+        """
+            BasUpdateView:
+            def get(self, request, *args, **kwargs):
+                self.object = self.get_object()
+                return super().get(request, *args, **kwargs)
+
+            ProcessFormView:
+            def get(self, request, *args, **kwargs):
+                "Handle GET requests: instantiate a blank version of the form."
+                return self.render_to_response(self.get_context_data())
+        """
+
+        mock_get_object.return_value = mock_object
+        request = RequestFactory().get('/fake-path')
+        view = setup_viewTest(self.view, request)
+        response = view.get(request)
+        self.assertDictContainsSubset(
+            {'object': mock_object}, response.context_data)
+
+    @patch('intake.views.intake.UpdateView', autospec=True)
+    @patch('intake.views.intake.ReferralForm', autospec=True, return_value=True)
+    @patch('intake.views.intake.Referral', autospec=True)
+    @patch('intake.views.intake.ReferralDetailView.get_object', autospec=True)
+    def test_post_valid_form(self, mock_get_object, mock_object, mock_form, mock_view):
+        """
+            BaseUpdateView:
+            def post(self, request, *args, **kwargs):
+                self.object = self.get_object()
+                return super().post(request, *args, **kwargs)
+
+            ProcessFormView:
+            def post(self, request, *args, **kwargs):
+                "Handle POST requests: instantiate a form instance with the passed
+                POST variables and then check if it's valid."
+                form = self.get_form()
+                if form.is_valid():
+                    return self.form_valid(form)
+                else:
+                    return self.form_invalid(form)
+
+        """
+        mock_get_object.return_value = mock_object
+        mock_form.is_valid.return_value = True
+        mock_view.get_form.return_value = mock_form
+        mock_view.form_valid.return_value = True
+
+        request = RequestFactory().get('/fake-path')
+        view = setup_viewTest(self.view, request)
+        response = view.post(request)
+
+        self.assertTrue(response)
+
+
+class ClientListView(SimpleTestCase):
+    """ SingleTableView """
+
+
+class ClientDetailViewTest(SimpleTestCase):
+    """
+        UpdateView
+    """
+
+    def setUp(self):
+        self.view = ClientDetailView()
+
+    @patch('intake.views.intake.ClientDetailView.get_object', autospec=True)
+    @patch('intake.views.intake.Client', autospec=True)
+    def test_get(self, mock_client, mock_get_object):
+        """
+            BasUpdateView:
+            def get(self, request, *args, **kwargs):
+                self.object = self.get_object()
+                return super().get(request, *args, **kwargs)
+
+            ProcessFormView:
+            def get(self, request, *args, **kwargs):
+                "Handle GET requests: instantiate a blank version of the form."
+                return self.render_to_response(self.get_context_data())
+        """
+        mock_get_object.return_value = mock_client
+        request = RequestFactory().get('/fake-path')
+        view = setup_viewTest(self.view, request)
+        response = view.get(request)
+        self.assertDictContainsSubset(
+            {'object': mock_client}, response.context_data)
+
+    @patch('intake.views.intake.UpdateView', autospec=True)
+    @patch('intake.views.intake.ClientForm', autospec=True, return_value=True)
+    @patch('intake.views.intake.Referral', autospec=True)
+    @patch('intake.views.intake.ClientDetailView.get_object', autospec=True)
+    def test_post_valid_form(self, mock_get_object, mock_object, mock_form, mock_view):
+        """
+            BaseUpdateView:
+            def post(self, request, *args, **kwargs):
+                self.object = self.get_object()
+                return super().post(request, *args, **kwargs)
+
+            ProcessFormView:
+            def post(self, request, *args, **kwargs):
+                "Handle POST requests: instantiate a form instance with the passed
+                POST variables and then check if it's valid."
+                form = self.get_form()
+                if form.is_valid():
+                    return self.form_valid(form)
+                else:
+                    return self.form_invalid(form)
+
+        """
+        mock_get_object.return_value = mock_object
+        mock_form.is_valid.return_value = True
+        mock_view.get_form.return_value = mock_form
+        mock_view.form_valid.return_value = True
+
+        request = RequestFactory().get('/fake-path')
+        view = setup_viewTest(self.view, request)
+        response = view.post(request)
+
+        self.assertTrue(response)
 
 class DecisionCreateViewTest(SimpleTestCase):
 
     def setUp(self):
         self.view = DecisionCreateView()
 
+    @patch('django.views.generic.edit.FormMixin.get_form', autospec=True)
+    @patch('intake.views.intake.DecisionForm', autospec=True, return_value='legal_form')
+    def test_get(self, mock_decision_form, mock_get_form):
+        mock_get_form.return_value = mock_decision_form
+
+        request = RequestFactory().get('/fake-path')
+        view = setup_viewTest(self.view, request)
+        response = view.get(request)
+        self.assertDictContainsSubset(
+            {'form': mock_decision_form}, response.context_data)
+
+    @patch('intake.views.intake.CreateView', autospec=True)
+    @patch('intake.views.intake.DecisionForm', autospec=True, return_value=True)
+    def test_post_valid_form(self, mock_decision_form, mock_view):
+        """
+        BaseCreateView:
+
+        def post(self, request, *args, **kwargs):
+            self.object = None
+            return super().post(request, *args, **kwargs)
+
+        ProcessFormView:
+
+        def post(self, request, *args, **kwargs):
+            form = self.get_form()
+            if form.is_valid():
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+        """
+        mock_decision_form.is_valid.return_value = True
+        mock_view.get_form.return_value = mock_decision_form
+        mock_view.form_valid.return_value = True
+
+        request = RequestFactory().get('/fake-path')
+        view = setup_viewTest(self.view, request)
+        response = view.post(request)
+
+        self.assertTrue(response)
+
+
 class CriminalBackgroundCreateViewTest(SimpleTestCase):
-    
+
     def setUp(self):
         self.view = CriminalBackgroundCreateView()
 
@@ -47,8 +276,9 @@ class CriminalBackgroundCreateViewTest(SimpleTestCase):
         request = RequestFactory().get('/fake-path')
         view = setup_viewTest(self.view, request)
         response = view.get(request)
-        self.assertDictContainsSubset({'form': mock_legal_form}, response.context_data)
-    
+        self.assertDictContainsSubset(
+            {'form': mock_legal_form}, response.context_data)
+
     @patch('intake.views.intake.CreateView', autospec=True)
     @patch('intake.views.intake.CriminalBackgroundForm', autospec=True, return_value=True)
     def test_post_valid_form(self, mock_legal_form, mock_view):
@@ -83,7 +313,7 @@ class IntakeFormViewTest(SimpleTestCase):
 
     def setUp(self):
         self.view = IntakeFormView()
-    
+
     @patch('intake.views.intake.DecisionForm', autospec=True)
     @patch('intake.views.intake.NoteForm', autospec=True)
     @patch('intake.views.intake.ReferralForm', autospec=True)
@@ -162,6 +392,7 @@ class IntakeFormViewTest(SimpleTestCase):
 
         self.assertNotIn(None, mock_form.call_args)
         self.assertIsInstance(mock_form.call_args[0][0], QueryDict)
+
 
 class IntakeFormViewUpdateTest(SimpleTestCase):
     """
