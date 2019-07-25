@@ -26,7 +26,7 @@
 #                    mixins.UndoViewMixin,
 #                    mixins.CancelViewMixin,
 #                    mixins.PerformViewMixin,
-#                    mixins.DetailViewMixin,
+#                    mixins.UpdateViewMixin,
 #                    Gateway):
 #     """
 #     Activates several outgoing task instances depends on callback value

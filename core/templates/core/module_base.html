@@ -2,7 +2,7 @@
 {% block main %}
 
 <div class="card">
-    <div class="card-header bg-dark text-white text-center rounded-top">
+    <div class="card-header bg-dark text-white text-center rounded-top mb-3">
         <h4>{% block card-header %}{% endblock %}</h4>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -11,10 +11,10 @@
             </ol>
         </nav>
     </div>
-    <p class="card-title lead">{% block card-title %}{% endblock %}</p>
-
+    <p class="card-title display-4 text-center lead">{% block card-title %}{% endblock %}</p>
     <div class="card-body rounded">
         <p class="card-text text-center lead">{% block help-text %}{% endblock %}</p>
+        <hr class="pb-1">
         {% block filter %}{% endblock %}
         {% block card-body %}{% endblock %}
 

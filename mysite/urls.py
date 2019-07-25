@@ -30,8 +30,6 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/home/')),
     path('home/', include('core.urls', namespace='core')),
     path('intake/', include('intake.urls', namespace='intake')),
-    # path('', include(frontend_urls))
-    
 ]
 
 if settings.DEBUG:

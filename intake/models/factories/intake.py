@@ -10,9 +10,10 @@ import factory
 from factory import DjangoModelFactory
 
 from ..intake import GenderOption
-from intake.models import Phase, Note, Client, Referral
+from intake.models import Phase, Client, Referral
 from intake.models.intake import IntakeStatus
-from profiles.models import Profile
+# from profiles.models import Profile
+from scribe.models import Note
 import string
 
 User = get_user_model()
@@ -29,17 +30,17 @@ def delete_factory_inventory(factory_cls):
     return f'{len(inventory)} objects deleted'
 
 
-@factory.django.mute_signals(post_save)
-class ProfileFactory(DjangoModelFactory):
+# @factory.django.mute_signals(post_save)
+# class ProfileFactory(DjangoModelFactory):
 
-    class Meta:
-        model = Profile
-        # django_get_or_create = ('user', 'user_role')
+#     class Meta:
+#         model = Profile
+#         # django_get_or_create = ('user', 'user_role')
 
-    user = factory.SubFactory(
-        'intake.models.factories.UserFactory', profile=None)
-    user_role = factory.Faker('random_element', elements=[
-        x[0] for x in Profile.USER_ROLES])
+#     user = factory.SubFactory(
+#         'intake.models.factories.UserFactory', profile=None)
+#     user_role = factory.Faker('random_element', elements=[
+#         x[0] for x in Profile.USER_ROLES])
 
 
 @factory.django.mute_signals(post_save)
@@ -52,7 +53,7 @@ class UserFactory(DjangoModelFactory):
     username = factory.Sequence(lambda n: f'username{n}')
     password = factory.Sequence(lambda n: f'password{n}')
 
-    profile = factory.RelatedFactory(ProfileFactory, 'user')
+    # profile = factory.RelatedFactory(ProfileFactory, 'user')
 
     @classmethod
     def _setup_next_sequence(cls):
@@ -75,7 +76,7 @@ class NoteFactory(DjangoModelFactory):
         #                         'note_type',
         #                         )
 
-    author = factory.SubFactory(ProfileFactory)
+    # author = factory.SubFactory(ProfileFactory)
     text = factory.Faker('paragraph')
     created_date = factory.Faker('date_time_this_month', tzinfo=tzinfo)
     note_type = 'Court'
@@ -122,9 +123,7 @@ class ClientFactory(DjangoModelFactory):
         #                         )
 
     client_id = factory.Sequence(lambda n: f'{int(2019000) + n}')
-    # TODO: figure out how to generate this based off decisions
-    status = factory.Faker('random_element', elements=[
-                           x[0] for x in IntakeStatus.CHOICES])
+    status = IntakeStatus.STATUS_PENDING
     birth_date = factory.Faker('date_of_birth')
     created_date = timezone.now()
     gender = factory.Faker('random_element', elements=[
@@ -151,10 +150,8 @@ class ReferralFactory(DjangoModelFactory):
 
     status = Referral.STATUS_PENDING
     client = factory.SubFactory('intake.models.factories.ClientFactory')
-    referrer = factory.SubFactory('intake.models.factories.ProfileFactory')
+    # referrer = factory.SubFactory('intake.models.factories.ProfileFactory')
     # provider = factory.SubFactory('intake.models.factories.Provider')
-
-
 
 # with factory.debug():
 #     obj = ClientFactory()

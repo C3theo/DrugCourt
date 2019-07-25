@@ -2,15 +2,20 @@
 from braces.forms import UserKwargModelFormMixin
 from crispy_forms import bootstrap
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import (HTML, TEMPLATE_PACK, Button, Div, Field,
-                                 Fieldset, Layout, LayoutObject, Row, Submit, ButtonHolder)
-from django.forms import ModelForm
+from crispy_forms.layout import (HTML, TEMPLATE_PACK, Button, ButtonHolder,
+                                 Div, Field, Fieldset, Layout, LayoutObject,
+                                 Row, Submit)
+from django.forms import ModelChoiceField, ModelForm, ModelMultipleChoiceField
 from django.forms.models import inlineformset_factory
+from django.forms.widgets import TextInput
 from django.template.loader import render_to_string
 from django_fsm import TransitionNotAllowed
 
+from betterforms.multiform import MultiModelForm
+from intake.models import Client, CriminalBackground, Decision, Referral
+from scribe.models import Note
+
 from .custom_formset import Formset
-from intake.models import Client, Decision, Note, Referral, CriminalBackground
 
 
 class ClientFormset(ModelForm):
@@ -54,26 +59,12 @@ class ClientForm(ModelForm):
 
     class Meta:
         model = Client
-        fields = ['birth_date', 'gender', 'first_name',
+        fields = ['birth_date', 'gender', 'first_name', 'status',
                   'middle_initial', 'last_name']
 
         labels = {
             'middle_initial': 'M.I.'
         }
-
-
-class NoteForm(ModelForm):
-
-    class Meta:
-        model = Note
-        fields = ['text', 'note_type']
-
-        labels = {
-            'text': 'Client Notes', }
-
-
-NoteFormSet = inlineformset_factory(
-    Client, Note, form=NoteForm, extra=1, fields=['text', 'note_type'])
 
 
 class ReferralForm(ModelForm):
@@ -86,27 +77,69 @@ class ReferralForm(ModelForm):
 
     class Meta:
         model = Referral
-        fields = ['referrer', 'provider']
+        fields = ['client', 'status', 'referrer', 'provider',
+                  'date_received', 'date_completed']
 
 
-# ReferralDecisonFormset = inlineformset_factory(
-#     Referral, Decision, extra=3, fields=['status'])
+class ClientReferralMutiForm(MultiModelForm):
+    form_classes = {
+        'client': ClientForm,
+        'referral': ReferralForm
+    }
+
+    def save(self, commit=True):
+        objects = super(ClientReferralMutiForm, self).save(commit=False)
+        if commit:
+            client = objects['client']
+            client.save()
+            referral = objects['referral']
+            referral.client = client
+            referral.save()
+        return objects
 
 
 class DecisionForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(DecisionForm, self).__init__(*args, **kwargs)
-
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['made_by'].widget.attrs['readonly'] = True
         self.helper = FormHelper(self)
         self.helper.form_tag = False
 
     class Meta:
         model = Decision
-        fields = ['date_received', 'date_completed', 'referral', 'verdict']
+        fields = ['made_by', 'date_received',
+                  'date_completed', 'verdict']
+        widgets = {
+            'made_by': TextInput(),
+        }        
 
         labels = {
-            'verdict': 'Approved', }
+            'verdict': 'Approved', 'made_by': 'Deciding Party'}
+
+
+class ReferralDecisionMutiForm(MultiModelForm):
+    form_classes = {
+        'referral': ReferralForm,
+        'pre_decision': DecisionForm,
+        'da_decision': DecisionForm,
+        'dc_decision': DecisionForm, 
+    }
+
+    # def __init__(self, *args, **kwargs):
+    #     # self.instances = kwargs.pop('instance', None)
+    #     # if self.instances is None:
+    #     #     self.instances = {}
+    #     # super(MultiModelForm, self).__init__(*args, **kwargs)
+    #     import pdb
+    #     pdb.set_trace()
+    #     super().__init__(*args, **kwargs)
+
+
+# ReferralDecisonFormset = inlineformset_factory(
+#     Referral, Decision, extra=3, fields=['status'])
 
 
 class CriminalBackgroundForm(ModelForm):
@@ -128,3 +161,17 @@ class CriminalBackgroundForm(ModelForm):
             'felonies',
             'misdemeanors',
             'firstarrestyear']
+
+
+class ReferralQueryForm(ModelForm):
+
+    client = ModelMultipleChoiceField(queryset=None)
+
+    def __init__(self, client=None, *args, **kwargs):
+        super(ReferralQueryForm, self).__init__(*args, **kwargs)
+        self.fields['client'].queryset = Client.objects.filter(pk=client.id)
+
+    class Meta:
+        model = Referral
+        fields = ['client', 'status', 'referrer',
+                  'date_received', 'date_completed']

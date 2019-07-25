@@ -18,7 +18,7 @@ class CourtDateView(CreateView):
     form_class = CourtDateForm
     template_name = 'intake/court_date_form.html'
 
-class CourtDateDetailView(UpdateView):
+class CourtDateUpdateView(UpdateView):
     model = CourtDate
     form_class = CourtDateForm
     template_name = 'intake/court_date_form.html'

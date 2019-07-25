@@ -15,9 +15,10 @@ from faker import Faker
 from viewflow import flow
 from viewflow.base import Flow, this
 
-from intake.models import Client, Decision, Note, Referral, factories
+from intake.models import Client, Decision, Referral, factories
 from intake.models.bpmn.flows import DecisionFlow
-from profiles.models import Profile
+# from profiles.models import Profile
+from scribe.models import Note
 
 User = get_user_model()
 tzinfo = timezone.get_current_timezone()

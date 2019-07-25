@@ -1,16 +1,1 @@
-[
-  "intake/tests/unit/test_views.py::ReferralCreateViewTest::test_get",
-  "intake/tests/unit/test_views.py::ReferralCreateViewTest::test_post_valid_form",
-  "intake/tests/unit/test_views.py::ReferralDetailViewTest::test_get",
-  "intake/tests/unit/test_views.py::ReferralDetailViewTest::test_post_valid_form",
-  "intake/tests/unit/test_views.py::ClientDetailViewTest::test_get",
-  "intake/tests/unit/test_views.py::ClientDetailViewTest::test_post_valid_form",
-  "intake/tests/unit/test_views.py::DecisionCreateViewTest::test_get",
-  "intake/tests/unit/test_views.py::DecisionCreateViewTest::test_post_valid_form",
-  "intake/tests/unit/test_views.py::CriminalBackgroundCreateViewTest::test_get",
-  "intake/tests/unit/test_views.py::CriminalBackgroundCreateViewTest::test_post_valid_form",
-  "intake/tests/unit/test_views.py::IntakeFormViewTest::test_get_form_submit",
-  "intake/tests/unit/test_views.py::IntakeFormViewTest::test_get_forms",
-  "intake/tests/unit/test_views.py::IntakeFormViewTest::test_post_invalid_form_not_saved",
-  "intake/tests/unit/test_views.py::IntakeFormViewTest::test_post_valid_form_saved"
-]
+[]

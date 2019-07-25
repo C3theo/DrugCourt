@@ -1,12 +1,29 @@
-import django_filters
-from intake.models import Client, CourtDate
+from django_filters import FilterSet, ModelChoiceFilter
 
-class ClientFilter(django_filters.FilterSet):
+from intake.models import Client, CourtDate, Referral
+
+
+# def clients(request):
+#     if request is None:
+#         return Client.objects.none()
+#     import pdb; pdb.set_trace()
+
+#     client = request.client
+#     return client.all()
+
+class ReferralFilter(FilterSet):
+    client = ModelChoiceFilter(queryset=Client.objects.all())
+
+    class Meta:
+        model = Referral
+        fields = ['client', 'referrer', ]
+
+class ClientFilter(FilterSet):
     class Meta:
         model = Client
         fields = ['client_id']
     
-class CourtDateFilter(django_filters.FilterSet):
+class CourtDateFilter(FilterSet):
     # court_date = django_filters.NumberFilter()
     # court_date__gt = django_filters.NumberFilter(field_name='court_date', lookup_expr='date__gt')
     # court_date__lt = django_filters.NumberFilter(field_name='court_date', lookup_expr='date__lt')

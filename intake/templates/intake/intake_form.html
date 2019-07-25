@@ -2,10 +2,8 @@
 {% load crispy_forms_tags %}
 
 {% block card-header %}Intake Module{% endblock %}
-{% block bread %}<li class="breadcrumb-item"><a href="{% url 'intake:new' %}">Intake</a></li>{% endblock %}
+{% block bread %}<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>{% endblock %}
 {% block card-body %}
-
-
 
 <form method="POST">
     {% csrf_token %}

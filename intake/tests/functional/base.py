@@ -5,11 +5,11 @@ from functools import wraps
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 
-MAX_WAIT = 5
+MAX_WAIT = 10
 
 def wait(f):
 
@@ -20,7 +20,7 @@ def wait(f):
         while True:
             try:
                 return f(*args, **kwargs)
-            except (AssertionError, WebDriverException) as e:
+            except (AssertionError, WebDriverException, NoSuchElementException) as e:
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)

@@ -7,9 +7,9 @@ from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.urls import resolve
 from django_webtest import WebTest
 
-from intake.views import (ClientDetailView, CriminalBackgroundCreateView,
+from intake.views import (ClientUpdateView, CriminalBackgroundCreateView,
                           DecisionCreateView, IntakeFormView,
-                          ReferralCreateView, ReferralDetailView)
+                          ReferralCreateView, ClientReferralUpdateView)
 from intake.views.intake import _get_form_submit
 from mysite.urls import RedirectView
 
@@ -27,9 +27,17 @@ def setup_viewTest(view, request, *args, **kwargs):
     return view
 
 # TODO:
-# NoteListView, ClientNoteCreateView,
+# NoteListView, ClientNoteCreateView, IntakeFormUpdateView, IntakeFormCreateView
 
+class IntakeFormUpdateView(SimpleTestCase):
+    """ModelChoiceFilter + UpdateView """
 
+    def setUp(self):
+        self.view = ReferralCreateView()
+
+    def test_get(self):
+        self.fail()
+        
 class ReferralCreateViewTest(SimpleTestCase):
     """ CreateView """
 
@@ -89,13 +97,13 @@ class ReferralCreateViewTest(SimpleTestCase):
         self.assertTrue(response)
 
 
-class ReferralDetailViewTest(SimpleTestCase):
+class ReferralUpdateViewTest(SimpleTestCase):
     """ UpdateView """
 
     def setUp(self):
-        self.view = ReferralDetailView()
+        self.view = ClientReferralUpdateView()
 
-    @patch('intake.views.intake.ReferralDetailView.get_object', autospec=True)
+    @patch('intake.views.intake.ClientReferralUpdateView.get_object', autospec=True)
     @patch('intake.views.intake.Referral', autospec=True)
     def test_get(self, mock_object, mock_get_object):
         """
@@ -120,7 +128,7 @@ class ReferralDetailViewTest(SimpleTestCase):
     @patch('intake.views.intake.UpdateView', autospec=True)
     @patch('intake.views.intake.ReferralForm', autospec=True, return_value=True)
     @patch('intake.views.intake.Referral', autospec=True)
-    @patch('intake.views.intake.ReferralDetailView.get_object', autospec=True)
+    @patch('intake.views.intake.ClientReferralUpdateView.get_object', autospec=True)
     def test_post_valid_form(self, mock_get_object, mock_object, mock_form, mock_view):
         """
             BaseUpdateView:
@@ -155,15 +163,15 @@ class ClientListView(SimpleTestCase):
     """ SingleTableView """
 
 
-class ClientDetailViewTest(SimpleTestCase):
+class ClientUpdateViewTest(SimpleTestCase):
     """
         UpdateView
     """
 
     def setUp(self):
-        self.view = ClientDetailView()
+        self.view = ClientUpdateView()
 
-    @patch('intake.views.intake.ClientDetailView.get_object', autospec=True)
+    @patch('intake.views.intake.ClientUpdateView.get_object', autospec=True)
     @patch('intake.views.intake.Client', autospec=True)
     def test_get(self, mock_client, mock_get_object):
         """
@@ -187,7 +195,7 @@ class ClientDetailViewTest(SimpleTestCase):
     @patch('intake.views.intake.UpdateView', autospec=True)
     @patch('intake.views.intake.ClientForm', autospec=True, return_value=True)
     @patch('intake.views.intake.Referral', autospec=True)
-    @patch('intake.views.intake.ClientDetailView.get_object', autospec=True)
+    @patch('intake.views.intake.ClientUpdateView.get_object', autospec=True)
     def test_post_valid_form(self, mock_get_object, mock_object, mock_form, mock_view):
         """
             BaseUpdateView:

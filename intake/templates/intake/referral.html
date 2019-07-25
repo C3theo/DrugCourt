@@ -1,0 +1,41 @@
+{% extends "core/module_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block card-header %}Intake Module{% endblock %}
+{% block bread %}
+<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
+<li class="breadcrumb-item"><a href="{% url 'intake:referral-add' %}">Referral</a></li>
+{% endblock %}
+{% block card-title %}Client Referral's{% endblock %}
+{% block help-text %}Start Referral Process for Client{% endblock %}
+{% block card-body %}
+<form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.client|as_crispy_field }}
+        </div>
+        <div class="form-group col-3">
+            {{ form.status|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.referrer|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.date_received|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.date_completed|as_crispy_field }}
+        </div>
+    </div>
+    <input type="submit" id="referral-update" value="Save Referral" class="btn btn-primary">
+    <a href="{% url 'intake:decision' %}" id="decision" class="btn btn-secondary">Evaluate Referral</a>
+</form>
+
+{% endblock %}

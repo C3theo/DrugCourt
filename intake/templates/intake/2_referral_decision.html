@@ -1,0 +1,101 @@
+{% extends "core/module_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block card-header %}Intake Module{% endblock %}
+{% block bread %}
+<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
+{% if object.id %}
+<li class="breadcrumb-item"><a href="{% url 'intake:referral-detail' object.id %}">Referral</a></li>
+<li class="breadcrumb-item"><a href="{% url 'intake:decision' object.id %}">Decisions</a></li>
+{% else %}
+<li class="breadcrumb-item"><a href="{% url 'intake:referral-add' %}">Referral</a></li>
+{% endif %}
+{% endblock %}
+{% block card-title %}Decision{% endblock %}
+{% block help-text %}Make Decisions on Client's Referral{% endblock %}
+{% block card-body %}
+<form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-3">
+            <label for="client-id">ClientID</label>
+            <input id="client-id" class="form-control" type="text" placeholder="{{ object.client.client_id }}" readonly>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.referral.provider|as_crispy_field }}
+        </div>
+        <div class="form-group col-3">
+            {{ form.referral.status|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.referral.referrer|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.referral.date_received|as_crispy_field }}
+        </div>
+        <div class="form-group col-3">
+            {{ form.referral.date_completed|as_crispy_field }}
+        </div>
+    </div>
+    <hr>
+
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.pre_decision.verdict|as_crispy_field }}
+        </div>
+        <div class="form-group col-4">
+            {{ form.pre_decision.made_by|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.pre_decision.date_received|as_crispy_field }}
+        </div>
+        <div class="form-group col-3">
+            {{ form.pre_decision.date_completed|as_crispy_field }}
+        </div>
+    </div>
+    <hr>
+
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.da_decision.verdict|as_crispy_field }}
+        </div>
+        <div class="form-group col-4">
+            {{ form.da_decision.made_by|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.da_decision.date_received|as_crispy_field }}
+        </div>
+        <div class="form-group col-3">
+            {{ form.da_decision.date_completed|as_crispy_field }}
+        </div>
+    </div>
+    <hr>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.dc_decision.verdict|as_crispy_field }}
+        </div>
+        <div class="form-group col-4">
+            {{ form.dc_decision.made_by|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.dc_decision.date_received|as_crispy_field }}
+        </div>
+        <div class="form-group col-3">
+            {{ form.dc_decision.date_completed|as_crispy_field }}
+        </div>
+    </div>
+    <input type="submit" id="decision-add" value="Update" class="btn btn-primary">
+</form>
+{% endblock %}

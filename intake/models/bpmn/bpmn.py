@@ -25,17 +25,27 @@ class Decision(models.Model):
 
     STATUS_CHOICES = Choices(STATUS_PENDING, STATUS_APPROVED, STATUS_REJECTED)
 
+    ROLE_DC = 'Drug Court Team'
+    ROLE_DA = 'DA'
+    ROLE_DEFENSE = 'Defense'
+    ROLE_PRETRIAL = 'Pretrial'
+    ROLES = Choices(ROLE_DC, ROLE_DA, ROLE_DEFENSE, ROLE_PRETRIAL)
+
     # user = models.ForeignKey(
     #     Profile, null=True, blank=True, on_delete=models.CASCADE)
-    date_received = models.DateField()
-    date_completed = models.DateField()
+    made_by = models.CharField(max_length=20, choices=ROLES, null=True)
+    date_received = models.DateField(null=True,)
+    date_completed = models.DateField(null=True,)
     verdict = FSMField('Verdict', choices=STATUS_CHOICES,
-                       max_length=20, default=0)
+                       max_length=20, default=STATUS_PENDING)
     referral = models.ForeignKey(
         'intake.Referral', on_delete=models.CASCADE)
 
     def get_absolute_url(self):
-        pass
+        return reverse('intake:referral-detail', kwargs={'pk': self.referral.id})
+
+    def __str__(self):
+        return f"Decision for {self.referral.client}"
 
     class Meta:
         managed = True
@@ -74,5 +84,3 @@ class Phase(models.Model):
 
     def __str__(self):
         return f'{self.phase_id}'
-
-
