@@ -9,7 +9,7 @@ from selenium.common.exceptions import WebDriverException, NoSuchElementExceptio
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 
-MAX_WAIT = 10
+MAX_WAIT = 8
 
 def wait(f):
 
@@ -38,6 +38,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
+        self.browser.maximize_window()
 
     def tearDown(self):
         self.browser.quit()

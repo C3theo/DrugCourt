@@ -1,7 +1,7 @@
 {% extends "core/module_base.html" %}
 {% load crispy_forms_tags %}
 
-{% block card-header %}Intake Module{% endblock %}
+{% block card-header %}Intake Module{% endblock card-header %}
 {% block bread %}
 <li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
 {% if object.id %}
@@ -9,15 +9,18 @@
 {% else %}
 <li class="breadcrumb-item"><a href="{% url 'intake:referral-add' %}">Referral</a></li>
 {% endif %}
-{% endblock %}
-{% block card-title %}Referral{% endblock %}
+{% endblock bread %}
+{% block card-title %}Referral{% endblock card-title %}
+
 {% block help-text %}
 {% if object.id %}
 Update Referral Status for Client
 {% else %}
 Start Referral Process for Client
 {% endif %}
-{% endblock %}
+{% endblock help-text%}
+
+
 {% block card-body %}
 
 <form method="post">
@@ -25,12 +28,12 @@ Start Referral Process for Client
     <div class="form-row">
         <div class="form-group col-3">
             <label for="client-id">ClientID</label>
+            {% if object.client %}
             <input id="client-id" class="form-control" type="text" placeholder="{{ object.client.client_id }}" readonly>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-2">
-            {{ form.client.status|as_crispy_field }}
+            {% else %}
+            <input id="client-id" class="form-control" type="text" placeholder="" readonly>
+            {% endif %}
+
         </div>
     </div>
     <div class="form-row">
@@ -54,20 +57,15 @@ Start Referral Process for Client
             {{ form.client.birth_date|as_crispy_field }}
         </div>
     </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.client.ssn|as_crispy_field }}
+        </div>
+    </div>
     <hr>
     <div class="form-row">
         <div class="form-group col-3">
             {{ form.referral.referrer|as_crispy_field }}
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-3">
-            {{ form.referral.provider|as_crispy_field }}
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-3">
-            {{ form.referral.status|as_crispy_field }}
         </div>
     </div>
     <div class="form-row">
@@ -83,4 +81,9 @@ Start Referral Process for Client
     <a href="{% url 'intake:decision' object.id %}" id="decision" class="btn btn-secondary">Evaluate Referral</a>
     {% endif %}
 </form>
-{% endblock %}
+
+{% if object.id %}
+{% include "intake/note_modal.html" %}
+{% endif %}
+
+{% endblock card-body %}

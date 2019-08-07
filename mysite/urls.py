@@ -30,6 +30,7 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/home/')),
     path('home/', include('core.urls', namespace='core')),
     path('intake/', include('intake.urls', namespace='intake')),
+    path('notes/', include('scribe.urls', namespace='scribe')),
 ]
 
 if settings.DEBUG:

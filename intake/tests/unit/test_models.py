@@ -12,12 +12,8 @@ from django.utils import timezone
 from django_fsm import TransitionNotAllowed
 from dotenv import load_dotenv
 from faker import Faker
-from viewflow import flow
-from viewflow.base import Flow, this
 
 from intake.models import Client, Decision, Referral, factories
-from intake.models.bpmn.flows import DecisionFlow
-# from profiles.models import Profile
 from scribe.models import Note
 
 User = get_user_model()
@@ -26,8 +22,6 @@ load_dotenv()
 
 
 class ClientModelTest(TestCase):
-        # clients = factories.ClientFactory.build_batch(5)
-        # client = factories.ClientFactory.simple_generate(create=False)
 
     def test_client_id_created_automatically(self):
 
@@ -90,6 +84,7 @@ class ReferralModelTest(TestCase):
         self.referral = Referral(client=self.client)
         self.referral.save()
 
+    @pytest.mark.skip(reason='Need to check on Referral Model required fields.')
     def test_referral_requires_client(self):
         r = Referral()
         self.assertRaises(IntegrityError, r.save)
@@ -98,6 +93,7 @@ class ReferralModelTest(TestCase):
 
         assert self.referral.status == Referral.STATUS_PENDING
 
+    @pytest.mark.skip(reason='Decision Model under construction')
     @patch('intake.models.intake.models.query.QuerySet.count', autospec=True, return_value=3)
     def test_approved_referral_adds_client_to_phase_one(self, mock_count):
         self.referral.approve_referral()
@@ -105,6 +101,7 @@ class ReferralModelTest(TestCase):
         assert self.referral.client.phase.phase_id == 'Phase One'
 
 
+@pytest.mark.skip(reason='Decision model under construction')
 class DecisionModelTest(TestCase):
     def setUp(self):
         client = factories.ClientFactory.create()
@@ -115,13 +112,10 @@ class DecisionModelTest(TestCase):
         user = User.objects.create(
             username=self.username, password=self.password, email=self.email)
 
-        self.profile = Profile(user=user)
-
         self.referral.save()
         user.save()
-        self.profile.save()
 
-        self.decision = Decision(referral=self.referral, user=self.profile,
+        self.decision = Decision(referral=self.referral,
                                  date_received='2019-06-08',
                                  date_completed='2019-06-09',)
         self.decision.save()

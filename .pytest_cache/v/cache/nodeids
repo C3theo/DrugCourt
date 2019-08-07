@@ -1,1 +1,8 @@
-[]
+[
+  "intake/tests/functional/test_intake.py::AddClientTest::test_drug_court_user_intake_client",
+  "intake/tests/functional/test_intake.py::AddClientTest::test_drug_court_user_intake_note",
+  "intake/tests/functional/test_intake.py::AddClientTest::test_intake_add_referral",
+  "intake/tests/functional/test_intake.py::AddClientTest::test_intake_client_filter_detail",
+  "intake/tests/functional/test_intake.py::AddClientTest::test_intake_client_referral",
+  "intake/tests/functional/test_intake.py::AddClientTest::test_intake_client_referral_decision"
+]

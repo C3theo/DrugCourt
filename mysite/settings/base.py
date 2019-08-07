@@ -43,9 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # my apps
+    # drug court apps
     'intake.apps.IntakeConfig',
     'core.apps.CoreConfig',
+    'scribe.apps.ScribeConfig',
     # 'profiles.apps.ProfileConfig',
 
     # third-party apps

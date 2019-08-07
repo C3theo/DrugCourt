@@ -12,8 +12,6 @@ class ClientTable(tables.Table):
         template_name = 'django_tables2/bootstrap4.html'
         fields = ['pk', 'client_id', 'first_name', 'last_name']
 
-
-
 class CourtDateTable(tables.Table):
 
     class Meta:

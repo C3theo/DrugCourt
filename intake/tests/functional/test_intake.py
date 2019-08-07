@@ -33,8 +33,9 @@ load_dotenv()
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
-folder_path = settings.BASE_DIR[:-7] + \
-    '\\intake\\tests\\functional\\screenshots\\'
+base = Path(settings.BASE_DIR).parent
+folder_path = base / 'intake' / 'tests' / 'functional' / 'screenshots'
+
 
 @override_settings(DEBUG=True)
 class AddClientTest(FunctionalTest):
@@ -71,10 +72,51 @@ class AddClientTest(FunctionalTest):
         keys = [j for i in keys for j in i]
         form.send_keys(keys)
 
-    def screenshot_submit(self, path=None, button=None):
-
+    def screenshot_submit(self, button=None, path=None):
         self.browser.save_screenshot(path)
         button.click()
+
+    def screenshot_flow(self, function_name=None):
+        """
+            Save screenshots in folder with labels and sequence number.
+        """
+
+        try:
+            function_path = folder_path / function_name
+        except TypeError:
+            function_path = folder_path
+
+        prev_name = None
+        count = None
+        prev_url_namespace = '_'.join(self.browser.current_url.split('/')[3:])
+
+        def take_screenshot(name='screenshot', window=self.browser):
+            nonlocal prev_name
+            nonlocal count
+            nonlocal prev_url_namespace
+            url_namespace = '_'.join(self.browser.current_url.split('/')[3:])
+            if prev_name != name or prev_url_namespace != url_namespace:
+                count = 0
+            screenshot_path = function_path / \
+                f'{url_namespace}_{name}_{count}.png'
+            screenshot_path = screenshot_path.__str__()
+            
+            # Check if window is webdriver or element
+            try:
+                window.save_screenshot(screenshot_path)
+            except AttributeError("'WebDriver' object has no attribute 'screenshot'"):
+                window.screenshot(screenshot_path)
+            count += 1
+            prev_name = name
+            prev_url_namespace = url_namespace
+
+        # Clear out all screenshots for each test run
+        try:
+            os.mkdir(function_path)
+            return take_screenshot
+        except FileExistsError:
+            [f.unlink() for f in Path(function_path).glob("*") if f.is_file()]
+            return take_screenshot
 
     def login_user(self):
 
@@ -90,6 +132,93 @@ class AddClientTest(FunctionalTest):
         self.wait_for(lambda: self.screenshot_submit(
             path=login_screenshot, button=login_button))
 
+    def test_intake_add_referral(self):
+        function_name = sys._getframe().f_code.co_name
+        take_screenshot = self.screenshot_flow(function_name)
+
+        self.create_pre_authenticated_session()
+        self.browser.get(self.live_server_url)
+
+        # User logs in and redirects to Dashboard
+
+        button = self.wait_for(
+            lambda: self.browser.find_element_by_id('id_intake_add'))
+        button.location_once_scrolled_into_view
+        take_screenshot()
+        # User goes to Intake Module
+        button.click()
+
+        button = self.wait_for(lambda: self.browser.find_element_by_id('add-referral'))
+        # button.location_once_scrolled_into_view
+        take_screenshot()
+        # User adds new Referral
+        button.click()
+
+        inputs = ['Jane', 'H', 'Doe', 'M', '07/07/1970']
+        client_form = self.wait_for(lambda: self.browser.find_element_by_id('id_client-first_name'))
+        self.send_keys_with_tabs(inputs, client_form)
+
+        ref_form = self.wait_for(lambda: self.browser.find_element_by_id('id_referral-referrer'))
+        inputs = ['John Deer', '07/07/2019', '07/10/2019']
+        self.send_keys_with_tabs(inputs, ref_form)
+
+        # User fills in client and referral form
+        ref_form.location_once_scrolled_into_view
+        take_screenshot()
+
+        # TODO: fix scrolling for screenshots
+        # client_form.location_once_scrolled_into_view
+        # take_screenshot()
+
+        # User submits form
+        button = self.wait_for(lambda: self.browser.find_element_by_id('referral-update'))
+        button.click()
+
+        button = self.wait_for(lambda: self.browser.find_element_by_link_text('Client: 20190001'))
+        take_screenshot()
+
+        # User clicks on newly created Referral
+        button.click()
+
+        button = self.wait_for(lambda: self.browser.find_element_by_id('decision'))
+
+        # User clicks on 'Evaluate Referral' button
+        button.click()
+        take_screenshot()
+
+        pre_trial = self.wait_for(lambda: self.browser.find_element_by_id('id_pre_decision-verdict'))
+        select = Select(pre_trial)
+        select.select_by_value('Approved')
+
+        dc = self.wait_for(lambda: self.browser.find_element_by_id('id_dc_decision-verdict'))
+        select = Select(dc)
+        select.select_by_value('Approved')
+        
+        da = self.wait_for(lambda: self.browser.find_element_by_id('id_da_decision-verdict'))
+        select = Select(da)
+        select.select_by_value('Approved')
+
+        button = self.wait_for(lambda: self.browser.find_element_by_id('decision-update'))
+        button.location_once_scrolled_into_view
+        take_screenshot()
+        button.click()
+        import pdb; pdb.set_trace()
+
+
+    @pytest.mark.skip()
+    def test_intake_client_referral_decision(self):
+        function_name = sys._getframe().f_code.co_name
+        take_screenshot = self.screenshot_flow(function_name)
+
+        self.create_pre_authenticated_session()
+        self.browser.get(self.live_server_url)
+
+        # User logs in and redirects to Dashboard
+        self.fail()
+        # self.wait_for(
+        #     lambda: self.browser.find_element_by_tag_name('table'))
+
+    @pytest.mark.skip()
     def test_intake_client_filter_detail(self):
         client = ClientFactory.create()
         self.create_pre_authenticated_session()
@@ -123,6 +252,7 @@ class AddClientTest(FunctionalTest):
         self.wait_for(lambda: self.screenshot_submit(
             path=client_detail_screenshot, button=submit))
 
+    @pytest.mark.skip()
     def test_drug_court_user_intake_client(self):
 
         self.create_pre_authenticated_session()
@@ -141,6 +271,7 @@ class AddClientTest(FunctionalTest):
         self.wait_for(lambda: self.screenshot_submit(
             path=client_screenshot, button=submit))
 
+    @pytest.mark.skip()
     def test_intake_client_referral(self):
         client = ClientFactory.create()
         self.create_pre_authenticated_session()
@@ -167,10 +298,12 @@ class AddClientTest(FunctionalTest):
         self.wait_for(lambda: self.screenshot_submit(
             button=submit, path=referral_screenshot))
 
-        self.wait_for(lambda: self.browser.find_element_by_id('decision').click())
-        import pdb; pdb.set_trace()
+        self.wait_for(
+            lambda: self.browser.find_element_by_id('decision').click())
+        import pdb
+        pdb.set_trace()
 
-
+    @pytest.mark.skip()
     def test_drug_court_user_intake_note(self):
         self.create_pre_authenticated_session()
         self.browser.get(self.live_server_url + '/intake/new/')

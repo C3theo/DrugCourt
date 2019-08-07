@@ -2,21 +2,23 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_tables2.views import SingleTableView
 
-from scribe.forms import  NoteForm, NoteFormSet
-from intake.forms import (ClientForm, ClientFormset, CriminalBackgroundForm,
-                          DecisionForm, ReferralForm,
-                          ReferralQueryForm, ClientReferralMutiForm, ReferralDecisionMutiForm)
-from intake.models import Client, CriminalBackground, Decision, Referral
+from scribe.forms import NoteForm, NoteFormSet
 from scribe.models import Note
+from scribe.tables import NoteTable
+
 from .filters import ClientFilter, ReferralFilter
-from .tables import ClientTable, NoteTable
+from ..forms import (ClientForm, ClientFormset, ClientReferralMultiForm,
+                     CriminalBackgroundForm, DecisionForm,
+                     ReferralDecisionMultiForm, ReferralForm, ReferralQueryForm)
+from ..models import Client, CriminalBackground, Decision, Referral
+from .tables import ClientTable
 
 
 class IntakeFilterView(LoginRequiredMixin, TemplateView):
@@ -39,7 +41,7 @@ class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
         Intake Client/Referral UpdateView
     """
     model = Referral
-    form_class = ReferralDecisionMutiForm
+    form_class = ReferralDecisionMultiForm
     template_name = 'intake/2_referral_decision.html'
     success_url = reverse_lazy('intake:start')
 
@@ -53,6 +55,7 @@ class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
         # instance={'referral': self.object}
         # instance.update(decisions)
         # kwargs.update(instance=instance)
+        
         decisions = self.object.decisions
         kwargs.update(instance={
             'referral': self.object,
@@ -61,52 +64,84 @@ class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
             'dc_decision': decisions[2],
         })
 
-        # import pdb; pdb.set_trace()
         return kwargs
 
 
 class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
     model = Referral
-    form_class = ClientReferralMutiForm
+    form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'
 
+    # def get_success_url(self):
+    #     import pdb; pdb.set_trace()
+    #     super().get_success_url()
+
+    def get_context_data(self, **kwargs):
+        """
+            Initialize NoteForm with client and pass to context
+        """
+        note_form = NoteForm(prefix='note', initial={'client': self.object.client})
+        # import pdb; pdb.set_trace()
+        context = {'note_form': note_form}
+        return super().get_context_data(**context)
+    
+    def post(self, request, *args, **kwargs):
+        """
+            Submit NoteForm separately from Referral/ClientForm
+        """
+
+        note_form = _get_form_submit(
+            request, NoteForm, prefix='note')
+        if note_form.is_bound and note_form.is_valid():
+            instance = note_form.save()
+            messages.success(request, f'Note for Client:{instance.client.client_id} saved successfully!')
+            self.success_url = self.get_object().get_absolute_url()
+            return self.form_valid(note_form)
+                  
+        return super().post(request, *args, **kwargs)
+
+
     def get_form_kwargs(self):
-        """Return the keyword arguments for instantiating the form."""
+        """
+            Return the keyword arguments for instantiating client and referral forms.
+        """
 
         kwargs = super(ClientReferralUpdateView, self).get_form_kwargs()
         kwargs.update(instance={
             'client': self.object.client,
             'referral': self.object
         })
+        # import pdb; pdb.set_trace()
+        
         return kwargs
-
 
 class ClientReferralCreateView(LoginRequiredMixin, CreateView):
     """
         Intake Client/Referral CreationView
     """
     model = Referral
-    form_class = ClientReferralMutiForm
+    form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'
     success_url = reverse_lazy('intake:start')
 
+    # def post(self, request, *args, **kwargs):
+    #     import pdb; pdb.set_trace()
+    #     return super().post(request, *args, **kwargs)
+    # def form_valid(self, form):
+    #     # Save the user first, because the profile needs a user before it
+    #     # can be saved.
+    #     import pdb; pdb.set_trace()
+    #     client = form['client'].save()
+    #     referral = form['referral'].save(commit=False)
+    #     referral.client = client
+    #     referral.save()
+    #     return redirect(self.get_success_url())
 
-class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
-    model = Referral
-    form_class = ClientReferralMutiForm
-    template_name = 'intake/1_client_referral.html'
 
-    def get_form_kwargs(self):
-        """Return the keyword arguments for instantiating the form."""
-
-        kwargs = super(ClientReferralUpdateView, self).get_form_kwargs()
-        kwargs.update(instance={
-            'client': self.object.client,
-            'referral': self.object
-        })
-        return kwargs
-
-class ClientNoteCreateView(CreateView):
+class ClientNoteCreateView(LoginRequiredMixin, CreateView):
+    """
+        View using Note Formsets
+    """
     model = Client
     template_name = 'intake/note.html'
     form_class = ClientFormset
@@ -137,13 +172,14 @@ class ClientNoteCreateView(CreateView):
     def get_success_url(self):
         return reverse('intake:note-add')
 
+
 class CriminalBackgroundCreateView(LoginRequiredMixin, CreateView):
     model = CriminalBackground
     form_class = CriminalBackgroundForm
     template_name = 'intake/criminal_background.html'
 
 
-class DecisionCreateView(CreateView):
+class DecisionCreateView(LoginRequiredMixin, CreateView):
     model = Decision
     form_class = DecisionForm
     template_name = 'intake/decision.html'
@@ -166,8 +202,6 @@ class ClientListView(LoginRequiredMixin, SingleTableView):
     table_class = ClientTable
     template_name = 'intake/clients_listing.html'
     context_object_name = 'clients'
-
-
 
 
 # class IntakeFormUpdateView(LoginRequiredMixin, CreateView):
@@ -254,7 +288,8 @@ def _get_form_submit(request, formcls, prefix=None):
             formcls:
             prefix
     """
-
-    data = request.POST if prefix in request.POST.keys() else None
+    # import pdb; pdb.set_trace()
+    # data = request.POST if prefix in request.POST.keys() else None
+    data = request.POST
 
     return formcls(data, prefix=prefix)

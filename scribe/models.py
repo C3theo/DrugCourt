@@ -1,5 +1,5 @@
 """
-    Scribe Models
+    Scribe App Models
 """
 
 from django.db import models
@@ -7,7 +7,7 @@ from model_utils import Choices
 
 class Note(models.Model):
     """
-        Model to represent User Notes.
+        Model to represent Client Notes.
 
         Fields:
             text
@@ -23,7 +23,7 @@ class Note(models.Model):
     text = models.TextField(help_text='Enter notes here.')
     created_date = models.DateTimeField(auto_now_add=True)
     note_type = models.CharField(
-        choices=CHOICES, max_length=25, default='Court')
+        choices=CHOICES, max_length=25, null=True, blank=True)
 
     # TODO: Make many to many for group notes
     client = models.ForeignKey(

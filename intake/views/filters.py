@@ -3,20 +3,13 @@ from django_filters import FilterSet, ModelChoiceFilter
 from intake.models import Client, CourtDate, Referral
 
 
-# def clients(request):
-#     if request is None:
-#         return Client.objects.none()
-#     import pdb; pdb.set_trace()
-
-#     client = request.client
-#     return client.all()
-
 class ReferralFilter(FilterSet):
     client = ModelChoiceFilter(queryset=Client.objects.all())
 
     class Meta:
         model = Referral
-        fields = ['client', 'referrer', ]
+        fields = ['client']
+
 
 class ClientFilter(FilterSet):
     class Meta:

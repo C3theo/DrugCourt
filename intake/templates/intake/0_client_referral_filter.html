@@ -8,8 +8,8 @@
 {% block card-title %}Referral{% endblock %}
 {% block help-text %}Use the drop down to select a Client. Select Client button in table to update a Referral's
 Status.{% endblock %}
-{% block filter %}
 
+{% block filter %}
 <!-- GET ?client=1 -->
 <form method="get">
     <div class="input-group mb-3">
@@ -17,7 +17,7 @@ Status.{% endblock %}
         <div class="input-group-append">
             <input type="submit" class="btn btn-primary">
         </div>
-        <a href="{% url 'intake:referral-add' %}" class='btn btn-secondary'>Add Referral</a>
+        <a href="{% url 'intake:referral-add' %}" class='btn btn-secondary' id='add-referral'>Add Referral</a>
     </div>
 </form>
 <table class="table">
@@ -25,7 +25,6 @@ Status.{% endblock %}
         <tr>
             <th scope="col">Client</th>
             <th scope="col">Full Name</th>
-            <th scope="col">Client Status</th>
             <th scope="col">Referrer</th>
             <th scope="col">Referral Status</th>
             <th scope="col">Date Received</th>
@@ -33,6 +32,7 @@ Status.{% endblock %}
         </tr>
     </thead>
     <tbody>
+        <!-- Referral Filter -->
         {% for object in filter.qs %}
         <tr>
             {% if object.id %}
@@ -41,7 +41,6 @@ Status.{% endblock %}
             <td>{{ object.client }}</td>
             {% endif %}
             <td>{{ object.client.full_name }}</td>
-            <td>{{ object.client.status }}</td>
             <td>{{ object.referrer }}</td>
             <td>{{ object.status }}</td>
             <td>{{ object.date_received }}</td>
@@ -50,6 +49,4 @@ Status.{% endblock %}
         {% endfor %}
     </tbody>
 </table>
-
-
 {% endblock %}

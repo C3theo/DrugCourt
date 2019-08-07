@@ -14,6 +14,7 @@ from django_fsm import TransitionNotAllowed
 from betterforms.multiform import MultiModelForm
 from intake.models import Client, CriminalBackground, Decision, Referral
 from scribe.models import Note
+from scribe.forms import NoteForm
 
 from .custom_formset import Formset
 
@@ -45,7 +46,7 @@ class ClientFormset(ModelForm):
                   'middle_initial', 'last_name']
 
         labels = {
-            'middle_initial': 'M.I.'
+            'middle_initial': 'M.I.',
         }
 
 
@@ -60,10 +61,11 @@ class ClientForm(ModelForm):
     class Meta:
         model = Client
         fields = ['birth_date', 'gender', 'first_name', 'status',
-                  'middle_initial', 'last_name']
+                  'middle_initial', 'last_name', 'ssn']
 
         labels = {
-            'middle_initial': 'M.I.'
+            'middle_initial': 'M.I.',
+            'ssn': 'SSN'
         }
 
 
@@ -77,30 +79,48 @@ class ReferralForm(ModelForm):
 
     class Meta:
         model = Referral
-        fields = ['client', 'status', 'referrer', 'provider',
+        fields = ['client', 'referrer', 'provider',
                   'date_received', 'date_completed']
 
+class ReferralEvalForm(ModelForm):
 
-class ClientReferralMutiForm(MultiModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ReferralEvalForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
+
+    class Meta:
+        model = Referral
+        fields = [ 'provider',
+                  'date_received', 'date_completed']
+
+class ClientReferralMultiForm(MultiModelForm):
     form_classes = {
         'client': ClientForm,
-        'referral': ReferralForm
+        'referral': ReferralForm,
     }
 
     def save(self, commit=True):
-        objects = super(ClientReferralMutiForm, self).save(commit=False)
+        objects = super(ClientReferralMultiForm, self).save(commit=False)
         if commit:
             client = objects['client']
             client.save()
             referral = objects['referral']
             referral.client = client
             referral.save()
+            # note = objects['note']
+            # note.client = client
+            # note.save()
         return objects
 
 
 class DecisionForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
+        """
+            Change made_by field to readonly
+        """
         super(DecisionForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
@@ -117,30 +137,35 @@ class DecisionForm(ModelForm):
         }        
 
         labels = {
-            'verdict': 'Approved', 'made_by': 'Deciding Party'}
+            'verdict': 'Approved',
+            'made_by': 'Deciding Party'}
 
 
-class ReferralDecisionMutiForm(MultiModelForm):
+class ReferralDecisionMultiForm(MultiModelForm):
     form_classes = {
-        'referral': ReferralForm,
+        'referral': ReferralEvalForm,
         'pre_decision': DecisionForm,
         'da_decision': DecisionForm,
         'dc_decision': DecisionForm, 
     }
 
-    # def __init__(self, *args, **kwargs):
-    #     # self.instances = kwargs.pop('instance', None)
-    #     # if self.instances is None:
-    #     #     self.instances = {}
-    #     # super(MultiModelForm, self).__init__(*args, **kwargs)
-    #     import pdb
-    #     pdb.set_trace()
-    #     super().__init__(*args, **kwargs)
+    def save(self, commit=True):
+        """
+            Save decisions before Referral
+        """
+
+        objects = super(ReferralDecisionMultiForm, self).save(commit=True)
+        if commit:
+            referral = objects['referral']
+            if referral.all_decisions_approved():
+                referral.approve()
+            referral.save()
+        return objects
+
 
 
 # ReferralDecisonFormset = inlineformset_factory(
 #     Referral, Decision, extra=3, fields=['status'])
-
 
 class CriminalBackgroundForm(ModelForm):
     """

@@ -9,8 +9,6 @@ from model_utils import Choices
 
 from django_fsm import (ConcurrentTransitionMixin, FSMField,
                         TransitionNotAllowed, transition)
-# from profiles.models import Profile
-from .bpmn import Phase, Decision
 
 tzinfo = timezone.get_current_timezone()
 
@@ -37,9 +35,9 @@ class Client(ConcurrentTransitionMixin, models.Model):
 
     client_id = models.CharField(max_length=20, unique=True, null=True)
     status = FSMField('Client Status', choices=IntakeStatus.CHOICES,
-                      default=IntakeStatus.STATUS_PENDING)
+                      default=IntakeStatus.STATUS_PENDING, blank=True, null=True)
     created_date = models.DateTimeField(default=timezone.now)
-    birth_date = models.DateField(null=True)
+    birth_date = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GenderOption.CHOICES)
     first_name = models.CharField(max_length=20,)
     middle_initial = models.CharField(max_length=1, null=True, blank=True)
@@ -64,6 +62,11 @@ class Client(ConcurrentTransitionMixin, models.Model):
         return new_id
 
     def save(self, *args, **kwargs):
+        """
+            Create ClientID when Client created
+        """
+        # TODO: Fix bug where Client is saved over
+        
         if not self.client_id:
             self.client_id = self.create_client_id()
 
@@ -86,7 +89,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
         return reverse('intake:client-detail', kwargs={'pk': self.id})
 
     def __str__(self):
-        return f'Client: {self.client_id}'
+        return f'{self.client_id}'
 
     class Meta:
         managed = True
@@ -125,6 +128,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     referrer = models.CharField(max_length=20, null=True, blank=True)
+    # TODO: add referrer ForeignKey later
     # referrer = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     provider = models.ForeignKey(
         'intake.Provider', on_delete=models.CASCADE, null=True, blank=True)
@@ -134,44 +138,61 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     @property
     def decisions(self):
         return self.decision_set.all()
+
     @property
     def decision_count(self):
-        return len(self.decision_set.all())
+        return self.decision_set.all().count()
 
-    def save(self, *args, **kwargs):
+    def save(self, commit=False, *args, **kwargs):
+        """
+            Create Decision objects upon Referral creation
+        """
+
         super().save(*args, **kwargs)
-        # import pdb; pdb.set_trace()
+
         if not self.decisions_created():
-            dc_decision = Decision.objects.create(referral=self, made_by=Decision.ROLE_DC)
-            da_decision = Decision.objects.create(referral=self, made_by=Decision.ROLE_DA)
-            pretrial_decision = Decision.objects.create(referral=self, made_by=Decision.ROLE_PRETRIAL)
+            dc_decision = Decision.objects.create(
+                referral=self, made_by=Decision.ROLE_DC)
+            da_decision = Decision.objects.create(
+                referral=self, made_by=Decision.ROLE_DA)
+            pretrial_decision = Decision.objects.create(
+                referral=self, made_by=Decision.ROLE_PRETRIAL)
             dc_decision.save()
             da_decision.save()
             pretrial_decision.save()
-        
+            
+        # try:
+        #     self.approve_referral()
+        # except TransitionNotAllowed:
+        #     pass
+            # TODO: send messsage
+
         # TODO: add checks to see if there are more or less than required decisions
 
     def get_absolute_url(self):
         return reverse('intake:referral-detail', kwargs={'pk': self.id})
 
     def __str__(self):
-        return f'Referral for {self.client}'
+        return f'ReferralID:{self.id} - ClientID: {self.client}'
 
     class Meta:
         managed = True
 
-    def decisions_made(self):
-        raise(NotImplementedError)
-    
+    def all_decisions_approved(self):
+        return self.decision_set.filter(verdict='Approved').count() == 3
+
     def decisions_created(self):
         return self.decision_count == 3
 
     def screens_rejected(self):
-        # TODO: check all three
+        # TODO: check if it needs to be all three or single rejection
         raise(NotImplementedError)
 
-    @transition(field=status, source=STATUS_PENDING, target=STATUS_APPROVED, conditions=[decisions_created, decisions_made])
-    def approve_referral(self):
+    @transition(field=status, source=STATUS_PENDING, target=STATUS_APPROVED, conditions=[all_decisions_approved])
+    def approve(self):
+        """
+            Add Client to Phase when all Decisions approved
+        """
         p = Phase(phase_id='Phase One')
         p.save()
         self.client.phase = p
@@ -181,6 +202,62 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     def reject_referral(self):
         pass
         # TODO: add signals
+
+
+class Decision(models.Model):
+    """
+        Model to represent decisions about client eligibility.
+    """
+    STATUS_PENDING = 'Pending'
+    STATUS_APPROVED = 'Approved'
+    STATUS_REJECTED = 'Rejected'
+
+    STATUS_CHOICES = Choices(STATUS_PENDING, STATUS_APPROVED, STATUS_REJECTED)
+
+    ROLE_DC = 'Drug Court Team'
+    ROLE_DA = 'DA'
+    ROLE_DEFENSE = 'Defense'
+    ROLE_PRETRIAL = 'Pretrial'
+    ROLES = Choices(ROLE_DC, ROLE_DA, ROLE_DEFENSE, ROLE_PRETRIAL)
+
+    # user = models.ForeignKey(
+    #     Profile, null=True, blank=True, on_delete=models.CASCADE)
+    made_by = models.CharField(max_length=20, choices=ROLES, null=True)
+    date_received = models.DateField(null=True, blank=True)
+    date_completed = models.DateField(null=True, blank=True)
+    verdict = models.CharField('Verdict', choices=STATUS_CHOICES,
+                       max_length=20, default=STATUS_PENDING)
+    referral = models.ForeignKey(
+        'intake.Referral', on_delete=models.CASCADE)
+
+    def get_absolute_url(self):
+        return reverse('intake:referral-detail', kwargs={'pk': self.referral.id})
+
+    def __str__(self):
+        return f"{self.made_by} Decision for Client{self.referral.client.client_id}"
+
+    class Meta:
+        managed = True
+        permissions = [('can_decide', 'Can Decide')]
+
+
+class Phase(models.Model):
+    """
+    """
+    CHOICES = Choices('Not in System', 'Phase One', 'Phase Two', 'Phase Three')
+
+    phase_id = models.CharField(
+        max_length=20, choices=CHOICES, null=True, blank=True)
+    screens_per_week = models.IntegerField(default=1)
+    meetings_per_week = models.IntegerField(default=1)
+    fees = models.CharField(max_length=4, null=True, blank=True)
+    notes = models.ForeignKey('intake.Note', null=True,
+                              blank=True, on_delete=models.CASCADE)
+    review_frequency = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.phase_id}'
+
 
 class CriminalBackground(models.Model):
     """

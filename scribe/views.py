@@ -1,5 +1,5 @@
 """
-    Scribe Views
+    Views for Scribe App
 """
 
 from django.shortcuts import render
@@ -10,7 +10,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django_tables2.views import SingleTableView
 
-from 
+from .tables import NoteTable
 from .models import Note
 
 
@@ -25,8 +25,7 @@ class ClientNoteListView(LoginRequiredMixin, ListView):
     #     return Post.objects.filter(author=user).order_by('-date_posted')
 
 
-
 class NoteListView(LoginRequiredMixin, SingleTableView):
     model = Note
     table_class = NoteTable
-    template_name = 'intake/clients_listing.html'
+    template_name = 'scribe/notes_all.html'

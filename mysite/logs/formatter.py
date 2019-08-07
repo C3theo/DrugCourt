@@ -2,7 +2,6 @@ import logging
 
 class SQLFormatter(logging.Formatter):
     def format(self, record):
-        # import pdb; pdb.set_trace()
         # Check if Pygments is available for coloring
         try:
             import pygments
