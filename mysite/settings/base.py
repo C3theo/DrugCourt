@@ -166,8 +166,6 @@ ANONYMOUS_USER_NAME = None
 # For fields added to custom user model
 # GUARDIAN_GET_INIT_ANONYMOUS_USER = 'profiles.models.get_anonymous_user_instance'
 
-
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
