@@ -20,7 +20,7 @@ django-fsm==2.6.1
 django-guardian==2.0.0
 django-material==1.5.6
 django-model-utils==3.2.0
-django-pyodbc-azure==2.1.0.0
+
 django-selenium-login==1.1.0
 django-tables2==2.0.6
 django-viewflow==1.5.6
@@ -42,7 +42,7 @@ py==1.8.0
 pycodestyle==2.5.0
 Pygments==2.4.2
 pylint==2.3.1
-pyodbc==4.0.26
+
 pyparsing==2.4.0
 pytest==4.6.1
 pytest-cov==2.7.1
@@ -65,3 +65,4 @@ Werkzeug==0.15.4
 whitenoise==4.1.2
 wrapt==1.11.1
 zipp==0.5.1
+
