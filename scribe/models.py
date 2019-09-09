@@ -3,7 +3,10 @@
 """
 
 from django.db import models
+from django.contrib.auth import get_user_model
 from model_utils import Choices
+
+User = get_user_model()
 
 class Note(models.Model):
     """
@@ -20,6 +23,8 @@ class Note(models.Model):
     # TODO: add user as model
     # author = models.ForeignKey(
     #     Profile, on_delete=models.SET_NULL, null=True, blank=True)
+    author = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True)
     text = models.TextField(help_text='Enter notes here.')
     created_date = models.DateTimeField(auto_now_add=True)
     note_type = models.CharField(

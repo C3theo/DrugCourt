@@ -12,13 +12,17 @@ Status.{% endblock %}
 {% block filter %}
 <!-- GET ?client=1 -->
 <form method="get">
-    <div class="input-group mb-3">
-        {{ filter.form.client }}
-        <div class="input-group-append">
-            <input type="submit" class="btn btn-primary">
-        </div>
-        <a href="{% url 'intake:referral-add' %}" class='btn btn-secondary' id='add-referral'>Add Referral</a>
-    </div>
+    <!-- <div class="row justify-content-end">
+        <div class="col-4"> -->
+            <div class="input-group mb-3">
+                {{ filter.form.client }}
+                <div class="input-group-append">
+                    <input type="submit" class="btn btn-primary">
+                </div>
+                <a href="{% url 'intake:referral-add' %}" class='btn btn-secondary' id='add-referral'>Add Referral</a>
+            </div>
+        <!-- </div>
+    </div> -->
 </form>
 <table class="table">
     <thead>
@@ -36,7 +40,8 @@ Status.{% endblock %}
         {% for object in filter.qs %}
         <tr>
             {% if object.id %}
-            <td><a href="{% url 'intake:referral-detail' object.id %}" class="btn btn-secondary">{{ object.client }}</a></td>
+            <td><a href="{% url 'intake:referral-detail' object.id %}" class="btn btn-secondary">{{ object.client }}</a>
+            </td>
             {% else %}
             <td>{{ object.client }}</td>
             {% endif %}

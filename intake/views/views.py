@@ -46,16 +46,20 @@ class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('intake:start')
 
     def get_form_kwargs(self):
-        """Return the keyword arguments for instantiating the form."""
+        """
+            Add Referral and 3 Associated decision objects to form.
+        """
 
         kwargs = super(ReferralDecisionUpdateView, self).get_form_kwargs()
-        # TODO: have to change Decision.ROLE to be able to accesss in form
+
+        # TODO: change Decision.ROLE to be able to accesss in form
+        # This will make it so you can add decisions dynamically
         # decisions = {f'{each.made_by}_decision': each for each in self.object.decisions}
         # decisions = {f'decision_{i}': each for i, each in enumerate(self.object.decisions)}
         # instance={'referral': self.object}
         # instance.update(decisions)
         # kwargs.update(instance=instance)
-        
+
         decisions = self.object.decisions
         kwargs.update(instance={
             'referral': self.object,
@@ -68,38 +72,40 @@ class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    """
     model = Referral
     form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'
-
-    # def get_success_url(self):
-    #     import pdb; pdb.set_trace()
-    #     super().get_success_url()
 
     def get_context_data(self, **kwargs):
         """
             Initialize NoteForm with client and pass to context
         """
-        note_form = NoteForm(prefix='note', initial={'client': self.object.client})
-        # import pdb; pdb.set_trace()
+
+        note_form = NoteForm(prefix='note')
         context = {'note_form': note_form}
         return super().get_context_data(**context)
-    
+
     def post(self, request, *args, **kwargs):
         """
-            Submit NoteForm separately from Referral/ClientForm
+            Submit NoteForm separately from Referral/ClientForm.
         """
 
+        referral = self.get_object()
+        self.success_url = referral.get_absolute_url()
         note_form = _get_form_submit(
             request, NoteForm, prefix='note')
         if note_form.is_bound and note_form.is_valid():
+            note_form.instance.author = self.request.user
+            note_form.instance.client = referral.client
             instance = note_form.save()
-            messages.success(request, f'Note for Client:{instance.client.client_id} saved successfully!')
-            self.success_url = self.get_object().get_absolute_url()
+            messages.success(
+                request, f'Note for {instance.client.first_name} {instance.client.last_name} ID: {instance.client.client_id}  saved successfully!')
             return self.form_valid(note_form)
-                  
-        return super().post(request, *args, **kwargs)
 
+
+        return super().post(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         """
@@ -111,9 +117,9 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
             'client': self.object.client,
             'referral': self.object
         })
-        # import pdb; pdb.set_trace()
-        
+
         return kwargs
+
 
 class ClientReferralCreateView(LoginRequiredMixin, CreateView):
     """
@@ -123,19 +129,6 @@ class ClientReferralCreateView(LoginRequiredMixin, CreateView):
     form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'
     success_url = reverse_lazy('intake:start')
-
-    # def post(self, request, *args, **kwargs):
-    #     import pdb; pdb.set_trace()
-    #     return super().post(request, *args, **kwargs)
-    # def form_valid(self, form):
-    #     # Save the user first, because the profile needs a user before it
-    #     # can be saved.
-    #     import pdb; pdb.set_trace()
-    #     client = form['client'].save()
-    #     referral = form['referral'].save(commit=False)
-    #     referral.client = client
-    #     referral.save()
-    #     return redirect(self.get_success_url())
 
 
 class ClientNoteCreateView(LoginRequiredMixin, CreateView):
@@ -162,6 +155,7 @@ class ClientNoteCreateView(LoginRequiredMixin, CreateView):
         client_notes = context['client_notes']
         with transaction.atomic():
             form.instance.author = self.request.username
+            import pdb; pdb.set_trace()
             self.object = form.save()
             if client_notes.is_valid():
                 client_notes.instance = self.object
@@ -288,7 +282,6 @@ def _get_form_submit(request, formcls, prefix=None):
             formcls:
             prefix
     """
-    # import pdb; pdb.set_trace()
     # data = request.POST if prefix in request.POST.keys() else None
     data = request.POST
 

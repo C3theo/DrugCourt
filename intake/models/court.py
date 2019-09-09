@@ -26,18 +26,18 @@ class CourtDate(models.Model):
     phase = models.ForeignKey(
         'intake.Phase', blank=True, null=True, on_delete=models.CASCADE)
 
-    attendance = models.CharField(
+    attendance = models.BooleanField(
         db_column='Attendance', max_length=50, blank=True, null=True)
 
     notes = models.ForeignKey(
         'intake.Note', blank=True, null=True, on_delete=models.CASCADE)
 
-    # date_created = models.DateTimeField(autoadd=blank=True, null=True)
+    # date_created = models.DateTimeField(autoadd=True, null=True)
     # created_by
 
     class Meta:
         managed = True
-        db_table = 'Court'
+        db_table = 'CourtDate'
 
     def get_absolute_url(self):
 

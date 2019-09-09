@@ -17,16 +17,17 @@ class NoteForm(ModelForm):
         """
             Change client field to readonly
         """
+
         super(NoteForm, self).__init__(*args, **kwargs)
-        instance = getattr(self, 'instance', None)
-        if instance and instance.pk:
-            self.fields['client'].widget.attrs['readonly'] = True
-        self.helper = FormHelper(self)
-        self.helper.form_tag = False
+        # instance = getattr(self, 'instance', None)
+        # if instance:
+        #     self.fields['client'].widget.attrs['readonly'] = True
+        # self.helper = FormHelper(self)
+        # self.helper.form_tag = False
 
     class Meta:
         model = Note
-        fields = ['client', 'text', 'note_type']
+        fields = ['text', 'note_type']
 
         labels = {
             'text': 'Client Notes', }
