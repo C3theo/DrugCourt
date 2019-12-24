@@ -9,7 +9,7 @@
 {% block main %}
 <div class="card-deck">
     <div class="card text-center ">
-        <h5 class="card-header bg-dark text-white"><i class="fas fa-gavel"></i> Court</h5>
+        <h5 class="card-header "><i class="fas fa-gavel"></i> Court</h5>
         <div class="card-body ">
             <p class="card-title lead"> Track Court Attendance and Payments </p>
             <ul class="list-group list-group-flush pb-3">
@@ -20,16 +20,19 @@
         </div>
     </div>
     <div class="card text-center">
-        <h5 class="card-header bg-dark text-white"><i class="fas fa-notes-medical"></i> Treatment</h5>
+        <h5 class="card-header "><i class="fas fa-notes-medical"></i> Treatment</h5>
         <div class="card-body ">
             <p class="card-text lead"> Track Treatment Progress </p>
             <ul class="list-group list-group-flush pb-3">
-                <li class="list-group-item"></li>
+                <a href="#" class="list-group-item list-group-item-action">Assessment Instruments</a>
+                <a href="#" class="list-group-item list-group-item-action">Treatment History</a>
+                <a href="#" class="list-group-item list-group-item-action">Medical</a>
+                <a href="#" class="list-group-item list-group-item-action">Provider</a>
             </ul>
         </div>
     </div>
     <div class="card text-center ">
-        <h5 class="card-header bg-dark text-white"><i class="fas fa-user-graduate"></i> Case Management</h5>
+        <h5 class="card-header "><i class="fas fa-user-graduate"></i> Case Management</h5>
         <div class="card-body ">
             <p class="card-title lead"> Track Program Status </p>
             <ul class="list-group list-group-flush pb-3">
@@ -41,17 +44,19 @@
 </div>
 <div class="card-deck">
     <div class="card text-center ">
-        <h5 class="card-header bg-dark text-white"><i class="fas fa-address-card"></i> Intake</h5>
+        <h5 class="card-header "><i class="fas fa-address-card"></i> Intake</h5>
         <div class="card-body ">
             <p class="card-title lead"> Track Intake Referral Status </p>
             <ul class="list-group list-group-flush pb-3">
                 <a href="{% url 'intake:start' %}" class="list-group-item list-group-item-action"
                     id="id_intake_add">Start Intake Process</a>
+                    <a href="{% url 'intake:crimes' %}" class="list-group-item list-group-item-action"
+                    id="id_intake_add">Criminal Background</a>
             </ul>
         </div>
     </div>
     <div class="card text-center">
-        <h5 class="card-header bg-dark text-white"><i class="fas fa-business-time"></i> Reporting</h5>
+        <h5 class="card-header "><i class="fas fa-business-time"></i> Reporting</h5>
         <div class="card-body ">
             <p class="card-title lead"> Generate Reports </p>
             <ul class="list-group list-group-flush pb-3">
@@ -60,11 +65,28 @@
         </div>
     </div>
     <div class="card text-center">
-        <h5 class="card-header bg-dark text-white"><i class="fas fa-user"></i> Admin</h5>
+        <h5 class="card-header "><i class="fas fa-user"></i> Admin</h5>
         <div class="card-body">
-            <p class="card-title lead"> Setup</p>
+            <p class="card-title lead"> Admin Site </p>
             <ul class="list-group list-group-flush pb-3">
-                <li class="list-group-item"></li>
+                <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action"
+                    id="id_admin_index">Index</a>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="card-deck">
+    <div class="card text-center">
+        <h5 class="card-header "><i class="fas fa-user"></i> Client</h5>
+        <div class="card-body">
+                <p class="card-title lead"> Manage Drug Court Tasks </p>
+            <p class="card-title lead"></p>
+            <ul class="list-group list-group-flush pb-3">
+                <a href="#" class="list-group-item list-group-item-action">Schedule</a>
+                <a href="#" class="list-group-item list-group-item-action">Releases of Information</a>
+                <a href="#" class="list-group-item list-group-item-action">Community Service</a>
+                <a href="#" class="list-group-item list-group-item-action">Releases</a>
             </ul>
         </div>
     </div>

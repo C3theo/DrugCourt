@@ -22,9 +22,12 @@ import selenium.webdriver.chrome.service as service
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support.expected_conditions import element_to_be_clickable
 
-from intake.models.factories import ClientFactory
+
+from intake.models.factories import ClientFactory, ReferralFactory
 from intake.models import Client
 from .base import FunctionalTest
 
@@ -39,6 +42,8 @@ folder_path = base / 'intake' / 'tests' / 'functional' / 'screenshots'
 
 @override_settings(DEBUG=True)
 class AddClientTest(FunctionalTest):
+    """
+    """
 
     def create_fake_user(self):
         self.username = os.environ['TEST_USERNAME']
@@ -87,26 +92,30 @@ class AddClientTest(FunctionalTest):
             function_path = folder_path
 
         prev_name = None
-        count = None
+        page_count = 0
+        total_count = 0
+
         prev_url_namespace = '_'.join(self.browser.current_url.split('/')[3:])
 
         def take_screenshot(name='screenshot', window=self.browser):
             nonlocal prev_name
-            nonlocal count
+            nonlocal page_count
+            nonlocal total_count
             nonlocal prev_url_namespace
             url_namespace = '_'.join(self.browser.current_url.split('/')[3:])
             if prev_name != name or prev_url_namespace != url_namespace:
-                count = 0
+                page_count = 0
             screenshot_path = function_path / \
-                f'{url_namespace}_{name}_{count}.png'
+                f'{total_count}_{url_namespace}_{name}_{page_count}.png'
             screenshot_path = screenshot_path.__str__()
-            
+
             # Check if window is webdriver or element
             try:
                 window.save_screenshot(screenshot_path)
             except AttributeError("'WebDriver' object has no attribute 'screenshot'"):
                 window.screenshot(screenshot_path)
-            count += 1
+            page_count += 1
+            total_count += 1
             prev_name = name
             prev_url_namespace = url_namespace
 
@@ -132,15 +141,18 @@ class AddClientTest(FunctionalTest):
         self.wait_for(lambda: self.screenshot_submit(
             path=login_screenshot, button=login_button))
 
+    # @pytest.mark.skip()
     def test_intake_add_referral(self):
+        """
+            Test adding and approving a Client's Referral
+        """
         function_name = sys._getframe().f_code.co_name
         take_screenshot = self.screenshot_flow(function_name)
 
-        self.create_pre_authenticated_session()
-        self.browser.get(self.live_server_url)
+        # self.create_pre_authenticated_session()
+        # self.browser.get(self.live_server_url)
 
         # User logs in and redirects to Dashboard
-
         button = self.wait_for(
             lambda: self.browser.find_element_by_id('id_intake_add'))
         button.location_once_scrolled_into_view
@@ -148,17 +160,20 @@ class AddClientTest(FunctionalTest):
         # User goes to Intake Module
         button.click()
 
-        button = self.wait_for(lambda: self.browser.find_element_by_id('add-referral'))
+        button = self.wait_for(
+            lambda: self.browser.find_element_by_id('add-referral'))
         # button.location_once_scrolled_into_view
         take_screenshot()
         # User adds new Referral
         button.click()
 
         inputs = ['Jane', 'H', 'Doe', 'M', '07/07/1970']
-        client_form = self.wait_for(lambda: self.browser.find_element_by_id('id_client-first_name'))
+        client_form = self.wait_for(
+            lambda: self.browser.find_element_by_id('id_client-first_name'))
         self.send_keys_with_tabs(inputs, client_form)
 
-        ref_form = self.wait_for(lambda: self.browser.find_element_by_id('id_referral-referrer'))
+        ref_form = self.wait_for(
+            lambda: self.browser.find_element_by_id('id_referral-referrer'))
         inputs = ['John Deer', '07/07/2019', '07/10/2019']
         self.send_keys_with_tabs(inputs, ref_form)
 
@@ -166,167 +181,125 @@ class AddClientTest(FunctionalTest):
         ref_form.location_once_scrolled_into_view
         take_screenshot()
 
-        # TODO: fix scrolling for screenshots
-        # client_form.location_once_scrolled_into_view
-        # take_screenshot()
-
         # User submits form
-        button = self.wait_for(lambda: self.browser.find_element_by_id('referral-update'))
+        button = self.wait_for(
+            lambda: self.browser.find_element_by_id('referral-update'))
         button.click()
 
-        button = self.wait_for(lambda: self.browser.find_element_by_link_text('Client: 20190001'))
+        button = self.wait_for(
+            lambda: self.browser.find_element_by_link_text('20190001'))
         take_screenshot()
 
         # User clicks on newly created Referral
         button.click()
 
-        button = self.wait_for(lambda: self.browser.find_element_by_id('decision'))
+        button = self.wait_for(
+            lambda: self.browser.find_element_by_id('decision'))
 
         # User clicks on 'Evaluate Referral' button
         button.click()
         take_screenshot()
 
-        pre_trial = self.wait_for(lambda: self.browser.find_element_by_id('id_pre_decision-verdict'))
+        # User Approves all Decsisions
+        pre_trial = self.wait_for(
+            lambda: self.browser.find_element_by_id('id_pre_decision-verdict'))
         select = Select(pre_trial)
         select.select_by_value('Approved')
 
-        dc = self.wait_for(lambda: self.browser.find_element_by_id('id_dc_decision-verdict'))
+        dc = self.wait_for(lambda: self.browser.find_element_by_id(
+            'id_dc_decision-verdict'))
         select = Select(dc)
         select.select_by_value('Approved')
-        
-        da = self.wait_for(lambda: self.browser.find_element_by_id('id_da_decision-verdict'))
+
+        da = self.wait_for(lambda: self.browser.find_element_by_id(
+            'id_da_decision-verdict'))
         select = Select(da)
         select.select_by_value('Approved')
 
-        button = self.wait_for(lambda: self.browser.find_element_by_id('decision-update'))
+        button = self.wait_for(
+            lambda: self.browser.find_element_by_id('decision-update'))
         button.location_once_scrolled_into_view
         take_screenshot()
         button.click()
-        import pdb; pdb.set_trace()
 
+        # User is redirected to Intake Landing page with created Client/Referral that is approved for program
+        elem = self.browser.find_element_by_xpath(
+            "/html/body/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/table[@class='table']/tbody/tr[1]/td[4]")
+        assert elem.text == 'Approved'
+        take_screenshot()
 
-    @pytest.mark.skip()
-    def test_intake_client_referral_decision(self):
+    # @pytest.mark.skip()
+    def test_drug_court_user_intake_note(self):
+        """
+            Test Client Note Creation
+        """
+
         function_name = sys._getframe().f_code.co_name
         take_screenshot = self.screenshot_flow(function_name)
 
-        self.create_pre_authenticated_session()
-        self.browser.get(self.live_server_url)
-
-        # User logs in and redirects to Dashboard
-        self.fail()
-        # self.wait_for(
-        #     lambda: self.browser.find_element_by_tag_name('table'))
-
-    @pytest.mark.skip()
-    def test_intake_client_filter_detail(self):
-        client = ClientFactory.create()
-        self.create_pre_authenticated_session()
-        self.browser.get(self.live_server_url)
+        # self.create_pre_authenticated_session()
         self.wait_to_be_logged_in()
 
-        function_path = folder_path + sys._getframe().f_code.co_name
+        referral = ReferralFactory.create()
 
-        home_screenshot = function_path + '_home.png'
-        submit = self.wait_for(
-            lambda: self.browser.find_element_by_id('id_intake_add'))
-        self.wait_for(lambda: self.screenshot_submit(
-            path=home_screenshot, button=submit))
+        # User goes to Referral
+        self.browser.get(self.live_server_url + '/intake')
 
-        client_filter_screenshot = function_path + '_submit.png'
-        field = self.wait_for(
-            lambda: self.browser.find_element_by_id('id_client_id'))
-        field.send_keys(client.client_id)
-        submit = self.wait_for(
-            lambda: self.browser.find_element_by_name('filter'))
-        self.wait_for(lambda: self.screenshot_submit(
-            path=client_filter_screenshot, button=submit))
-        table_elem = self.wait_for(
-            lambda: self.browser.find_element_by_id('client-id'))
-        self.assertEqual(client.client_id, table_elem.text)
-        self.wait_for(lambda: table_elem.click())
+        # User Selects Client
+        button = self.wait_for(lambda:
+                               self.browser.find_element_by_xpath(
+                                   "/html/body/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/table[@class='table']/tbody/tr[1]/td[1]/a[@class='btn btn-secondary']")
+                               )
+        button.click()
 
-        client_detail_screenshot = function_path + '_detail.png'
-        submit = self.wait_for(
-            lambda: self.browser.find_element_by_id('client-update'))
-        self.wait_for(lambda: self.screenshot_submit(
-            path=client_detail_screenshot, button=submit))
+        # User clicks on "Add Note Button"
+        button = self.wait_for(lambda:
+                               self.browser.find_element_by_xpath(
+                                   "/html/body/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/div[@class='btn-group pb-5']/button[@class='btn btn-primary']")
+                               )
+        take_screenshot()
+        button.click()
 
-    @pytest.mark.skip()
-    def test_drug_court_user_intake_client(self):
+        # Client Field is Auto-populated for Client
+        # TODO: make read only
 
-        self.create_pre_authenticated_session()
-        self.browser.get(self.live_server_url + '/intake/new/')
-        self.wait_to_be_logged_in()
+        # User Selects Note type from drop down
+        drop_down = WebDriverWait(self.browser, 10).until(
+            element_to_be_clickable((By.ID, 'id_note-note_type')))
 
-        this_function_name = sys._getframe().f_code.co_name
-        client_screenshot = folder_path + this_function_name + '_submit.png'
+        select = Select(drop_down)
+        select.select_by_value('Court')
 
-        client_form = self.wait_for(
-            lambda: self.browser.find_element_by_id('id_client-first_name'))
-        inputs = ['Jane', 'H', 'Doe', 'M', '07/07/1970']
-        self.send_keys_with_tabs(inputs, client_form)
-        submit = self.wait_for(
-            lambda: self.browser.find_element_by_name('client'))
-        self.wait_for(lambda: self.screenshot_submit(
-            path=client_screenshot, button=submit))
+        # User types in notes for client
+        field = self.wait_for(lambda:
+                              self.browser.find_element_by_xpath(
+                                  "/html/body[@class='modal-open']/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/div[@id='noteModal']/div[@class='modal-dialog']/div[@class='modal-content']/div[@class='modal-body']/form[@id='note-form']/div[@class='form-row'][2]/div[@class='form-group col-12']/div[@id='div_id_note-text']/div/textarea[@id='id_note-text']")
+                              )
+        inputs = ['Client is doing great in program.']
+        self.send_keys_with_tabs(inputs, field)
+        take_screenshot()
+        # User clicks "Add Notes" button in modal form
+        button = self.wait_for(lambda:
+                               self.browser.find_element_by_xpath(
+                                   "/html/body[@class='modal-open']/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/div[@id='noteModal']/div[@class='modal-dialog']/div[@class='modal-content']/div[@class='modal-footer']/input[@id='add-note']")
+                               )
+        button.click()
 
-    @pytest.mark.skip()
-    def test_intake_client_referral(self):
-        client = ClientFactory.create()
-        self.create_pre_authenticated_session()
-        self.browser.get(self.live_server_url)
-        # self.wait_to_be_logged_in()
+        # User clicks "View All Notes Button"
+        button = self.wait_for(lambda:
+                               self.browser.find_element_by_xpath(
+                                   "/html/body/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/div[@class='btn-group pb-5']/a[@class='btn btn-secondary']")
+                               )
+        button.click()
+        take_screenshot()
 
-        this_function_name = sys._getframe().f_code.co_name
-        referral_screenshot = folder_path + this_function_name + '_submit.png'
+        # User is redirected to Notes page filtered by Client ID, from which note was created
+        # assert url == 'http://127.0.0.1:8000/notes/'
 
-        self.wait_for(lambda: self.browser.find_element_by_id(
-            'referral-add').click())
+        # User sees newly created note for client in Notes Module
+        table_field = self.wait_for(lambda:
+                                    self.browser.find_element_by_xpath(
+                                        "/html/body/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/div[@class='table-container']/table[@class='table table-striped table-light']/tbody/tr[@class='even'][1]/td[4]")
+                                    )
 
-        form = self.wait_for(
-            lambda: self.browser.find_element_by_id('id_client'))
-
-        select = Select(form)
-        select.select_by_value('1')
-
-        field = self.browser.find_element_by_name('referrer')
-        inputs = ['John Snow', '06/08/2019', '06/08/2019']
-        self.send_keys_with_tabs(inputs=inputs, form=field)
-        submit = self.browser.find_element_by_id('referral-update')
-
-        self.wait_for(lambda: self.screenshot_submit(
-            button=submit, path=referral_screenshot))
-
-        self.wait_for(
-            lambda: self.browser.find_element_by_id('decision').click())
-        import pdb
-        pdb.set_trace()
-
-    @pytest.mark.skip()
-    def test_drug_court_user_intake_note(self):
-        self.create_pre_authenticated_session()
-        self.browser.get(self.live_server_url + '/intake/new/')
-        self.wait_to_be_logged_in()
-
-        this_function_name = sys._getframe().f_code.co_name
-        note_screenshot = folder_path + this_function_name + '_submit.png'
-
-        self.wait_for(
-            lambda: self.browser.find_element_by_id('note-tab').click())
-        note_form = self.wait_for(
-            lambda: self.browser.find_element_by_id('id_note-text'))
-
-        inputs = ['Test Note............']
-        self.send_keys_with_tabs(inputs, note_form)
-        note_submit = self.wait_for(
-            lambda: self.browser.find_element_by_name('note'))
-        self.wait_for(lambda: self.screenshot_submit(
-            button=note_submit, path=note_screenshot))
-
-
-# User logs in as Drug Court User
-
-# User checks recent referrals
-
-# User adds new client from referral
+        assert table_field.text == referral.client.client_id

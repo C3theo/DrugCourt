@@ -3,8 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django_tables2.views import SingleTableView
 from django.shortcuts import render
 
-from intake.models import CourtDate
-from intake.forms import CourtDateForm
+from intake.models import CourtDate, Client
+from intake.forms import CourtDateForm, NoteForm
 
 from .tables import CourtDateTable
 from .filters import CourtDateFilter
@@ -23,6 +23,15 @@ class CourtDateUpdateView(UpdateView):
     form_class = CourtDateForm
     template_name = 'intake/court_date_form.html'
 
+    def get_context_data(self, **kwargs):
+        """
+            Initialize NoteForm with Client and pass to context
+        """
+
+        note_form = NoteForm(prefix='note')
+        context = {'note_form': note_form}
+        return super().get_context_data(**context)
+    
 class CourtDateListView(LoginRequiredMixin, SingleTableView):
     model = CourtDate
     table_class = CourtDateTable

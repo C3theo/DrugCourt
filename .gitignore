@@ -4,3 +4,7 @@
 graphs
 htmlcov
 screenshots
+UI
+*.map
+scss
+staticfiles

@@ -73,7 +73,7 @@ class ClientReferralCreateViewTest(SimpleTestCase):
     @patch('django.views.generic.edit.FormMixin.get_form', autospec=True)
     @patch('intake.views.views.ClientReferralMultiForm', auto_spec=True)
     def test_get_multi_forms(self, mock_forms, mock_get_form):
-  
+
         mock_get_form.return_value = mock_forms
 
         view = ClientReferralCreateView()
@@ -149,8 +149,6 @@ class ReferralDecisionUpdateViewTest(SimpleTestCase):
         view = setup_viewTest(self.view, request)
         response = view.get(request)
 
-        import pdb
-        pdb.set_trace()
         objects = response.context_data['form'].instances
         mock_objects = {
             'referral': mock_model,
@@ -158,7 +156,10 @@ class ReferralDecisionUpdateViewTest(SimpleTestCase):
             'da_decision': mock_model.decisions[1],
             'dc_decision': mock_model.decisions[2],
         }
+
         self.assertEqual(mock_objects, objects)
+
+    # def test_referral_approve_called(self):
 
 
 class ReferralCreateViewTest(SimpleTestCase):

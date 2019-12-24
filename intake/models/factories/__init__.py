@@ -1,2 +1,2 @@
 from .intake import (ClientFactory, UserFactory, ReferralFactory, PhaseFactory,
-                     NoteFactory)
+                     NoteFactory, delete_factory_inventory)

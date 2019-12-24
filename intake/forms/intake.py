@@ -82,6 +82,7 @@ class ReferralForm(ModelForm):
         fields = ['client', 'referrer', 'provider',
                   'date_received', 'date_completed']
 
+
 class ReferralEvalForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -92,8 +93,9 @@ class ReferralEvalForm(ModelForm):
 
     class Meta:
         model = Referral
-        fields = [ 'provider',
+        fields = ['provider',
                   'date_received', 'date_completed']
+
 
 class ClientReferralMultiForm(MultiModelForm):
     form_classes = {
@@ -134,7 +136,7 @@ class DecisionForm(ModelForm):
                   'date_completed', 'verdict']
         widgets = {
             'made_by': TextInput(),
-        }        
+        }
 
         labels = {
             'verdict': 'Approved',
@@ -146,7 +148,7 @@ class ReferralDecisionMultiForm(MultiModelForm):
         'referral': ReferralEvalForm,
         'pre_decision': DecisionForm,
         'da_decision': DecisionForm,
-        'dc_decision': DecisionForm, 
+        'dc_decision': DecisionForm,
     }
 
     def save(self, commit=True):
@@ -163,7 +165,6 @@ class ReferralDecisionMultiForm(MultiModelForm):
         return objects
 
 
-
 # ReferralDecisonFormset = inlineformset_factory(
 #     Referral, Decision, extra=3, fields=['status'])
 
@@ -177,6 +178,8 @@ class CriminalBackgroundForm(ModelForm):
 
         self.helper = FormHelper(self)
         self.helper.form_tag = False
+
+    
 
     class Meta:
         model = CriminalBackground

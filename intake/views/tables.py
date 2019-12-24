@@ -1,5 +1,6 @@
 import django_tables2 as tables
 from django_tables2.utils import A
+from django_tables2.columns import Column
 
 from intake.models import Client, CourtDate
 
@@ -13,7 +14,7 @@ class ClientTable(tables.Table):
         fields = ['pk', 'client_id', 'first_name', 'last_name']
 
 class CourtDateTable(tables.Table):
-
+    court_date = Column(linkify=True)
     class Meta:
         model = CourtDate
         template_name = 'django_tables2/bootstrap4.html'

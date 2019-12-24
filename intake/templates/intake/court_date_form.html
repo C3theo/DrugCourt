@@ -8,6 +8,11 @@
 {% block card-title %}Court Schedule{% endblock %}
 {% block help-text %}Schedule Court Dates for Client{% endblock %}
 {% block card-body %}
+
+{% if object.id %}
+{% include "scribe/note_modal.html" %}
+{% endif %}
+
 <form method="POST">
     {% csrf_token %}
     <div class="form-row">

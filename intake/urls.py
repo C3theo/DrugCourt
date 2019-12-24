@@ -17,6 +17,7 @@ urlpatterns = [
          name='referral-detail'),
     path('referral/decision/<int:pk>',
          ReferralDecisionUpdateView.as_view(), name='decision'),
+    path('criminalhistory/', CriminalBackgroundCreateView.as_view(), name='crimes'),
      
      
     path('clients/', ClientListView.as_view(), name='clients'),
@@ -26,6 +27,5 @@ urlpatterns = [
     path('court/<int:pk>', CourtDateUpdateView.as_view(), name='court-detail'),
     path('court/all', CourtDateListView.as_view(), name='dates'),
     path('court/filter', views.court_date_client_list, name='court-filter'),
-    path('legal/', CriminalBackgroundCreateView.as_view(), name='legal'),
 ]
 

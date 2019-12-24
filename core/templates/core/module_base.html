@@ -1,15 +1,17 @@
 {% extends "core/base.html" %}
 {% block main %}
 
+
+
 <div class="card">
-    <div class="card-header bg-dark text-white text-center rounded-top mb-3">
-        <h4>{% block card-header %}{% endblock %}</h4>
+    <div class="card-header text-white text-center rounded-top mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
                 {% block bread %}{% endblock %}
             </ol>
         </nav>
+        <h4>{% block card-header %}{% endblock %}</h4>
     </div>
     <p class="card-title display-4 text-center lead">{% block card-title %}{% endblock %}</p>
     <div class="card-body rounded">

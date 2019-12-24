@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 
 MAX_WAIT = 8
 
@@ -37,8 +38,14 @@ class FunctionalTest(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
-        self.browser = webdriver.Chrome()
+        # opts = Options().add_argument({'w3c':False})
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option('w3c', False)
+        self.browser = webdriver.Chrome(options=options)
         self.browser.maximize_window()
+
+        self.create_pre_authenticated_session()
+        self.browser.get(self.live_server_url)
 
     def tearDown(self):
         self.browser.quit()
@@ -56,7 +63,6 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def get_item_input_box(self):
         return self.browser.find_element_by_id('id_text')
-
 
     def add_list_item(self, item_text):
         num_rows = len(self.browser.find_elements_by_css_selector('#id_list_table tr'))
