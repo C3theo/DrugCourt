@@ -1,17 +1,9 @@
 {% extends "core/module_base.html" %}
 {% load crispy_forms_tags %}
 
-{% block card-header %}Intake Module{% endblock %}
-{% block bread %}
-<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
-{% endblock %}
-{% block card-title %}Referral{% endblock %}
-{% block help-text %}Use the drop down to select a Client. Select Client button in table to update a Referral's
-Status.{% endblock %}
+{% block search %}
 
-{% block filter %}
-<!-- GET ?client=1 -->
-<form method="get">
+<form method="GET">
     <!-- <div class="row justify-content-end">
         <div class="col-4"> -->
             <div class="input-group mb-3">
@@ -24,6 +16,18 @@ Status.{% endblock %}
         <!-- </div>
     </div> -->
 </form>
+{% endblock search %}
+
+{% block card-header %}Intake Module{% endblock %}
+{% block bread %}
+<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
+{% endblock %}
+{% block card-title %}Referral{% endblock %}
+{% block help-text %}Use the drop down to select a Client. Select Client button in table to update a Referral's
+Status.{% endblock %}
+
+
+{% block filter %}
 <table class="table">
     <thead>
         <tr>
@@ -54,4 +58,4 @@ Status.{% endblock %}
         {% endfor %}
     </tbody>
 </table>
-{% endblock %}
+{% endblock filter %}

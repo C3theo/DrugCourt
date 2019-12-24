@@ -66,7 +66,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
         """
             Create ClientID when Client model first created.
         """
-        
+
         if not self.client_id:
             self.client_id = self.create_client_id()
 
@@ -96,6 +96,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
         app_label = 'intake'
         verbose_name_plural = 'clients'
 
+
 class Referral(ConcurrentTransitionMixin, models.Model):
     """
         Model to represent the state of a Drug Court's Client Referrral process.
@@ -105,7 +106,21 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     STATUS_APPROVED = 'Approved'
     STATUS_REJECTED = 'Rejected'
 
-    STATUS_CHOICES = Choices(STATUS_PENDING, STATUS_APPROVED, STATUS_REJECTED)
+    STATUS_CHOICES = Choices(
+        ('Approved', 'Approved'),
+        ('Pending', 'Pending'),
+        ('Rejected', 'Rejected'),
+        ('Declined', 'Declined'),
+        ('Active', 'Active'),
+        ('In Custody', 'In Custody'),
+        ('AWOL', 'AWOL'),
+        ('Medical Leave', 'Medical Leave'),
+        ('Pending Termination', 'Pending Termination'),
+        ('Graduated', 'Graduated'),
+        ('Terminated', 'Terminated'),
+        ('Administrative Discharge', 'Administrative Discharge'),
+        ('Deferred', 'Deferred'))
+
     status = FSMField('Referral Status',
                       max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
     client = models.ForeignKey(
@@ -141,7 +156,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
             dc_decision.save()
             da_decision.save()
             pretrial_decision.save()
-            
+
     def get_absolute_url(self):
         return reverse('intake:referral-detail', kwargs={'pk': self.id})
 
@@ -155,7 +170,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
 
     class Meta:
         managed = True
-    
+
     ### Transition Conditions ###
 
     def all_decisions_approved(self):
@@ -176,7 +191,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         # TODO: check if it needs to be all three or single rejection
         raise(NotImplementedError)
 
-    @transition(field=status, source=STATUS_PENDING, target=STATUS_APPROVED, conditions=[all_decisions_approved])
+    @transition(field=status, source='*', target=STATUS_APPROVED, conditions=[all_decisions_approved])
     def approve(self):
         """
             Add Client to Phase when Referral approved
@@ -207,7 +222,7 @@ class Decision(models.Model):
     date_received = models.DateField(null=True, blank=True)
     date_completed = models.DateField(null=True, blank=True)
     verdict = models.CharField('Verdict', choices=STATUS_CHOICES,
-                       max_length=20, default=STATUS_PENDING)
+                               max_length=20, default=STATUS_PENDING)
     referral = models.ForeignKey(
         'intake.Referral', on_delete=models.CASCADE)
 
@@ -254,6 +269,9 @@ class CriminalBackground(models.Model):
         db_column='Misdemeanors', blank=True, null=True)
     firstarrestyear = models.IntegerField(
         db_column='FirstArrestYear', blank=True, null=True)
+
+    def get_absolute_url(self):
+        return reverse('intake:criminal', kwargs={'pk': self.id})
 
     def __str__(self):
         return f'CriminalBackGround - Client: {self.client.client_id}'

@@ -21,6 +21,7 @@ from ..models import Client, CriminalBackground, Decision, Referral
 from .tables import ClientTable
 
 
+
 class IntakeFilterView(LoginRequiredMixin, TemplateView):
     """
         Intake Start Page
@@ -179,12 +180,6 @@ class DecisionCreateView(LoginRequiredMixin, CreateView):
     template_name = 'intake/decision.html'
 
 
-class ClientCreateView(LoginRequiredMixin, CreateView):
-    model = Client
-    form_class = ClientForm
-    template_name = 'intake/client.html'
-
-
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
     form_class = ClientForm
@@ -194,7 +189,7 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
 class ClientListView(LoginRequiredMixin, SingleTableView):
     model = Client
     table_class = ClientTable
-    template_name = 'intake/clients_listing.html'
+    template_name = 'intake/client_filter.html'
     context_object_name = 'clients'
 
 
