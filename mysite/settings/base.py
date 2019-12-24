@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'intake.apps.IntakeConfig',
     'core.apps.CoreConfig',
     'scribe.apps.ScribeConfig',
-    # 'profiles.apps.ProfileConfig',
+    # treatment
+    # court
+    # 'profiles.apps.ProfileConfig'
 
     # third-party apps
     'crispy_forms',

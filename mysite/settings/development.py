@@ -16,19 +16,13 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,
 }
 
-# SQL Server
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'sql_server.pyodbc',
-#         'NAME': 'CaseMgmt',
-#         'HOST': 'DESKTOP-9AN0D63',
-#         'INTEGRATED SECURITY': 'SSPI',
-#         'OPTIONS': {
-#             'driver': 'ODBC Driver 13 for SQL Server',
-#         },
-
+#         'ENGINE': 'django.db.backends.postgresql', 
+#         'HOST': 'localhost',      
+#         'NAME': 'acc_court',
+#         'USER': os.getenv('POSTGRES_USERNAME'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
 #     }
-
 # }
 
-# DATABASE_URL="Server=localhost;Database=master;Trusted_Connection=True"
