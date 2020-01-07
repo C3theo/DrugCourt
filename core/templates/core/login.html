@@ -6,7 +6,7 @@
         <hr>
         <form method="POST">
             {% csrf_token %}
-            <fieldset class="form-group">
+            <fieldset class="form-group col-4">
                 <legend class="border-bottom mb-4">Log In</legend>
                 {{ form|crispy }}
             </fieldset>

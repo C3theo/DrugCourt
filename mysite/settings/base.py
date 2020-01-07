@@ -47,8 +47,8 @@ INSTALLED_APPS = [
     'intake.apps.IntakeConfig',
     'core.apps.CoreConfig',
     'scribe.apps.ScribeConfig',
-    # treatment
-    # court
+    'treatment.apps.TreatmentConfig',
+    'court.apps.CourtConfig',
     # 'profiles.apps.ProfileConfig'
 
     # third-party apps
@@ -106,9 +106,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'ATOMIC_REQUEST': True,
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ACM',
+        'USER': 'postgres',
+        'PASSWORD': 'VGY7ujm',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
