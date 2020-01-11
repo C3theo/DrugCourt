@@ -4,8 +4,6 @@ from django_tables2.columns import Column
 
 from court.models import CourtDates
 
-# filter clients that are accepted
-# drop down where you pick a client
 
 
 class CourtDateTable(tables.Table):

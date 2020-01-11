@@ -6,12 +6,15 @@ from django.shortcuts import render
 
 from court.models import CourtDates
 from court.forms import CourtDateForm
+from court.tables import CourtDateTable
+from court.filters import CourtDateFilter
 
-from .tables import CourtDateTable
-from .filters import CourtDateFilter
+from intake.models import IntakeStatus
 
 def court_date_client_list(request):
-    f = CourtDateFilter(request.GET, queryset=CourtDates.objects.all())
+
+    qs = CourtDates.objects.filter(client__status__contains=IntakeStatus.STATUS_ACCEPTED)
+    f = CourtDateFilter(request.GET, queryset=qs)
     return render(request, 'court/court_filter.html', {'filter': f}) 
 
 class CourtDateView(CreateView):

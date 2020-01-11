@@ -17,12 +17,12 @@ class IntakeStatus:
 
     STATUS_PENDING = 'Pending'
     STATUS_SCREEN = 'Screening'
-    STATUS_ADMIT = 'Accepted'
+    STATUS_ACCEPTED = 'Accepted'
 
     CHOICES = Choices(
         (STATUS_PENDING, STATUS_PENDING),
         (STATUS_SCREEN, STATUS_SCREEN),
-        (STATUS_ADMIT, STATUS_ADMIT),
+        (STATUS_ACCEPTED, STATUS_ACCEPTED),
         
         )
 
@@ -207,7 +207,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         # p = Phase(phase_id='Phase One')
         # p.save()
         # self.client.phase = p
-        self.client.status = IntakeStatus.STATUS_ADMIT
+        self.client.status = IntakeStatus.STATUS_ACCEPTED
         self.client.save()
 
 
