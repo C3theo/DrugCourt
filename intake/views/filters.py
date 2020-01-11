@@ -1,6 +1,6 @@
 from django_filters import FilterSet, ModelChoiceFilter
 
-from intake.models import Client, CourtDate, Referral
+from intake.models import Client, Referral
 
 
 class ReferralFilter(FilterSet):

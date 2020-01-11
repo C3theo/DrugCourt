@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'intake.apps.IntakeConfig',
     'core.apps.CoreConfig',
     'scribe.apps.ScribeConfig',
-    # treatment
-    # court
+    'treatment.apps.TreatmentConfig',
+    'court.apps.CourtConfig',
     # 'profiles.apps.ProfileConfig'
 
     # third-party apps

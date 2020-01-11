@@ -4,7 +4,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, Row, HTML
 from crispy_forms import bootstrap
 from django.forms.widgets import CheckboxInput
-from intake.models import CourtDate
+from court.models import CourtDates
 
 
 class CourtDateForm(ModelForm):
@@ -16,8 +16,8 @@ class CourtDateForm(ModelForm):
         self.helper.form_tag = False
 
     class Meta:
-        model = CourtDate
-        fields = ['court_date', 'client', 'event',
+        model = CourtDates
+        fields = ['court_date', 'client_ID', 'event',
                   'court_date_type', 'attendance']
 
         widgets = {'attendance': CheckboxInput}
