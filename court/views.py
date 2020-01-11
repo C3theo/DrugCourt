@@ -28,7 +28,7 @@ class CourtDateUpdateView(UpdateView):
         """
             Initialize NoteForm with Client and pass to context
         """
-
+        
         note_form = NoteForm(prefix='note')
         context = {'note_form': note_form}
         return super().get_context_data(**context)

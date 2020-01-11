@@ -8,9 +8,9 @@ from .views import (CourtDateUpdateView, CourtDateListView, CourtDateView)
 app_name = 'court'
 
 urlpatterns = [
-    path('', CourtDateView.as_view(), name='court'),
-    path('court/<int:pk>', CourtDateUpdateView.as_view(), name='court-detail'),
+    path('', CourtDateView.as_view(), name='add'),
+    path('court/<int:pk>', CourtDateUpdateView.as_view(), name='detail'),
     path('court/all', CourtDateListView.as_view(), name='dates'),
-    path('court/filter', views.court_date_client_list, name='court-filter'),
+    # path('court/filter', views.court_date_client_list, name='court-filter'),
 ]
 
