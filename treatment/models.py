@@ -45,56 +45,58 @@ class RatingChoice:
 
 
 class Objectives(TimeStampedModel):
-    client_id = models.ForeignKey(
+    client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
-    ObjDescrip = models.TextField(max_length=250)
-    ClientObjNum = models.IntegerField
-    ObjTarget = models.DateField
-    Closed = models.BooleanField
-    Met = models.BooleanField
-    MetDate = models.DateField
-    TxRating = models.IntegerField
-    ClientRating = models.IntegerField
+    description = models.TextField(max_length=250)
+    obj_num = models.IntegerField()
+    obj_target = models.DateField()
+    closed = models.BooleanField()
+    met = models.BooleanField()
+    met_date = models.DateField()
+    tx_rating = models.IntegerField()
+    client_rating = models.IntegerField()
 
 class ProbGoals(TimeStampedModel):
-    client_id = models.ForeignKey(
+    client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
-    Obj_id = models.ForeignKey(
+    objective = models.ForeignKey(
         'objectives', on_delete=models.CASCADE, blank=True, null=True)
-    ProbDescrip = models.TextField(max_length=250)
-    GoalDescrip = models.TextField(max_length=250)
-    ClientProbGoalNum = models.IntegerField
-    ProGoalTarget = models.DateField
-    ProbGoalStatus = models.CharField(max_length=1, choices=ProbGoalStatusOptions.CHOICES)
-    StatusDate = models.DateField
+    prob_description = models.TextField(max_length=250)
+    goal_description = models.TextField(max_length=250)
+    prob_goal_num = models.IntegerField()
+    prob_goal_target = models.DateField()
+    prob_goal_status = models.CharField(max_length=25, choices=ProbGoalStatusOptions.CHOICES)
+    status_date = models.DateField()
 
 class TxAttendance(TimeStampedModel):
-    client_id = models.ForeignKey(
+    client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
-    SessionDate = models.DateField
-    Attended = models.BooleanField
-    AbsenceReason = models.CharField(max_length=1, choices=AbsenceReasons.CHOICES)
-    TimeIn = models.TimeField
-    TimeOut = models.TimeField
+    session_date = models.DateField()
+    attended = models.BooleanField()
+    absence_reason = models.CharField(max_length=25, choices=AbsenceReasons.CHOICES)
+    time_in = models.TimeField()
+    time_out = models.TimeField()
 
 class TxProgress(TimeStampedModel):
-    client_id = models.ForeignKey(
+    client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
-    NoteType = models.CharField(max_length=1, choices=TxNoteTypes.CHOICES)
-    TimeIn = models.TimeField
-    TimeOut = models.TimeField
-    Problems = models.TextField(max_length=250)
-    NextReview = models.DateField
+    # NoteType = models.CharField(max_length=1, choices=TxNoteTypes.CHOICES)
+    note = models.ForeignKey(
+        'intake.Note', on_delete=models.CASCADE, null=True, blank=True)
+    time_in = models.TimeField()
+    time_out = models.TimeField()
+    problems = models.TextField(max_length=250)
+    next_review = models.DateField()
 
 class Ratings(TimeStampedModel):
-    client_id = models.ForeignKey(
+    client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
-    RatingDate = models.DateField
-    ProbGoalID = models.ForeignKey(
+    rating_date = models.DateField()
+    prob_goal= models.ForeignKey(
         'ProbGoals', on_delete=models.CASCADE, blank=True, null=True)
-    ObjID = models.ForeignKey(
+    obj_id = models.ForeignKey(
         'objectives', on_delete=models.CASCADE, blank=True, null=True)
-    ItemDescription = models.TextField(max_length=250)
-    StaffRating = models.CharField(max_length=1, choices=RatingChoice.CHOICES)
-    ClientRating = models.CharField(max_length=1, choices=RatingChoice.CHOICES)
-    ClientObjNumber = models.IntegerField
+    item_description = models.TextField(max_length=250)
+    staff_rating = models.CharField(max_length=1, choices=RatingChoice.CHOICES)
+    client_rating = models.CharField(max_length=1, choices=RatingChoice.CHOICES)
+    client_obj_number = models.IntegerField()

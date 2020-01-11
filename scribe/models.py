@@ -20,6 +20,9 @@ class Note(models.Model):
     """
 
     CHOICES = Choices('Court', 'Treatment', 'General')
+    # TX
+    # Staffing
+    # Contact
     # TODO: add user as model
     # author = models.ForeignKey(
     #     Profile, on_delete=models.SET_NULL, null=True, blank=True)

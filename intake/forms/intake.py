@@ -179,8 +179,6 @@ class CriminalBackgroundForm(ModelForm):
         self.helper = FormHelper(self)
         self.helper.form_tag = False
 
-    
-
     class Meta:
         model = CriminalBackground
         fields = [
@@ -188,7 +186,7 @@ class CriminalBackgroundForm(ModelForm):
             'arrests',
             'felonies',
             'misdemeanors',
-            'firstarrestyear']
+            'first_arrest_year']
 
 
 class ReferralQueryForm(ModelForm):

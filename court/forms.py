@@ -17,7 +17,7 @@ class CourtDateForm(ModelForm):
 
     class Meta:
         model = CourtDates
-        fields = ['court_date', 'client_ID', 'event',
+        fields = ['court_date', 'client', 'event',
                   'court_date_type', 'attendance']
 
         widgets = {'attendance': CheckboxInput}

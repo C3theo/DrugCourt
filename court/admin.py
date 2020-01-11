@@ -1,6 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import PhaseParms
+from .models import Phase
 
-admin.site.register(PhaseParms)
+admin.site.register(Phase)

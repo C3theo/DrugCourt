@@ -63,7 +63,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
     last_name = models.CharField(max_length=20,)
     ssn = models.CharField(max_length=20, null=True, blank=True)
     phase = models.ForeignKey(
-        'intake.Phase', on_delete=models.CASCADE, blank=True, null=True)
+        'court.Phase', on_delete=models.CASCADE, blank=True, null=True)
 
     def create_client_id(self):
         """
@@ -110,7 +110,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
         return f'{self.client_id}'
 
     class Meta:
-        managed = True
+        
         app_label = 'intake'
         verbose_name_plural = 'clients'
 
@@ -177,9 +177,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
             each.verdict = Decision.STATUS_CHOICES['Approved']
             each.save()
 
-    class Meta:
-        managed = True
-
+ 
 
     ### Transition Conditions ###
 
@@ -248,66 +246,5 @@ class Decision(models.Model):
         return f"{self.made_by} Decision for {self.referral.client}"
 
     class Meta:
-        managed = True
+        
         permissions = [('can_decide', 'Can Decide')]
-
-
-class Phase(models.Model):
-    """
-    """
-    CHOICES = Choices('Not in System', 'Phase One', 'Phase Two', 'Phase Three')
-
-    phase_id = models.CharField(
-        max_length=20, choices=CHOICES, null=True, blank=True)
-    screens_per_week = models.IntegerField(default=1)
-    meetings_per_week = models.IntegerField(default=1)
-    fees = models.CharField(max_length=4, null=True, blank=True)
-    notes = models.ForeignKey('intake.Note', null=True,
-                              blank=True, on_delete=models.CASCADE)
-    review_frequency = models.IntegerField(default=1)
-
-    def __str__(self):
-        return f'{self.phase_id}'
-
-
-class CriminalBackground(models.Model):
-    """
-        Client Arrest History
-    """
-    client = models.ForeignKey('intake.Client', on_delete=models.CASCADE)
-    arrests = models.IntegerField(db_column='Arrests', blank=True, null=True)
-    felonies = models.IntegerField(db_column='Felonies', blank=True, null=True)
-    misdemeanors = models.IntegerField(
-        db_column='Misdemeanors', blank=True, null=True)
-    firstarrestyear = models.IntegerField(
-        db_column='FirstArrestYear', blank=True, null=True)
-
-    def get_absolute_url(self):
-        return reverse('intake:criminal', kwargs={'pk': self.id})
-
-    def __str__(self):
-        return f'CriminalBackGround - Client: {self.client.client_id}'
-
-    class Meta:
-        managed = True
-
-# TODO: move to treatment app
-# class Provider(models.Model):
-
-#     CHOICES = (('Treatment 1', 'Treatment 1'),
-#                ('Treatment 2', 'Treatment 2'),
-#                )
-
-#     name = models.CharField(max_length=20,)
-#     provider_type = models.CharField(max_length=20, choices=CHOICES)
-#     # TODO: Change to actual types of treatment
-#     # clients = models.ManyToManyField('intake.Client', through='Referral')
-
-#     class Meta:
-#         managed = True
-#         app_label = 'intake'
-
-    # TODO: Add more provider fields
-    # location
-    # services (method??)
-    # other criterion for assessment

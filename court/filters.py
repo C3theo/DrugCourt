@@ -9,6 +9,6 @@ class CourtDateFilter(FilterSet):
     
     class Meta:
         model = CourtDates
-        fields = ['client_ID']
+        fields = ['client']
 
 
