@@ -17,14 +17,20 @@ class IntakeStatus:
 
     STATUS_PENDING = 'Pending'
     STATUS_SCREEN = 'Screening'
-    STATUS_ADMIT = 'In Program'
+    STATUS_ADMIT = 'Accepted'
 
     CHOICES = Choices(
         (STATUS_PENDING, STATUS_PENDING),
         (STATUS_SCREEN, STATUS_SCREEN),
         (STATUS_ADMIT, STATUS_ADMIT),
-        ('Declined', 'Declined'),
+        
+        )
+
+class ClientStatus:
+    
+    Choices = Choices(
         ('Active', 'Active'),
+        ('Declined', 'Declined'),
         ('In Custody', 'In Custody'),
         ('AWOL', 'AWOL'),
         ('Medical Leave', 'Medical Leave'),
@@ -33,7 +39,7 @@ class IntakeStatus:
         ('Terminated', 'Terminated'),
         ('Administrative Discharge', 'Administrative Discharge'),
         ('Deferred', 'Deferred')
-        )
+    )
 
 class GenderOption:
 

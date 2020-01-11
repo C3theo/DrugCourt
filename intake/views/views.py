@@ -7,7 +7,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django_tables2.views import SingleTableView
+from django_tables2.views import SingleTableView, MultiTableMixin
 
 from scribe.forms import NoteForm, NoteFormSet
 from scribe.models import Note
@@ -18,8 +18,17 @@ from ..forms import (ClientForm, ClientFormset, ClientReferralMultiForm,
                      CriminalBackgroundForm, DecisionForm,
                      ReferralDecisionMultiForm, ReferralForm, ReferralQueryForm)
 from ..models import Client, CriminalBackground, Decision, Referral
-from .tables import ClientTable
+from .tables import ClientTable, ClientCourtTable
 
+
+class ClientCourtDateView(LoginRequiredMixin, MultiTableMixin):
+    """
+        View to edit Client Court Dates
+    """
+
+    template_name = 'intake/court_date_table.html'
+    model = Client
+    # table_class = 
 
 
 class IntakeFilterView(LoginRequiredMixin, SingleTableView):
@@ -30,7 +39,6 @@ class IntakeFilterView(LoginRequiredMixin, SingleTableView):
     template_name = 'intake/0_client_referral_filter.html'
     model = Client
     table_class = ClientTable
-
 
 class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
     """

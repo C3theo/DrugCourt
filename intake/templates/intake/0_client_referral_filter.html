@@ -9,11 +9,14 @@
 {% block bread %}
 <li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
 {% endblock %}
-{% block card-title %}Clients{% endblock %}
+{% block card-title %}Referrals{% endblock %}
 
 
 {% block filter %}
+<p>
+    <a href="{% url 'intake:referral-add' %}" class='btn btn-primary' id='add-referral'>Add Referral</a>
+</p>
+
 {% render_table table %}
-<a href="{% url 'intake:referral-add' %}" class='btn btn-secondary' id='add-referral'>Add Referral</a>
 
 {% endblock filter %}

@@ -1,12 +1,10 @@
 {% extends "core/module_base.html" %}
 {% load crispy_forms_tags %}
 
-{% block form-header %}Court Module{% endblock %}
+{% block card-header %}Court Module{% endblock %}
 {% block bread %}<li class="breadcrumb-item"><a href="{% url 'intake:court' %}">Court</a></li>{% endblock %}
 {% block help-text %}Use the drop down to filter by Client.{% endblock %}
 {% block filter %}
-
-
 
 <form method="get" action="{% url 'intake:court-filter' %}">
     <div class="input-group mb-3">
@@ -30,7 +28,7 @@
     <tbody>
         {% for obj in filter.qs %}
         <tr>
-            <td>{{ obj.client.client_id }}</td>
+            <td>{{ obj.client.full_name}}</td>
             <td>{{ obj.court_date }}</td>
             <td>{{ obj.event }}</td>
             <td>{{ obj.court_date_type }}</td>
@@ -39,6 +37,5 @@
         {% endfor %}
     </tbody>
 </table>
-
 
 {% endblock %}

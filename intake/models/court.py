@@ -14,7 +14,7 @@ class CourtDate(models.Model):
 
     court_date_id = models.AutoField(db_column='CourtDateID', primary_key=True)
 
-    client = models.ForeignKey('intake.Client', on_delete=models.CASCADE)
+    client = models.OneToOneField('intake.Client', on_delete=models.CASCADE)
 
     court_date = models.DateField(db_column='CourtDate')
 
@@ -23,8 +23,8 @@ class CourtDate(models.Model):
     court_date_type = models.CharField(
         db_column='CourtDateType',choices=TYPE_CHOICES, max_length=10, blank=True, null=True)
 
-    phase = models.ForeignKey(
-        'intake.Phase', blank=True, null=True, on_delete=models.CASCADE)
+    # phase = models.ForeignKey(
+    #     'intake.Phase', blank=True, null=True, on_delete=models.CASCADE)
 
     attendance = models.BooleanField(
         db_column='Attendance', max_length=50, blank=True, null=True)
