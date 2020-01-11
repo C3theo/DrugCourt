@@ -1,61 +1,19 @@
 {% extends "core/module_base.html" %}
 {% load crispy_forms_tags %}
+{% load render_table from django_tables2 %}
 
 {% block search %}
-
-<form method="GET">
-    <!-- <div class="row justify-content-end">
-        <div class="col-4"> -->
-            <div class="input-group mb-3">
-                {{ filter.form.client }}
-                <div class="input-group-append">
-                    <input type="submit" class="btn btn-primary">
-                </div>
-                <a href="{% url 'intake:referral-add' %}" class='btn btn-secondary' id='add-referral'>Add Referral</a>
-            </div>
-        <!-- </div>
-    </div> -->
-</form>
 {% endblock search %}
 
 {% block card-header %}Intake Module{% endblock %}
 {% block bread %}
 <li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
 {% endblock %}
-{% block card-title %}Referral{% endblock %}
-{% block help-text %}Use the drop down to select a Client. Select Client button in table to update a Referral's
-Status.{% endblock %}
+{% block card-title %}Clients{% endblock %}
 
 
 {% block filter %}
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Client</th>
-            <th scope="col">Full Name</th>
-            <th scope="col">Referrer</th>
-            <th scope="col">Referral Status</th>
-            <th scope="col">Date Received</th>
-            <th scope="col">Date Completed</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Referral Filter -->
-        {% for object in filter.qs %}
-        <tr>
-            {% if object.id %}
-            <td><a href="{% url 'intake:referral-detail' object.id %}" class="btn btn-secondary">{{ object.client }}</a>
-            </td>
-            {% else %}
-            <td>{{ object.client }}</td>
-            {% endif %}
-            <td>{{ object.client.full_name }}</td>
-            <td>{{ object.referrer }}</td>
-            <td>{{ object.status }}</td>
-            <td>{{ object.date_received }}</td>
-            <td>{{ object.date_completed }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% render_table table %}
+<a href="{% url 'intake:referral-add' %}" class='btn btn-secondary' id='add-referral'>Add Referral</a>
+
 {% endblock filter %}

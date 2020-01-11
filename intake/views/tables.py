@@ -6,12 +6,17 @@ from intake.models import Client, CourtDate
 
 
 class ClientTable(tables.Table):
-    pk = tables.LinkColumn('intake:detail', args=[A('pk')])
-
+    # import pdb; pdb.set_trace()
+    
+    # pk = tables.LinkColumn('intake:referral-detail', args=[A('client.pk')])
+    referral = Column(linkify=True)
+    # referral = Column(linkify=("intake:referral-detail", (A("client.referral"), )))
+    
     class Meta:
         model = Client
         template_name = 'django_tables2/bootstrap4.html'
-        fields = ['pk', 'client_id', 'first_name', 'last_name']
+        fields = ('referral', 'first_name', 'last_name', 'status')
+
 
 class CourtDateTable(tables.Table):
     court_date = Column(linkify=True)

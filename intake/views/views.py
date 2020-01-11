@@ -22,19 +22,14 @@ from .tables import ClientTable
 
 
 
-class IntakeFilterView(LoginRequiredMixin, TemplateView):
+class IntakeFilterView(LoginRequiredMixin, SingleTableView):
     """
         Intake Start Page
     """
-    template_name = 'intake/0_client_referral_filter.html'
-    model = Referral
 
-    def get(self, request, *args, **kwargs):
-        # TODO: change queryset to those managed by user
-        # User.objects.filter(clients)
-        referral_filter = ReferralFilter(
-            request.GET)
-        return self.render_to_response({'filter': referral_filter})
+    template_name = 'intake/0_client_referral_filter.html'
+    model = Client
+    table_class = ClientTable
 
 
 class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
@@ -75,6 +70,7 @@ class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
 class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
     """
     """
+
     model = Referral
     form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'
@@ -83,7 +79,7 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
         """
             Initialize NoteForm with client and pass to context
         """
-
+        
         note_form = NoteForm(prefix='note')
         context = {'note_form': note_form}
         return super().get_context_data(**context)
@@ -94,7 +90,7 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
         """
 
         referral = self.get_object()
-        self.success_url = referral.get_absolute_url()
+        self.success_url = referral.get_absolute_url() #???
         note_form = _get_form_submit(
             request, NoteForm, prefix='note')
         if note_form.is_bound and note_form.is_valid():
@@ -118,6 +114,8 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
             'client': self.object.client,
             'referral': self.object
         })
+
+        # import pdb; pdb.set_trace()
 
         return kwargs
 

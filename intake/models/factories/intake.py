@@ -131,7 +131,7 @@ class ClientFactory(DjangoModelFactory):
     middle_initial = factory.Faker(
         'random_element', elements=list(string.ascii_uppercase))
     last_name = factory.Faker('last_name')
-    phase = factory.RelatedFactory('intake.models.factories.PhaseFactory')
+    # phase = factory.RelatedFactory('intake.models.factories.PhaseFactory')
 
     @classmethod
     def _setup_next_sequence(cls):

@@ -19,8 +19,21 @@ class IntakeStatus:
     STATUS_SCREEN = 'Screening'
     STATUS_ADMIT = 'In Program'
 
-    CHOICES = Choices(STATUS_PENDING, STATUS_SCREEN, STATUS_ADMIT)
-
+    CHOICES = Choices(
+        (STATUS_PENDING, STATUS_PENDING),
+        (STATUS_SCREEN, STATUS_SCREEN),
+        (STATUS_ADMIT, STATUS_ADMIT),
+        ('Declined', 'Declined'),
+        ('Active', 'Active'),
+        ('In Custody', 'In Custody'),
+        ('AWOL', 'AWOL'),
+        ('Medical Leave', 'Medical Leave'),
+        ('Pending Termination', 'Pending Termination'),
+        ('Graduated', 'Graduated'),
+        ('Terminated', 'Terminated'),
+        ('Administrative Discharge', 'Administrative Discharge'),
+        ('Deferred', 'Deferred')
+        )
 
 class GenderOption:
 
@@ -30,11 +43,10 @@ class GenderOption:
 
 class Client(ConcurrentTransitionMixin, models.Model):
     """
-        Model to represent inital eligibility
-        client information in a Drug Court Program.
+        Model to represent inital eligibility criterion
     """
 
-    client_id = models.CharField(max_length=20, unique=True, null=True)
+    client_id = models.CharField(max_length=100, unique=True, null=True)
     status = FSMField('Client Status', choices=IntakeStatus.CHOICES,
                       default=IntakeStatus.STATUS_PENDING, blank=True, null=True)
     created_date = models.DateTimeField(default=timezone.now)
@@ -58,7 +70,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
                 latest_id = int(client_id)
                 new_id = latest_id + 1
         except Client.DoesNotExist:
-            new_id = f'{pre_text}000{1}'
+            new_id = f'{pre_text}{1}'
 
         return new_id
 
@@ -99,7 +111,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
 
 class Referral(ConcurrentTransitionMixin, models.Model):
     """
-        Model to represent the state of a Drug Court's Client Referrral process.
+        Model to represent the state of a client during Referrral process.
     """
 
     STATUS_PENDING = 'Pending'
@@ -110,20 +122,11 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         ('Approved', 'Approved'),
         ('Pending', 'Pending'),
         ('Rejected', 'Rejected'),
-        ('Declined', 'Declined'),
-        ('Active', 'Active'),
-        ('In Custody', 'In Custody'),
-        ('AWOL', 'AWOL'),
-        ('Medical Leave', 'Medical Leave'),
-        ('Pending Termination', 'Pending Termination'),
-        ('Graduated', 'Graduated'),
-        ('Terminated', 'Terminated'),
-        ('Administrative Discharge', 'Administrative Discharge'),
-        ('Deferred', 'Deferred'))
+    )
 
     status = FSMField('Referral Status',
-                      max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
-    client = models.ForeignKey(
+                      max_length=40, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    client = models.OneToOneField(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     referrer = models.CharField(max_length=20, null=True, blank=True)
     provider = models.ForeignKey(
@@ -171,6 +174,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     class Meta:
         managed = True
 
+
     ### Transition Conditions ###
 
     def all_decisions_approved(self):
@@ -196,9 +200,10 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         """
             Add Client to Phase when Referral approved
         """
-        p = Phase(phase_id='Phase One')
-        p.save()
-        self.client.phase = p
+        # p = Phase(phase_id='Phase One')
+        # p.save()
+        # self.client.phase = p
+        self.client.status = IntakeStatus.STATUS_ADMIT
         self.client.save()
 
 
@@ -228,12 +233,13 @@ class Decision(models.Model):
 
     # Efficient way to look up foreign keys
     # Entry.objects.select_related('blog').get(id=5)
+    # This Returns objects not foreign key. Can you just pass referral?
 
     def get_absolute_url(self):
         return reverse('intake:referral-detail', kwargs={'pk': self.referral.id})
 
     def __str__(self):
-        return f"{self.made_by} Decision for Client{self.referral.client.client_id}"
+        return f"{self.made_by} Decision for {self.referral.client}"
 
     class Meta:
         managed = True
