@@ -24,16 +24,16 @@ def save_court_form(request, form, template_name):
     data = dict()
 
     if request.method == 'POST':
+
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
             court = CourtDates.objects.all()
-            data['html_book_list'] = render_to_string('court/includes/partial_court_list.html', {
+            data['html_court_list'] = render_to_string('court/includes/partial_court_list.html', {
                 'court': court
             })
         else:
             data['form_is_valid'] = False
-
 
     context = {'form': form}
     data['html_form'] = render_to_string(template_name,
@@ -51,10 +51,11 @@ def court_date_create(request):
 
 def court_date_update(request, pk):
     court = get_object_or_404(CourtDates, pk=pk)
+    
     if request.method == 'POST':
-        form = CourtDateForm(request.POST, instance = court)
+        form = CourtDateForm(request.POST, instance=court)
     else:
-        form = CourtDateForm()
+        form = CourtDateForm(instance=court)
     return save_court_form(request, form, 'court/includes/partial_court_update.html')
 
 

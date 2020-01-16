@@ -34,8 +34,8 @@ class CourtDates(TimeStampedModel):
 
     # date_created = models.DateTimeField(autoadd=blank=True, null=True)
     # created_by
-    def get_absolute_url(self):
-        return reverse('court:detail', kwargs={'pk': self.id})
+    # def get_absolute_url(self):
+    #     return reverse('court:detail', kwargs={'pk': self.id})
 
 
 class Phase(models.Model):
