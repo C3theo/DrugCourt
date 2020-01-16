@@ -28,10 +28,8 @@ def save_court_form(request, form, template_name):
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
-            court = CourtDates.objects.all()
-            data['html_court_list'] = render_to_string('court/includes/partial_court_list.html', {
-                'court': court
-            })
+            court_dates = CourtDates.objects.all()
+            data['html_court_list'] = render_to_string('court/includes/partial_court_list.html', {'court_dates': court_dates})
         else:
             data['form_is_valid'] = False
 
