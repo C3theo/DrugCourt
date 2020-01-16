@@ -21,14 +21,7 @@ from ..models import Client, CriminalBackground, Decision, Referral
 from .tables import ClientTable, ClientCourtTable
 
 
-class ClientCourtDateView(LoginRequiredMixin, MultiTableMixin):
-    """
-        View to edit Client Court Dates
-    """
 
-    template_name = 'intake/court_date_table.html'
-    model = Client
-    # table_class = 
 
 
 class IntakeFilterView(LoginRequiredMixin, SingleTableView):
@@ -123,8 +116,6 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
             'referral': self.object
         })
 
-        # import pdb; pdb.set_trace()
-
         return kwargs
 
 
@@ -132,6 +123,7 @@ class ClientReferralCreateView(LoginRequiredMixin, CreateView):
     """
         Intake Client/Referral CreationView
     """
+
     model = Referral
     form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'

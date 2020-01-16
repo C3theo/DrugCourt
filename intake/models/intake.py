@@ -107,7 +107,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
         return reverse('intake:client-detail', kwargs={'pk': self.id})
 
     def __str__(self):
-        return f'{self.client_id}'
+        return f'{self.full_name}'
 
     class Meta:
         

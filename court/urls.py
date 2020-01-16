@@ -9,8 +9,11 @@ app_name = 'court'
 
 urlpatterns = [
     path('', CourtDateView.as_view(), name='add'),
-    path('court/<int:pk>', CourtDateUpdateView.as_view(), name='detail'),
-    path('court/all', CourtDateListView.as_view(), name='dates'),
-    # path('court/filter', views.court_date_client_list, name='court-filter'),
+    path('dates/<int:pk>', CourtDateUpdateView.as_view(), name='detail'),
+    path('dates/', CourtDateListView.as_view(), name='dates'),
+    path('filter/', views.court_date_client_list, name='filter'),
+    path('dates/list', views.court_date_list, name='list'),
+    path('dates/create', views.court_date_create, name='create'),
+    path('dates/<int:pk>/update', views.court_date_update, name='update'),
 ]
 

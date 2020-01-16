@@ -12,7 +12,7 @@ class CourtDateTable(tables.Table):
     class Meta:
         model = CourtDates
         template_name = 'django_tables2/bootstrap4.html'
-        fields = ['client', 'court_date', 'event',
+        fields = ['client__full_name', 'court_date', 'event',
                   'court_date_type', 'attendance']
         attrs = {'th': {'class': 'table-light'},
                  'class': 'table table-striped table-light'

@@ -7,7 +7,7 @@ from intake.models import Client
 
 class ClientTable(tables.Table):
 
-    referral = Column(linkify=True)
+    referral = Column('C', linkify=True)
     
     class Meta:
         model = Client
