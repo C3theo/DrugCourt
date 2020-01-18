@@ -2,11 +2,13 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 from django_tables2.views import SingleTableView, MultiTableMixin
 
 from scribe.forms import NoteForm, NoteFormSet
@@ -21,7 +23,57 @@ from ..models import Client, CriminalBackground, Decision, Referral
 from .tables import ClientTable, ClientCourtTable
 
 
+def client_list(request):
+    clients = Client.objects.all()
+    return render(request, 'intake/client_list.html', {'clients': clients})
 
+
+def save_client_form(request, form, template_name):
+    data = dict()
+
+    if request.method == 'POST':
+
+        if form.is_valid():
+            form.save()
+            data['form_is_valid'] = True
+            clients = Client.objects.all()
+            # TODO
+            data['html_client_list'] = render_to_string(
+                'intake/includes/partial_client_list.html', {'clients': clients})
+        else:
+            data['form_is_valid'] = False
+
+    context = {'form': form}
+    data['html_form'] = render_to_string(template_name,
+                                         context,
+                                         request=request
+                                         )
+    return JsonResponse(data)
+
+
+def client_create(request):
+    if request.method == 'POST':
+        form = ClientReferralMultiForm(request.POST)
+    else:
+        form = ClientReferralMultiForm()
+    return save_client_form(request, form, 'intake/includes/partial_client_create.html')
+
+
+def client_update(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+    if request.method == 'POST':
+        form = ClientReferralMultiForm(request.POST, instance={
+            'client': client,
+            'referral': client.referral
+        })
+    else:
+        form = ClientReferralMultiForm(instance={
+            'client': client,
+            'referral': client.referral
+        })
+
+    # import pdb; pdb.set_trace()
+    return save_client_form(request, form, 'intake/includes/partial_client_update.html')
 
 
 class IntakeFilterView(LoginRequiredMixin, SingleTableView):
@@ -32,6 +84,7 @@ class IntakeFilterView(LoginRequiredMixin, SingleTableView):
     template_name = 'intake/0_client_referral_filter.html'
     model = Client
     table_class = ClientTable
+
 
 class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
     """
@@ -80,7 +133,7 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
         """
             Initialize NoteForm with client and pass to context
         """
-        
+
         note_form = NoteForm(prefix='note')
         context = {'note_form': note_form}
         return super().get_context_data(**context)
@@ -91,7 +144,7 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
         """
 
         referral = self.get_object()
-        self.success_url = referral.get_absolute_url() #???
+        self.success_url = referral.get_absolute_url()  # ???
         note_form = _get_form_submit(
             request, NoteForm, prefix='note')
         if note_form.is_bound and note_form.is_valid():
@@ -99,9 +152,8 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
             note_form.instance.client = referral.client
             instance = note_form.save()
             messages.success(
-                request, f'Note for {instance.client.first_name} {instance.client.last_name} ID: {instance.client.client_id}  saved successfully!')
+                request, f'Note for {instance.client.full_name} ID: {instance.client.client_id}  saved successfully!')
             return self.form_valid(note_form)
-
 
         return super().post(request, *args, **kwargs)
 
@@ -154,7 +206,8 @@ class ClientNoteCreateView(LoginRequiredMixin, CreateView):
         client_notes = context['client_notes']
         with transaction.atomic():
             form.instance.author = self.request.username
-            import pdb; pdb.set_trace()
+            import pdb
+            pdb.set_trace()
             self.object = form.save()
             if client_notes.is_valid():
                 client_notes.instance = self.object

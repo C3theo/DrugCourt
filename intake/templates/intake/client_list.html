@@ -1,24 +1,41 @@
+{% extends "core/module_base.html" %}
+{% load crispy_forms_tags django_tables2 %}
+{% load static %}
 
-
-{% block content %}
-  <h1 class="page-header">Books</h1>
-
-  <!-- BUTTON TO TRIGGER THE ACTION -->
-  <p>
-    <button type="button" class="btn btn-primary js-create-book">
-      <span class="glyphicon glyphicon-plus"></span>
-      New book
+{% block card-header %}Intake Module{% endblock card-header %}
+{% block bread %}<li class="breadcrumb-item"><a href="">Referral</a></li>{% endblock bread %}
+{% block help-text %}...{% endblock help-text %}
+{% block filter %}
+<p>
+    <button type="button" class="btn btn-primary js-create-client" data-url="{% url 'intake:create' %}">
+        <span class="fas fa-plus"></span>
+        Add Referral
     </button>
-  </p>
+</p>
 
-  <table class="table" id="book-table">
-    <!-- TABLE CONTENT SUPPRESSED FOR BREVITY'S SAKE -->
-  </table>
+<table class="table" id="client-table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% include 'intake/includes/partial_client_list.html' %}
+     
+    </tbody>
+</table>
 
-  <!-- THE MODAL WE WILL BE USING -->
-  <div class="modal fade" id="modal-book">
+<div class="modal fade" id="modal-client">
     <div class="modal-dialog">
-      <div class="modal-content">
-      </div>
+        <div class="modal-content">
+        </div>
     </div>
-{% endblock %}
+    {% endblock filter %}
+
+{% block javascript %}
+<!-- TODO -->
+<script src="{% static 'core/client.js' %}"></script>
+{% endblock javascript %}
