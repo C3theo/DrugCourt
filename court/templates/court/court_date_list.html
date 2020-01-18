@@ -1,0 +1,40 @@
+{% extends "core/module_base.html" %}
+{% load crispy_forms_tags django_tables2 %}
+{% load static %}
+
+{% block card-header %}Court Module{% endblock card-header %}
+{% block bread %}<li class="breadcrumb-item"><a href="">Court</a></li>{% endblock bread %}
+{% block help-text %}...{% endblock help-text %}
+{% block filter %}
+<p>
+    <button type="button" class="btn btn-primary js-create-court" data-url="{% url 'court:create' %}">
+        <span class="fas fa-plus"></span>
+        Add Court Date
+    </button>
+</p>
+
+<table class="table" id="court-table">
+    <thead>
+        <tr>
+            <th>Client</th>
+            <th>Court Date</th>
+            <th>Event Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% include 'court/includes/partial_court_list.html' %}
+     
+    </tbody>
+</table>
+
+<div class="modal fade" id="modal-court">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+    {% endblock filter %}
+
+{% block javascript %}
+<script src="{% static 'core/court_dates.js' %}"></script>
+{% endblock javascript %}

@@ -1,0 +1,17 @@
+{% for client in clients %}
+<tr>
+    <td>{{ client.first_name }}</td>
+    <td>{{ client.last_name }}</td>
+    <td>{{ client.status }}</td>
+    <td>
+        <button type="button"
+                class="btn btn-warning btn-sm js-update-client"
+                data-url="{% url 'intake:update' client.id %}">
+          <span class="fas fa-edit"></span> Edit
+        </button>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="7" class="text-center bg-warning">No court_date</td>
+</tr>
+{% endfor %}
