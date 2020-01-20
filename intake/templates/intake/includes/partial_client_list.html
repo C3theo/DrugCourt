@@ -1,6 +1,7 @@
 {% for client in clients %}
 <tr>
     <td>{{ client.first_name }}</td>
+    <td>{{ client.middle_name }}</td>
     <td>{{ client.last_name }}</td>
     <td>{{ client.status }}</td>
     <td>
@@ -8,7 +9,13 @@
                 class="btn btn-warning btn-sm js-update-client"
                 data-url="{% url 'intake:update' client.id %}">
           <span class="fas fa-edit"></span> Edit
-        </button>
+        </button></td>
+    <td>
+        <button type="button"
+                class="btn btn-warning btn-sm js-update-client"
+                data-url="{% url 'intake:decision' client.id %}">
+            <span class="fas fa-edit"></span> Evaluate
+        </button></td>
 </tr>
 {% empty %}
 <tr>
