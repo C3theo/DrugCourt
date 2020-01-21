@@ -11,6 +11,7 @@
         <span class="fas fa-plus"></span>
         Add Referral
     </button>
+
 </p>
 
 <table class="table" id="client-table">
@@ -19,12 +20,13 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        
+
         {% include 'intake/includes/partial_client_list.html' %}
-     
+
     </tbody>
 </table>
 
@@ -35,7 +37,7 @@
     </div>
     {% endblock filter %}
 
-{% block javascript %}
-<!-- TODO -->
-<script src="{% static 'core/client.js' %}"></script>
-{% endblock javascript %}
+    {% block javascript %}
+    <!-- TODO -->
+    <script src="{% static 'core/client.js' %}"></script>
+    {% endblock javascript %}

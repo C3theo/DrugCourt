@@ -28,10 +28,14 @@ def client_list(request):
     return render(request, 'intake/client_list.html', {'clients': clients})
 
 
+# def save_decision_form(request, form)
+
+
 def save_client_form(request, form, template_name):
     data = dict()
 
     if request.method == 'POST':
+        # import pdb; pdb.set_trace()
 
         if form.is_valid():
             form.save()
@@ -72,8 +76,29 @@ def client_update(request, pk):
             'referral': client.referral
         })
 
-    # import pdb; pdb.set_trace()
     return save_client_form(request, form, 'intake/includes/partial_client_update.html')
+
+
+def client_evaluate(request, pk):
+
+    referral = get_object_or_404(Referral, pk=pk)
+    decisions = referral.decisions
+    if request.method == 'POST':
+        form = ReferralDecisionMultiForm(request.POST, instance={
+            'referral': referral,
+            'pre_decision': decisions[0],
+            'da_decision': decisions[1],
+            'dc_decision': decisions[2],
+        })
+    else:
+        form = ReferralDecisionMultiForm(instance={
+            'referral': referral,
+            'pre_decision': decisions[0],
+            'da_decision': decisions[1],
+            'dc_decision': decisions[2],
+        })
+
+    return save_client_form(request, form, 'intake/includes/partial_client_evaluate.html')
 
 
 class IntakeFilterView(LoginRequiredMixin, SingleTableView):

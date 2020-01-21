@@ -4,11 +4,18 @@
     <td>{{ client.last_name }}</td>
     <td>{{ client.status }}</td>
     <td>
-        <button type="button"
-                class="btn btn-warning btn-sm js-update-client"
-                data-url="{% url 'intake:update' client.id %}">
-          <span class="fas fa-edit"></span> Edit
+        <button type="button" class="btn btn-warning btn-sm js-update-client"
+            data-url="{% url 'intake:update' client.id %}">
+            <span class="fas fa-edit"></span> Edit
         </button>
+        {% if client.status == 'Accepted' %}
+        {% else %}
+            <button type="button" class="btn btn-warning btn-sm js-eval-client" data-url="{% url 'intake:eval' client.referral.id %}">
+                <span class="fas fa-user-check"></span>
+                Evaluate
+            </button>
+        {% endif %}
+    </td>
 </tr>
 {% empty %}
 <tr>
