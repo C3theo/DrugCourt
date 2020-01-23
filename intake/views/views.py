@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
@@ -24,23 +25,41 @@ from .tables import ClientTable, ClientCourtTable
 
 
 def client_list(request):
-    clients = Client.objects.all()
+
+    client_list = Client.objects.all()
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(client_list, 3)
+    try:
+        clients = paginator.page(page)
+    except PageNotAnInteger:
+        clients = paginator.page(1)
+    except EmptyPage:
+        clients = paginator.page(paginator.num_pages)
+
     return render(request, 'intake/client_list.html', {'clients': clients})
 
-
-# def save_decision_form(request, form)
 
 
 def save_client_form(request, form, template_name):
     data = dict()
 
     if request.method == 'POST':
-        # import pdb; pdb.set_trace()
 
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
-            clients = Client.objects.all()
+            client_list = Client.objects.all()
+            page = request.GET.get('page', 1)
+
+            paginator = Paginator(client_list, 10)
+            try:
+                clients = paginator.page(page)
+            except PageNotAnInteger:
+                clients = paginator.page(1)
+            except EmptyPage:
+                clients = paginator.page(paginator.num_pages)
+
             # TODO
             data['html_client_list'] = render_to_string(
                 'intake/includes/partial_client_list.html', {'clients': clients})
