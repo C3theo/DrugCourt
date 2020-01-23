@@ -10,7 +10,8 @@ import factory
 from factory import DjangoModelFactory
 
 from ..intake import GenderOption
-from intake.models import Phase, Client, Referral
+from intake.models import Client, Referral
+from court.models import Phase
 from intake.models.intake import IntakeStatus
 # from profiles.models import Profile
 from scribe.models import Note
