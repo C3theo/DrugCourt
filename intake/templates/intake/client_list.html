@@ -31,26 +31,31 @@
     </tbody>
 </table>
 
+
 {% if clients.has_other_pages %}
 
 <nav>
-<ul class="pagination">
+<ul class="pagination justify-content-center">
         {% if clients.has_previous %}
-        <li class="page-item"><a href="?page={{ clients.previous_page_number }}">&laquo;</a></li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ clients.previous_page_number }}">&laquo;</a>
+        </li>
         {% else %}
-        <li class="page-item disabled"><span>&laquo;</span></li>
+        <li class="page-item disabled">
+            <span class="page-link" >&laquo;</span></li>
         {% endif %}
+
         {% for i in clients.paginator.page_range %}
         {% if clients.number == i %}
-        <li class="page-item active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        <li class="page-item active"><span class="page-link" >{{ i }} <span class="sr-only">(current)</span></span></li>
         {% else %}
-        <li class="page-item"><a href="?page={{ i }}">{{ i }}</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
         {% endif %}
         {% endfor %}
         {% if clients.has_next %}
-        <li class="page-item"><a href="?page={{ clients.next_page_number }}">&raquo;</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ clients.next_page_number }}">&raquo;</a></li>
         {% else %}
-      <li class="page-item disabled"><span>&raquo;</span></li>
+      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
       {% endif %}
     </ul>
 </nav>
