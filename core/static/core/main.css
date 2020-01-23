@@ -9649,10 +9649,6 @@ h3 {
     border-color: #dee2e6;
   }
 }
-#staticNav {
-  background-color: #026670;
-}
-
 body {
   min-height: 75rem;
   padding-top: 4.5rem;
@@ -9671,25 +9667,6 @@ body {
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
   }
-}
-.list-group-item:link {
-  color: #FCE181;
-}
-.list-group-item:visited {
-  color: #FCE181;
-}
-.list-group-item:hover {
-  background-color: #026670;
-}
-.list-group-item:active {
-  color: #9FEDD7;
-}
-
-.jumbotron {
-  background-color: #9FEDD7;
-}
-.jumbotron .card-body {
-  background-color: #FCE181;
 }
 
 /*# sourceMappingURL=main.css.map */
