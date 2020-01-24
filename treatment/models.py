@@ -68,7 +68,7 @@ class ProbGoals(TimeStampedModel):
     prob_goal_status = models.CharField(max_length=25, choices=ProbGoalStatusOptions.CHOICES)
     status_date = models.DateField()
 
-class TxAttendance(TimeStampedModel):
+class TxSession(TimeStampedModel):
     client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
     session_date = models.DateField()
