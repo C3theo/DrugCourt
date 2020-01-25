@@ -12,10 +12,11 @@ $(function () {
       },
       success: function (data) {
         $("#modal-client .modal-content").html(data.html_form);
+        console.log('test');
       }
     });
   };
-
+  
   var saveForm = function () {
     var form = $(this);
     $.ajax({
@@ -25,6 +26,7 @@ $(function () {
       dataType: 'json',
       success: function (data) {
         if (data.form_is_valid) {
+          console.log('test');
           $("#client-table tbody").html(data.html_client_list);
           $("#modal-client").modal("hide");
         }
@@ -47,6 +49,10 @@ $(function () {
   // Delete client
   $("#client-table").on("click", ".js-delete-client", loadForm);
   $("#modal-client").on("submit", ".js-client-delete-form", saveForm);
+
+  //Eval client
+  $("#client-table").on("click", ".js-eval-client", loadForm);
+  $("#modal-client").on("submit", ".js-client-eval-form", saveForm);
 
   // This is working
   // $(".js-create-court").click(function () {

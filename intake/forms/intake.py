@@ -139,7 +139,7 @@ class DecisionForm(ModelForm):
         }
 
         labels = {
-            'verdict': 'Approved',
+            'verdict': 'Decision',
             'made_by': 'Deciding Party'}
 
 
@@ -155,7 +155,8 @@ class ReferralDecisionMultiForm(MultiModelForm):
         """
             Save decisions before Referral
         """
-
+        # import pdb; pdb.set_trace()
+    
         objects = super(ReferralDecisionMultiForm, self).save(commit=True)
         if commit:
             referral = objects['referral']

@@ -2,10 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block card-header %}Intake Module{% endblock %}
-{% block bread %}
-<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
-<li class="breadcrumb-item"><a href="{% url 'intake:crimes' %}">Criminal Background</a></li>
-{% endblock %}
+
 {% block card-title %}Criminal Background{% endblock %}
 {% block help-text %}Add Criminal Background to Client Record{% endblock %}
 {% block card-body %}

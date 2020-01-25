@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block card-header %}Intake Module{% endblock card-header %}
-{% block bread %}<li class="breadcrumb-item"><a href="">Referral</a></li>{% endblock bread %}
+
 {% block help-text %}...{% endblock help-text %}
 {% block filter %}
 <p>
@@ -11,23 +11,55 @@
         <span class="fas fa-plus"></span>
         Add Referral
     </button>
+
 </p>
 
-<table class="table" id="client-table">
+<table class="table table-striped table-bordered table-hover" id="client-table">
     <thead>
         <tr>
             <th>First Name</th>
             <th>MI</th>
             <th>Last Name</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        
+
         {% include 'intake/includes/partial_client_list.html' %}
-     
+
     </tbody>
 </table>
+
+
+{% if clients.has_other_pages %}
+
+<nav>
+<ul class="pagination justify-content-center">
+        {% if clients.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ clients.previous_page_number }}">&laquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link" >&laquo;</span></li>
+        {% endif %}
+
+        {% for i in clients.paginator.page_range %}
+        {% if clients.number == i %}
+        <li class="page-item active"><span class="page-link" >{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if clients.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ clients.next_page_number }}">&raquo;</a></li>
+        {% else %}
+      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+      {% endif %}
+    </ul>
+</nav>
+{% endif %}
 
 <div class="modal fade" id="modal-client">
     <div class="modal-dialog">
@@ -36,7 +68,7 @@
     </div>
     {% endblock filter %}
 
-{% block javascript %}
-<!-- TODO -->
-<script src="{% static 'core/client.js' %}"></script>
-{% endblock javascript %}
+    {% block javascript %}
+    <!-- TODO -->
+    <script src="{% static 'core/client.js' %}"></script>
+    {% endblock javascript %}

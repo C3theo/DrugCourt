@@ -2,13 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block card-header %}Intake Module{% endblock card-header %}
-{% block bread %}
-<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>
-{% if object.id %}
-<li class="breadcrumb-item"><a href="{% url 'intake:referral-detail' object.id %}">Referral</a></li>
-{% else %}
-<li class="breadcrumb-item"><a href="{% url 'intake:referral-add' %}">Referral</a></li>
-{% endif %}
+
 {% endblock bread %}
 {% block card-title %}Referral{% endblock card-title %}
 
