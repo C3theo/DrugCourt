@@ -59,7 +59,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
     birth_date = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GenderOption.CHOICES)
     first_name = models.CharField(max_length=20,)
-    middle_initial = models.CharField(max_length=1, blank=True)
+    middle_initial = models.CharField(max_length=1)
     last_name = models.CharField(max_length=20,)
     ssn = models.CharField(max_length=20, null=True, blank=True)
     phase = models.ForeignKey(
@@ -100,7 +100,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
 
     @property
     def full_name(self):
-        return f'{self.first_name} {self.middle_initial}. {self.last_name}'
+        return f'{self.first_name} {self.middle_initial} {self.last_name}'
 
     def get_absolute_url(self):
 

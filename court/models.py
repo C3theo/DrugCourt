@@ -10,7 +10,7 @@ from django_fsm import (ConcurrentTransitionMixin, FSMField,
                         TransitionNotAllowed, transition)
 
 
-class CourtDates(TimeStampedModel):
+class CourtDate(TimeStampedModel):
     EVENT_CHOICES = Choices('Entry', 'Phase Appearance',
                             'Graduation', 'Termination', 'Special')
     TYPE_CHOICES = Choices('New', 'Review', 'Final')
@@ -90,7 +90,7 @@ class PhaseHistory(TimeStampedModel):
     total_days = models.IntegerField()
 
 
-class Screens(TimeStampedModel):
+class Screen(TimeStampedModel):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     collect_date = models.DateField
@@ -100,7 +100,7 @@ class Screens(TimeStampedModel):
     positive_approved = models.BooleanField
 
 
-class Sanctions(TimeStampedModel):
+class Sanction(TimeStampedModel):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     sanc_date = models.DateField

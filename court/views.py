@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
-from court.models import CourtDates
+from court.models import CourtDate
 from court.forms import CourtDateForm
 from court.tables import CourtDateTable
 from court.filters import CourtDateFilter
@@ -16,7 +16,7 @@ from scribe.forms import NoteForm
 
 
 def court_date_list(request):
-    court_dates = CourtDates.objects.all()
+    court_dates = CourtDate.objects.all()
     return render(request, 'court/court_date_list.html', {'court_dates': court_dates})
 
 
@@ -28,7 +28,7 @@ def save_court_form(request, form, template_name):
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
-            court_dates = CourtDates.objects.all()
+            court_dates = CourtDate.objects.all()
             data['html_court_list'] = render_to_string('court/includes/partial_court_list.html', {'court_dates': court_dates})
         else:
             data['form_is_valid'] = False
@@ -48,7 +48,7 @@ def court_date_create(request):
     return save_court_form(request, form, 'court/includes/partial_court_create.html')
 
 def court_date_update(request, pk):
-    court = get_object_or_404(CourtDates, pk=pk)
+    court = get_object_or_404(CourtDate, pk=pk)
     
     if request.method == 'POST':
         form = CourtDateForm(request.POST, instance=court)
@@ -70,7 +70,7 @@ class ClientCourtDateView(LoginRequiredMixin, SingleTableView):
 
 def court_date_client_list(request):
 
-    qs = CourtDates.objects.filter(
+    qs = CourtDate.objects.filter(
         client__status__contains=IntakeStatus.STATUS_ACCEPTED)
     table = CourtDateTable(qs)
     f = CourtDateFilter(request.GET, queryset=qs)
@@ -79,7 +79,7 @@ def court_date_client_list(request):
 
 
 class CourtDateView(CreateView):
-    model = CourtDates
+    model = CourtDate
     form_class = CourtDateForm
     template_name = 'court/court_date_form.html'
 
@@ -87,7 +87,7 @@ class CourtDateView(CreateView):
 
 
 class CourtDateUpdateView(UpdateView):
-    model = CourtDates
+    model = CourtDate
     form_class = CourtDateForm
     template_name = 'court/court_date_form.html'
 
@@ -103,7 +103,7 @@ class CourtDateUpdateView(UpdateView):
 
 
 class CourtDateListView(LoginRequiredMixin, SingleTableView):
-    model = CourtDates
+    model = CourtDate
     table_class = CourtDateTable
     template_name = 'court/court_date_table.html'
     context_object_name = 'court_date'
