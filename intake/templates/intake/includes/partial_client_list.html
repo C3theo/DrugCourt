@@ -1,7 +1,7 @@
 {% for client in clients %}
 <tr>
     <td>{{ client.first_name }}</td>
-    <td>{{ client.middle_name }}</td>
+    <td>{{ client.middle_initial }}</td>
     <td>{{ client.last_name }}</td>
     <td>{{ client.status }}</td>
     <td>
@@ -9,17 +9,16 @@
             data-url="{% url 'intake:update' client.id %}">
             <span class="fas fa-edit"></span> Edit
         </button>
-        {% if client.status == 'Accepted' %}
-        {% else %}
+        
             <button type="button" class="btn btn-warning btn-sm js-eval-client" data-url="{% url 'intake:eval' client.referral.id %}">
                 <span class="fas fa-user-check"></span>
                 Evaluate
             </button>
-        {% endif %}
+    
     </td>
 </tr>
 {% empty %}
 <tr>
-    <td colspan="7" class="text-center bg-warning">No court_date</td>
+    <td colspan="7" class="text-center bg-warning">No Referrals</td>
 </tr>
 {% endfor %}

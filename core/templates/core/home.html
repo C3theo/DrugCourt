@@ -24,6 +24,7 @@
                 <a href="#" class="list-group-item list-group-item-action">Objectives</a>
                 <a href="#" class="list-group-item list-group-item-action">Goals</a>
                 <a href="#" class="list-group-item list-group-item-action">Sessions</a>
+                <a href="{% url 'scribe:all' %}" class="list-group-item list-group-item-action">Notes</a>
             </ul>
         </div>
     </div>
@@ -35,12 +36,10 @@
                 <a href="{% url 'scribe:all' %}" class="list-group-item list-group-item-action">Goals</a>
                 <a href="#" class="list-group-item list-group-item-action">Sessions</a>
                 <a href="#" class="list-group-item list-group-item-action">Community Service</a>
-                <a href="{% url 'scribe:all' %}" class="list-group-item list-group-item-action">Notes</a>
+               
             </ul>
         </div>
     </div>
-</div>
-<div class="card-deck">
     <div class="card text-center">
         <h5 class="card-header "><i class="fas fa-address-card"></i> Intake</h5>
         <div class="card-body ">
@@ -52,13 +51,15 @@
             </ul>
         </div>
     </div>
+</div>
+
+<div class="card-deck">    
     <div class="card text-center">
         <h5 class="card-header "><i class="fas fa-business-time"></i> Reporting</h5>
         <div class="card-body ">
             <ul class="list-group list-group-flush pb-3">
                 <li class="list-group-item">Court Schedule</li>
                 <li class="list-group-item">Court Schedule</li>
-
             </ul>
         </div>
     </div>
@@ -71,19 +72,23 @@
             </ul>
         </div>
     </div>
-</div>
-
-<div class="card-deck">
     <div class="card text-center">
         <h5 class="card-header "><i class="fas fa-user"></i> Client</h5>
         <div class="card-body">
-            <p class="card-title lead"></p>
-            <ul class="list-group list-group-flush pb-3">
-                
+            <ul class="list-group list-group-flush pb-3">              
                 <a href="#" class="list-group-item list-group-item-action">Education</a>
                 <a href="#" class="list-group-item list-group-item-action">Contacts</a>
-                <a href="#" class="list-group-item list-group-item-action">Community Service</a>
-                <a href="#" class="list-group-item list-group-item-action">Releases</a>
+                <a href="#" class="list-group-item list-group-item-action">Housing</a>
+            </ul>
+        </div>
+    </div>
+    <div class="card text-center">
+        <h5 class="card-header "><i class="fas fa-user"></i> Stats</h5>
+        <div class="card-body">
+            <ul class="list-group list-group-flush pb-3">              
+                <a href="#" class="list-group-item list-group-item-action">Demographics</a>
+                <a href="#" class="list-group-item list-group-item-action">Phase Data</a>
+                <a href="#" class="list-group-item list-group-item-action">Other Stuff</a>           
             </ul>
         </div>
     </div>

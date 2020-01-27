@@ -12,6 +12,7 @@ $(function () {
       },
       success: function (data) {
         $("#modal-court .modal-content").html(data.html_form);
+        console.log('test');
       }
     });
   };
@@ -25,7 +26,8 @@ $(function () {
       dataType: 'json',
       success: function (data) {
         if (data.form_is_valid) {
-          $("#court-table tbody").html(data.html_court_list);~
+          console.log('test');
+          $("#court-table tbody").html(data.html_court_date_list);
           $("#modal-court").modal("hide");
         }
         else {
