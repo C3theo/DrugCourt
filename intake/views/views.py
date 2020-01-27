@@ -29,7 +29,7 @@ def client_list(request):
     client_list = Client.objects.all()
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(client_list, 3)
+    paginator = Paginator(client_list, 25)
     try:
         clients = paginator.page(page)
     except PageNotAnInteger:
@@ -52,7 +52,7 @@ def save_client_form(request, form, template_name):
             client_list = Client.objects.all()
             page = request.GET.get('page', 1)
 
-            paginator = Paginator(client_list, 10)
+            paginator = Paginator(client_list, 25)
             try:
                 clients = paginator.page(page)
             except PageNotAnInteger:

@@ -7,7 +7,7 @@ from crispy_forms.layout import (HTML, TEMPLATE_PACK, Button, ButtonHolder,
                                  Row, Submit)
 from django.forms import ModelChoiceField, ModelForm, ModelMultipleChoiceField
 from django.forms.models import inlineformset_factory
-from django.forms.widgets import TextInput
+from django.forms.widgets import TextInput, DateInput
 from django.template.loader import render_to_string
 from django_fsm import TransitionNotAllowed
 
@@ -70,6 +70,7 @@ class ClientForm(ModelForm):
 
 
 class ReferralForm(ModelForm):
+    date_received = DateInput(attrs={'type': 'date'})
 
     def __init__(self, *args, **kwargs):
         super(ReferralForm, self).__init__(*args, **kwargs)
@@ -79,8 +80,10 @@ class ReferralForm(ModelForm):
 
     class Meta:
         model = Referral
-        fields = ['client', 'referrer', 'provider',
-                  'date_received', 'date_completed']
+        fields = ('client', 'referrer', 'provider', 'date_received')
+        widgets = {'date_received': DateInput(attrs={
+                'type': 'date'
+            })}
 
 
 class ReferralEvalForm(ModelForm):
@@ -119,6 +122,8 @@ class ClientReferralMultiForm(MultiModelForm):
 
 class DecisionForm(ModelForm):
 
+    date_received = DateInput(attrs={'type': 'date'})
+
     def __init__(self, *args, **kwargs):
         """
             Change made_by field to readonly
@@ -132,10 +137,12 @@ class DecisionForm(ModelForm):
 
     class Meta:
         model = Decision
-        fields = ['made_by', 'date_received',
-                  'date_completed', 'verdict']
+        fields = ['made_by', 'date_received', 'verdict']
         widgets = {
             'made_by': TextInput(),
+            'date_received': DateInput(attrs={
+                'type': 'date'
+            })
         }
 
         labels = {
@@ -155,7 +162,7 @@ class ReferralDecisionMultiForm(MultiModelForm):
         """
             Save decisions before Referral
         """
-        # import pdb; pdb.set_trace()
+        
     
         objects = super(ReferralDecisionMultiForm, self).save(commit=True)
         if commit:
