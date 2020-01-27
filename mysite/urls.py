@@ -34,6 +34,7 @@ urlpatterns = [
     path('intake/', include('intake.urls', namespace='intake')),
     path('notes/', include('scribe.urls', namespace='scribe')),
     path('court/', include('court.urls', namespace='court')),
+    path('treatment/', include('treatment.urls', namespace='treatment')),
 ]
 
 if settings.DEBUG:

@@ -26,7 +26,6 @@ $(function () {
       dataType: 'json',
       success: function (data) {
         if (data.form_is_valid) {
-          console.log('test');
           $("#client-table tbody").html(data.html_client_list);
           $("#modal-client").modal("hide");
         }

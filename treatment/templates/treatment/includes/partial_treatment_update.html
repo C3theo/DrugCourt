@@ -1,16 +1,16 @@
-<form method="post" action="{% url 'court:update' form.instance.pk %}" class="js-court-update-form">
+<form method="post" action="{% url 'treatment:update' form.instance.pk %}" class="js-treatment-update-form">
     {% csrf_token %}
     <div class="modal-header">
-      <h4 class="modal-title">Update Court Date</h4>
+      <h4 class="modal-title">Update Treatment Session</h4>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
-      {% include 'court/includes/partial_court_form.html' %}
+      {% include 'treatment/includes/partial_treatment_form.html' %}
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      <button type="submit" class="btn btn-primary">Update Court</button>
+      <button type="submit" class="btn btn-primary">Update</button>
     </div>
   </form>

@@ -1,19 +1,17 @@
 {% extends "core/module_base.html" %}
 {% load crispy_forms_tags django_tables2 %}
 {% load static %}
-
-{% block card-header %}Treatment Module{% endblock card-header %}
-{% block bread %}<li class="breadcrumb-item"><a href="">Treatment</a></li>{% endblock bread %}
-{% block help-text %}...{% endblock help-text %}
+{% block card-header %}Treatment{% endblock card-header %}
+{% block help-text %}{% endblock help-text %}
 {% block filter %}
 <p>
-    <button type="button" class="btn btn-primary js-create-tx_session" data-url="{% url 'treatment:create' %}">
+    <button type="button" class="btn btn-primary js-create-treatment" data-url="{% url 'treatment:create' %}">
         <span class="fas fa-plus"></span>
         Add Treatment Session
     </button>
 </p>
 
-<table class="table" id="TxSession-table">
+<table class="table" id="treatment-table">
     <thead>
         <tr>
             <th>Client</th>
@@ -22,16 +20,17 @@
             <th>Absence Reason</th>
             <th>Time In</th>
             <th>Time Out</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         
-        {% include 'treatment/includes/partial_tx_session_list.html' %}
+        {% include 'treatment/includes/partial_treatment_list.html' %}
      
     </tbody>
 </table>
 
-<div class="modal fade" id="modal-tx_sessions">
+<div class="modal fade" id="modal-treatment">
     <div class="modal-dialog">
         <div class="modal-content">
         </div>
@@ -39,5 +38,5 @@
     {% endblock filter %}
 
 {% block javascript %}
-<script src="{% static 'core/tx_sessions.js' %}"></script>
+<script src="{% static 'core/treatment.js' %}"></script>
 {% endblock javascript %}

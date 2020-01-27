@@ -1,4 +1,4 @@
-{% for tx_session in tx_session %}
+{% for tx_session in treatment %}
 <tr>
     <td>{{ tx_session.client }}</td>
     <td>{{ tx_session.session_date }}</td>
@@ -8,7 +8,7 @@
     <td>{{ tx_session.time_out }}</td>
     <td>
         <button type="button"
-                class="btn btn-warning btn-sm js-update-tx_session"
+                class="btn btn-warning btn-sm js-update-treatment"
                 data-url="{% url 'treatment:update' tx_session.id %}">
           <span class="fas fa-edit"></span> Edit
         </button>
