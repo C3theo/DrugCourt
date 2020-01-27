@@ -16,4 +16,4 @@ class CriminalBackground(models.Model):
         return reverse('intake:criminal', kwargs={'pk': self.id})
 
     def __str__(self):
-        return f'CriminalBackGround - Client: {self.client.client_id}'
+        return f'CriminalBackGround - Client: {self.client.id}'

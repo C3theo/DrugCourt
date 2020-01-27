@@ -13,5 +13,5 @@ class ReferralFilter(FilterSet):
 class ClientFilter(FilterSet):
     class Meta:
         model = Client
-        fields = ['client_id']
+        fields = ['client_num']
 

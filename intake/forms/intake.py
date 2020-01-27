@@ -79,8 +79,7 @@ class ReferralForm(ModelForm):
 
     class Meta:
         model = Referral
-        fields = ['client', 'referrer', 'provider',
-                  'date_received', 'date_completed']
+        fields = ['client', 'referrer', 'date_received', 'date_completed']
 
 
 class ReferralEvalForm(ModelForm):
@@ -93,8 +92,7 @@ class ReferralEvalForm(ModelForm):
 
     class Meta:
         model = Referral
-        fields = ['provider',
-                  'date_received', 'date_completed']
+        fields = ['date_received', 'date_completed']
 
 
 class ClientReferralMultiForm(MultiModelForm):

@@ -27,9 +27,9 @@ Start Referral Process for Client
         <div class="form-group col-3">
             <label for="client-id">ClientID</label>
             {% if object.client %}
-            <input id="client-id" class="form-control" type="text" placeholder="{{ object.client.client_id }}" readonly>
+            <input id="client-num" class="form-control" type="text" placeholder="{{ object.client.client_num }}" readonly>
             {% else %}
-            <input id="client-id" class="form-control" type="text" placeholder="" readonly>
+            <input id="client-num" class="form-control" type="text" placeholder="" readonly>
             {% endif %}
 
         </div>

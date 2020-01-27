@@ -23,12 +23,12 @@ class CourtDate(TimeStampedModel):
         max_length=50, choices=EVENT_CHOICES, blank=True, null=True)
 
     court_date_type = models.CharField(
-        db_column='CourtDateType', choices=TYPE_CHOICES, max_length=10, blank=True, null=True)
+        choices=TYPE_CHOICES, max_length=10, blank=True, null=True)
 
     phase = models.TextField(max_length=1)
 
     attendance = models.CharField(
-        db_column='Attendance', max_length=50, blank=True, null=True)
+        max_length=50, blank=True, null=True)
 
     notes = models.TextField(max_length=15)
 

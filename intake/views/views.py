@@ -196,7 +196,7 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
             note_form.instance.client = referral.client
             instance = note_form.save()
             messages.success(
-                request, f'Note for {instance.client.full_name} ID: {instance.client.client_id}  saved successfully!')
+                request, f'Note for {instance.client.full_name} ID: {instance.client.id}  saved successfully!')
             return self.form_valid(note_form)
 
         return super().post(request, *args, **kwargs)

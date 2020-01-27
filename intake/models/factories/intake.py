@@ -122,7 +122,7 @@ class ClientFactory(DjangoModelFactory):
         #                         'created_date', 'gender', 'first_name', 'middle_initial', 'last_name', 'phase'
         #                         )
 
-    client_id = factory.Sequence(lambda n: f'{int(2019000) + n}')
+    client_num = factory.Sequence(lambda n: f'{int(2019000) + n}')
     status = IntakeStatus.STATUS_PENDING
     birth_date = factory.Faker('date_of_birth')
     created_date = timezone.now()

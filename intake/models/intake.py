@@ -52,7 +52,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
         Model to represent inital eligibility criterion
     """
 
-    client_id = models.CharField(max_length=100, unique=True, null=True)
+    client_num = models.CharField(max_length=100, unique=True, null=True)
     status = FSMField('Client Status', choices=IntakeStatus.CHOICES,
                       default=IntakeStatus.STATUS_PENDING, blank=True, null=True)
     created_date = models.DateTimeField(default=timezone.now)
@@ -65,28 +65,28 @@ class Client(ConcurrentTransitionMixin, models.Model):
     phase = models.ForeignKey(
         'court.Phase', on_delete=models.CASCADE, blank=True, null=True)
 
-    def create_client_id(self):
+    def create_client_num(self):
         """
             Return unique id for client consisting of gender, birth date, SSN, and last name.
         """
         pre_text = date.today().year
         try:
-            client_id = Client.objects.latest('client_id').client_id
-            if client_id != '':
-                latest_id = int(client_id)
-                new_id = latest_id + 1
+            client_num = Client.objects.latest('client_num').client_num
+            if client_num != '':
+                latest_num = int(client_num)
+                new_num = latest_num + 1
         except Client.DoesNotExist:
-            new_id = f'{pre_text}{1}'
+            new_num = f'{pre_text}{1}'
 
-        return new_id
+        return new_num
 
     def save(self, *args, **kwargs):
         """
-            Create ClientID when Client model first created.
+            Create Client Number when Client model first created. (should model change to record? TF)
         """
 
-        if not self.client_id:
-            self.client_id = self.create_client_id()
+        if not self.client_num:
+            self.client_num = self.create_client_num()
 
         super().save(*args, **kwargs)
 
@@ -135,8 +135,6 @@ class Referral(ConcurrentTransitionMixin, models.Model):
     client = models.OneToOneField(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     referrer = models.CharField(max_length=20, null=True, blank=True)
-    provider = models.ForeignKey(
-        'intake.Provider', on_delete=models.CASCADE, null=True, blank=True)
     date_received = models.DateField(null=True, blank=True)
     date_completed = models.DateField(null=True, blank=True)
 

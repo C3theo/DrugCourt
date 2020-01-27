@@ -2,13 +2,13 @@
 
 {% block card-header %}Intake Module{% endblock card-header %}
 
-{% block help-text %}Search ClientID to start Client Intake Process{% endblock %}
+{% block help-text %}Search ClientNum to start Client Intake Process{% endblock %}
 
 {% block filter %}
 
 <form method="get">
     <div class="input-group mb-3">
-        {{ filter.form.client_id }}
+        {{ filter.form.client_num }}
         <div class="input-group-append">
             <input type="submit" name="filter" class="btn btn-primary">``
         </div>
@@ -17,7 +17,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">ClientID</th>
+            <th scope="col">ClientNum</th>
             <th scope="col">First Name </th>
             <th scope="col">MI</th>
             <th scope="col">Last Name</th>
@@ -28,7 +28,7 @@
     <tbody>
         {% for obj in filter.qs %}
         <tr>
-            <td><a id='client-id' href="{% url 'intake:client-detail' obj.pk %}">{{ obj.client_id }}</a></td>
+            <td><a id='client-id' href="{% url 'intake:client-detail' obj.pk %}">{{ obj.client_num }}</a></td>
             <td>{{ obj.first_name }}</td>
             <td>{{ obj.last_name }}</td>
             <td>{{ obj.status }}</td>

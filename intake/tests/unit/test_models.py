@@ -33,9 +33,9 @@ class ClientModelTest(TestCase):
 
         client.save()
 
-        self.assertIsNotNone(client.client_id)
-        self.assertIsNot(client.client_id, '')
-        self.assertEqual(client.client_id, '20190001')
+        self.assertIsNotNone(client.client_num)
+        self.assertIsNot(client.client_num, '')
+        self.assertEqual(client.client_num, '20190001')
 
     def test_client_id_unique(self):
 
@@ -54,7 +54,7 @@ class ClientModelTest(TestCase):
         client_1.save()
         client_2.save()
 
-        self.assertNotEqual(client_1.client_id, client_2.client_id)
+        self.assertNotEqual(client_1.client_num, client_2.client_num)
 
 
 @pytest.mark.skip()
@@ -71,7 +71,7 @@ class NoteModelTest(TestCase):
 
     def test_note_linked_to_client(self):
 
-        self.assertEqual(self.note.client.client_id, self.client.client_id)
+        self.assertEqual(self.note.client.client_num, self.client.client_num)
 
     def test_note_time_stamped(self):
 
