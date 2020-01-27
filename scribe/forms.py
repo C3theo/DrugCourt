@@ -19,16 +19,17 @@ class NoteForm(ModelForm):
         """
 
         super(NoteForm, self).__init__(*args, **kwargs)
-        # instance = getattr(self, 'instance', None)
-        # if instance:
-        #     self.fields['client'].widget.attrs['readonly'] = True
-        # self.helper = FormHelper(self)
-        # self.helper.form_tag = False
+        instance = getattr(self, 'instance', None)
+        if instance:
+            self.fields['note_type'].widget.attrs['readonly'] = True
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
 
     class Meta:
         model = Note
         fields = ['text', 'note_type']
-
+        widgets = {
+            'note_type': TextInput(),}
         labels = {
             'text': 'Client Notes', }
         

@@ -41,13 +41,21 @@ def client_list(request):
 
 
 
-def save_client_form(request, form, template_name):
+def save_client_form(request, form, template_name, context=None):
     data = dict()
 
     if request.method == 'POST':
-
         if form.is_valid():
-            form.save()
+
+            try:
+                note = form.save(commit=False)
+                note.client = context['client']
+                note.author = request.user
+                note.save()
+                
+            except KeyError:
+                form.save()
+
             data['form_is_valid'] = True
             client_list = Client.objects.all()
             page = request.GET.get('page', 1)
@@ -60,13 +68,17 @@ def save_client_form(request, form, template_name):
             except EmptyPage:
                 clients = paginator.page(paginator.num_pages)
 
-            # TODO
             data['html_client_list'] = render_to_string(
                 'intake/includes/partial_client_list.html', {'clients': clients})
         else:
             data['form_is_valid'] = False
+    
+    if context:
+        context['form'] = form
+    else:
+        context = {"form": form}
 
-    context = {'form': form}
+
     data['html_form'] = render_to_string(template_name,
                                          context,
                                          request=request
@@ -119,6 +131,16 @@ def client_evaluate(request, pk):
 
     return save_client_form(request, form, 'intake/includes/partial_client_evaluate.html')
 
+def client_note(request, pk):
+
+    client = get_object_or_404(Client, pk=pk)
+    context = {'client': client, 'note_type': 'General'}
+    if request.method == 'POST':
+        form = NoteForm(request.POST, initial=context)
+    else:
+        form = NoteForm(initial=context)
+
+    return save_client_form(request, form, 'intake/includes/partial_client_note.html', context=context)
 
 class IntakeFilterView(LoginRequiredMixin, SingleTableView):
     """

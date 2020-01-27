@@ -53,19 +53,8 @@ $(function () {
   $("#client-table").on("click", ".js-eval-client", loadForm);
   $("#modal-client").on("submit", ".js-client-eval-form", saveForm);
 
-  // This is working
-  // $(".js-create-court").click(function () {
-  //   $.ajax({
-  //     url: 'create',
-  //     type: 'get',
-  //     dataType: 'json',
-  //     beforeSend: function () {
-  //       $("#modal-court").modal("show");
-  //     },
-  //     success: function (data) {
-  //       $("#modal-court .modal-content").html(data.html_form);
-  //     }
-  //   });
-  // });
+  // Client Notes
+  $("#client-table").on("click", ".js-create-client-note", loadForm);
+  $("#modal-client").on("submit", ".js-client-note-form", saveForm);
 
 });

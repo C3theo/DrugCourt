@@ -12,9 +12,10 @@
                 data-url="{% url 'treatment:update' tx_session.id %}">
           <span class="fas fa-edit"></span> Edit
         </button>
+        <button type="button" class="btn btn-warning btn-sm js-treatment-note" data-url="{% url 'treatment:note' tx_session.client.id %}"><span class="far fa-sticky-note"></span> Note</button>
 </tr>
 {% empty %}
 <tr>
-    <td colspan="7" class="text-center bg-warning">No treatment_sessions</td>
+    <td colspan="7" class="text-center bg-warning">No Treatment Sessions</td>
 </tr>
 {% endfor %}

@@ -9,4 +9,5 @@ urlpatterns = [
 path('list/', views.treatment_list, name='list'),
 path('create/', views.treatment_create, name='create'),
 path('<int:pk>/update', views.treatment_update, name='update'),
+path('<int:pk>/note', views.treatment_note, name='note'),
 ]

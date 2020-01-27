@@ -9,6 +9,7 @@
                 data-url="{% url 'court:update' court_date.id %}">
           <span class="fas fa-edit"></span> Edit
         </button>
+        <button type="button" class="btn btn-warning btn-sm js-create-court-note" data-url="{% url 'court:note' court_date.client.id %}"><span class="far fa-sticky-note"></span> Note</button>
 </tr>
 {% empty %}
 <tr>

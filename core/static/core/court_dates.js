@@ -25,8 +25,8 @@ $(function () {
       dataType: 'json',
       success: function (data) {
         if (data.form_is_valid) {
-          $("#court-table tbody").html(data.html_court_list);~
-          $("#modal-court").modal("hide");
+          $("#court-table tbody").html(data.html_court_list); ~
+            $("#modal-court").modal("hide");
         }
         else {
           $("#modal-court .modal-court").html(data.html_form);
@@ -48,19 +48,8 @@ $(function () {
   $("#court-table").on("click", ".js-delete-court", loadForm);
   $("#modal-court").on("submit", ".js-court-delete-form", saveForm);
 
-  // This is working
-  // $(".js-create-court").click(function () {
-  //   $.ajax({
-  //     url: 'create',
-  //     type: 'get',
-  //     dataType: 'json',
-  //     beforeSend: function () {
-  //       $("#modal-court").modal("show");
-  //     },
-  //     success: function (data) {
-  //       $("#modal-court .modal-content").html(data.html_form);
-  //     }
-  //   });
-  // });
+  // Client Notes
+  $("#court-table").on("click", ".js-create-court-note", loadForm);
+  $("#modal-court").on("submit", ".js-court-note-form", saveForm);
 
 });

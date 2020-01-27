@@ -49,5 +49,10 @@ $(function () {
   $("#treatment-table").on("click", ".js-delete-treatment", loadForm);
   $("#modal-treatment").on("submit", ".js-treatment-delete-form", saveForm);
 
+  // Treatment Note
+  $("#treatment-table").on("click", ".js-treatment-note", loadForm);
+  $("#modal-treatment").on("submit", ".js-treatment-note-form", saveForm);
+
+
 
 });
