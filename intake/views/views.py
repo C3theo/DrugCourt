@@ -53,7 +53,7 @@ def save_client_form(request, form, template_name, context=None):
                 note.author = request.user
                 note.save()
                 
-            except KeyError:
+            except (KeyError, TypeError):
                 form.save()
 
             data['form_is_valid'] = True
