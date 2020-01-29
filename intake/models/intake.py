@@ -17,10 +17,29 @@ class IntakeStatus:
 
     STATUS_PENDING = 'Pending'
     STATUS_SCREEN = 'Screening'
-    STATUS_ADMIT = 'In Program'
+    STATUS_ACCEPTED = 'Accepted'
 
-    CHOICES = Choices(STATUS_PENDING, STATUS_SCREEN, STATUS_ADMIT)
+    CHOICES = Choices(
+        (STATUS_PENDING, STATUS_PENDING),
+        (STATUS_SCREEN, STATUS_SCREEN),
+        (STATUS_ACCEPTED, STATUS_ACCEPTED),
+        
+        )
 
+class ClientStatus:
+    
+    Choices = Choices(
+        ('Active', 'Active'),
+        ('Declined', 'Declined'),
+        ('In Custody', 'In Custody'),
+        ('AWOL', 'AWOL'),
+        ('Medical Leave', 'Medical Leave'),
+        ('Pending Termination', 'Pending Termination'),
+        ('Graduated', 'Graduated'),
+        ('Terminated', 'Terminated'),
+        ('Administrative Discharge', 'Administrative Discharge'),
+        ('Deferred', 'Deferred')
+    )
 
 class GenderOption:
 
@@ -30,22 +49,21 @@ class GenderOption:
 
 class Client(ConcurrentTransitionMixin, models.Model):
     """
-        Model to represent inital eligibility
-        client information in a Drug Court Program.
+        Model to represent inital eligibility criterion
     """
 
-    client_id = models.CharField(max_length=20, unique=True, null=True)
+    client_id = models.CharField(max_length=100, unique=True, null=True)
     status = FSMField('Client Status', choices=IntakeStatus.CHOICES,
                       default=IntakeStatus.STATUS_PENDING, blank=True, null=True)
     created_date = models.DateTimeField(default=timezone.now)
     birth_date = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GenderOption.CHOICES)
     first_name = models.CharField(max_length=20,)
-    middle_initial = models.CharField(max_length=1, null=True, blank=True)
+    middle_initial = models.CharField(max_length=1, blank=True)
     last_name = models.CharField(max_length=20,)
     ssn = models.CharField(max_length=20, null=True, blank=True)
     phase = models.ForeignKey(
-        'intake.Phase', on_delete=models.CASCADE, blank=True, null=True)
+        'court.Phase', on_delete=models.CASCADE, blank=True, null=True)
 
     def create_client_id(self):
         """
@@ -58,7 +76,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
                 latest_id = int(client_id)
                 new_id = latest_id + 1
         except Client.DoesNotExist:
-            new_id = f'{pre_text}000{1}'
+            new_id = f'{pre_text}{1}'
 
         return new_id
 
@@ -89,17 +107,17 @@ class Client(ConcurrentTransitionMixin, models.Model):
         return reverse('intake:client-detail', kwargs={'pk': self.id})
 
     def __str__(self):
-        return f'{self.client_id}'
+        return f'{self.full_name}'
 
     class Meta:
-        managed = True
+        
         app_label = 'intake'
         verbose_name_plural = 'clients'
 
 
 class Referral(ConcurrentTransitionMixin, models.Model):
     """
-        Model to represent the state of a Drug Court's Client Referrral process.
+        Model to represent the state of a client during Referrral process.
     """
 
     STATUS_PENDING = 'Pending'
@@ -110,20 +128,11 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         ('Approved', 'Approved'),
         ('Pending', 'Pending'),
         ('Rejected', 'Rejected'),
-        ('Declined', 'Declined'),
-        ('Active', 'Active'),
-        ('In Custody', 'In Custody'),
-        ('AWOL', 'AWOL'),
-        ('Medical Leave', 'Medical Leave'),
-        ('Pending Termination', 'Pending Termination'),
-        ('Graduated', 'Graduated'),
-        ('Terminated', 'Terminated'),
-        ('Administrative Discharge', 'Administrative Discharge'),
-        ('Deferred', 'Deferred'))
+    )
 
     status = FSMField('Referral Status',
-                      max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
-    client = models.ForeignKey(
+                      max_length=40, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    client = models.OneToOneField(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     referrer = models.CharField(max_length=20, null=True, blank=True)
     provider = models.ForeignKey(
@@ -168,8 +177,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
             each.verdict = Decision.STATUS_CHOICES['Approved']
             each.save()
 
-    class Meta:
-        managed = True
+ 
 
     ### Transition Conditions ###
 
@@ -196,9 +204,10 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         """
             Add Client to Phase when Referral approved
         """
-        p = Phase(phase_id='Phase One')
-        p.save()
-        self.client.phase = p
+        # p = Phase(phase_id='Phase One')
+        # p.save()
+        # self.client.phase = p
+        self.client.status = IntakeStatus.STATUS_ACCEPTED
         self.client.save()
 
 
@@ -228,74 +237,14 @@ class Decision(models.Model):
 
     # Efficient way to look up foreign keys
     # Entry.objects.select_related('blog').get(id=5)
+    # This Returns objects not foreign key. Can you just pass referral?
 
     def get_absolute_url(self):
         return reverse('intake:referral-detail', kwargs={'pk': self.referral.id})
 
     def __str__(self):
-        return f"{self.made_by} Decision for Client{self.referral.client.client_id}"
+        return f"{self.made_by} Decision for {self.referral.client}"
 
     class Meta:
-        managed = True
+        
         permissions = [('can_decide', 'Can Decide')]
-
-
-class Phase(models.Model):
-    """
-    """
-    CHOICES = Choices('Not in System', 'Phase One', 'Phase Two', 'Phase Three')
-
-    phase_id = models.CharField(
-        max_length=20, choices=CHOICES, null=True, blank=True)
-    screens_per_week = models.IntegerField(default=1)
-    meetings_per_week = models.IntegerField(default=1)
-    fees = models.CharField(max_length=4, null=True, blank=True)
-    notes = models.ForeignKey('intake.Note', null=True,
-                              blank=True, on_delete=models.CASCADE)
-    review_frequency = models.IntegerField(default=1)
-
-    def __str__(self):
-        return f'{self.phase_id}'
-
-
-class CriminalBackground(models.Model):
-    """
-        Client Arrest History
-    """
-    client = models.ForeignKey('intake.Client', on_delete=models.CASCADE)
-    arrests = models.IntegerField(db_column='Arrests', blank=True, null=True)
-    felonies = models.IntegerField(db_column='Felonies', blank=True, null=True)
-    misdemeanors = models.IntegerField(
-        db_column='Misdemeanors', blank=True, null=True)
-    firstarrestyear = models.IntegerField(
-        db_column='FirstArrestYear', blank=True, null=True)
-
-    def get_absolute_url(self):
-        return reverse('intake:criminal', kwargs={'pk': self.id})
-
-    def __str__(self):
-        return f'CriminalBackGround - Client: {self.client.client_id}'
-
-    class Meta:
-        managed = True
-
-# TODO: move to treatment app
-# class Provider(models.Model):
-
-#     CHOICES = (('Treatment 1', 'Treatment 1'),
-#                ('Treatment 2', 'Treatment 2'),
-#                )
-
-#     name = models.CharField(max_length=20,)
-#     provider_type = models.CharField(max_length=20, choices=CHOICES)
-#     # TODO: Change to actual types of treatment
-#     # clients = models.ManyToManyField('intake.Client', through='Referral')
-
-#     class Meta:
-#         managed = True
-#         app_label = 'intake'
-
-    # TODO: Add more provider fields
-    # location
-    # services (method??)
-    # other criterion for assessment

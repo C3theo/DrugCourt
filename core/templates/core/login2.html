@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+{% block title %} Log In {% endblock %}
+{% block main %}
+{% load crispy_forms_tags %}
+    <div class="logincontent">
+        <div class="loginheading"> login
+        </div> 
+        <label for="txtUserName" >
+            Username:</label>
+        <input type="text" id="txtUserName" name="txtUserName" />
+        <label for="txtPassword">
+            Password:</label>
+        <input type="password" id="txtPassword" name="txtPassword" />
+        <div class="loginremember">
+            <input type="checkbox" id="chbRemember" name="chbRemember" />
+            <label class="check"
+                for="chbRemember">Remember me next time</label>
+            <input type="submit" class="loginbtn" value="Login" id="login" />
+            <!--<input type="submit" class="loginbtn" value="Login" id="btnSubmit" /> -->
+            <button type="submit" class="btn btn-primary" id='login'>Login</button>
+        </div>
+    </div>
+{% endblock %}

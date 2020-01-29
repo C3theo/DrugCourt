@@ -1,13 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import transaction
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django_tables2.views import SingleTableView
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django_tables2.views import SingleTableView, MultiTableMixin
 
 from scribe.forms import NoteForm, NoteFormSet
 from scribe.models import Note
@@ -18,23 +21,135 @@ from ..forms import (ClientForm, ClientFormset, ClientReferralMultiForm,
                      CriminalBackgroundForm, DecisionForm,
                      ReferralDecisionMultiForm, ReferralForm, ReferralQueryForm)
 from ..models import Client, CriminalBackground, Decision, Referral
-from .tables import ClientTable
+from .tables import ClientTable, ClientCourtTable
+
+
+def client_list(request):
+
+    client_list = Client.objects.all()
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(client_list, 25)
+    try:
+        clients = paginator.page(page)
+    except PageNotAnInteger:
+        clients = paginator.page(1)
+    except EmptyPage:
+        clients = paginator.page(paginator.num_pages)
+
+    return render(request, 'intake/client_list.html', {'clients': clients})
 
 
 
-class IntakeFilterView(LoginRequiredMixin, TemplateView):
+def save_client_form(request, form, template_name, context=None):
+    data = dict()
+
+    if request.method == 'POST':
+        if form.is_valid():
+
+            try:
+                note = form.save(commit=False)
+                note.client = context['client']
+                note.author = request.user
+                note.save()
+                
+            except (KeyError, TypeError):
+                form.save()
+
+            data['form_is_valid'] = True
+            client_list = Client.objects.all()
+            page = request.GET.get('page', 1)
+
+            paginator = Paginator(client_list, 25)
+            try:
+                clients = paginator.page(page)
+            except PageNotAnInteger:
+                clients = paginator.page(1)
+            except EmptyPage:
+                clients = paginator.page(paginator.num_pages)
+
+            data['html_client_list'] = render_to_string(
+                'intake/includes/partial_client_list.html', {'clients': clients})
+        else:
+            data['form_is_valid'] = False
+    
+    if context:
+        context['form'] = form
+    else:
+        context = {"form": form}
+
+
+    data['html_form'] = render_to_string(template_name,
+                                         context,
+                                         request=request
+                                         )
+    return JsonResponse(data)
+
+
+def client_create(request):
+    if request.method == 'POST':
+        form = ClientReferralMultiForm(request.POST)
+    else:
+        form = ClientReferralMultiForm()
+    return save_client_form(request, form, 'intake/includes/partial_client_create.html')
+
+
+def client_update(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+    if request.method == 'POST':
+        form = ClientReferralMultiForm(request.POST, instance={
+            'client': client,
+            'referral': client.referral
+        })
+    else:
+        form = ClientReferralMultiForm(instance={
+            'client': client,
+            'referral': client.referral
+        })
+
+    return save_client_form(request, form, 'intake/includes/partial_client_update.html')
+
+
+def client_evaluate(request, pk):
+
+    referral = get_object_or_404(Referral, pk=pk)
+    decisions = referral.decisions
+    if request.method == 'POST':
+        form = ReferralDecisionMultiForm(request.POST, instance={
+            'referral': referral,
+            'pre_decision': decisions[0],
+            'da_decision': decisions[1],
+            'dc_decision': decisions[2],
+        })
+    else:
+        form = ReferralDecisionMultiForm(instance={
+            'referral': referral,
+            'pre_decision': decisions[0],
+            'da_decision': decisions[1],
+            'dc_decision': decisions[2],
+        })
+
+    return save_client_form(request, form, 'intake/includes/partial_client_evaluate.html')
+
+def client_note(request, pk):
+
+    client = get_object_or_404(Client, pk=pk)
+    context = {'client': client, 'note_type': 'General'}
+    if request.method == 'POST':
+        form = NoteForm(request.POST, initial=context)
+    else:
+        form = NoteForm(initial=context)
+
+    return save_client_form(request, form, 'intake/includes/partial_client_note.html', context=context)
+
+class IntakeFilterView(LoginRequiredMixin, SingleTableView):
     """
         Intake Start Page
     """
-    template_name = 'intake/0_client_referral_filter.html'
-    model = Referral
 
-    def get(self, request, *args, **kwargs):
-        # TODO: change queryset to those managed by user
-        # User.objects.filter(clients)
-        referral_filter = ReferralFilter(
-            request.GET)
-        return self.render_to_response({'filter': referral_filter})
+    template_name = 'intake/0_client_referral_filter.html'
+    model = Client
+    table_class = ClientTable
 
 
 class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
@@ -75,6 +190,7 @@ class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
 class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
     """
     """
+
     model = Referral
     form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'
@@ -94,7 +210,7 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
         """
 
         referral = self.get_object()
-        self.success_url = referral.get_absolute_url()
+        self.success_url = referral.get_absolute_url()  # ???
         note_form = _get_form_submit(
             request, NoteForm, prefix='note')
         if note_form.is_bound and note_form.is_valid():
@@ -102,9 +218,8 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
             note_form.instance.client = referral.client
             instance = note_form.save()
             messages.success(
-                request, f'Note for {instance.client.first_name} {instance.client.last_name} ID: {instance.client.client_id}  saved successfully!')
+                request, f'Note for {instance.client.full_name} ID: {instance.client.client_id}  saved successfully!')
             return self.form_valid(note_form)
-
 
         return super().post(request, *args, **kwargs)
 
@@ -126,6 +241,7 @@ class ClientReferralCreateView(LoginRequiredMixin, CreateView):
     """
         Intake Client/Referral CreationView
     """
+
     model = Referral
     form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'
@@ -156,7 +272,8 @@ class ClientNoteCreateView(LoginRequiredMixin, CreateView):
         client_notes = context['client_notes']
         with transaction.atomic():
             form.instance.author = self.request.username
-            import pdb; pdb.set_trace()
+            import pdb
+            pdb.set_trace()
             self.object = form.save()
             if client_notes.is_valid():
                 client_notes.instance = self.object

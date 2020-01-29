@@ -18,7 +18,6 @@ load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# print(f'BASE_DIR={BASE_DIR}')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -47,8 +46,8 @@ INSTALLED_APPS = [
     'intake.apps.IntakeConfig',
     'core.apps.CoreConfig',
     'scribe.apps.ScribeConfig',
-    # treatment
-    # court
+    'treatment.apps.TreatmentConfig',
+    'court.apps.CourtConfig',
     # 'profiles.apps.ProfileConfig'
 
     # third-party apps
@@ -57,13 +56,15 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_fsm',
     'django_extensions',
-    'betterforms',
+    # 'betterforms',
     # 'guardian',
     'behave_django',
     # 'material',
     # 'material.frontend',
     # 'viewflow',
     # 'viewflow.frontend',
+    'widget_tweaks',
+    'django_pdb',
 
 ]
 
@@ -77,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_pdb.middleware.PdbMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -104,15 +106,6 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'ATOMIC_REQUEST': True,
-    }
-}
-
-
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # default
     'guardian.backends.ObjectPermissionBackend',
@@ -136,7 +129,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -149,7 +141,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
@@ -214,7 +205,6 @@ LOGGING = {
         # },
     }
 }
-
 
 
 # LOGLEVEL = os.environ.get('LOGLEVEL', 'debug').upper()

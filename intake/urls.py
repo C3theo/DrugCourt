@@ -4,7 +4,6 @@ from django.views import generic
 
 from . import views
 from .views import (ClientUpdateView, ClientListView, ClientNoteCreateView,
-                    CourtDateUpdateView, CourtDateListView, CourtDateView,
                     CriminalBackgroundCreateView, ReferralDecisionUpdateView,
                     ClientReferralCreateView, ClientReferralUpdateView, IntakeFilterView)
 
@@ -18,14 +17,13 @@ urlpatterns = [
     path('referral/decision/<int:pk>',
          ReferralDecisionUpdateView.as_view(), name='decision'),
     path('criminalhistory/', CriminalBackgroundCreateView.as_view(), name='crimes'),
-     
-     
+    path('notes/', ClientNoteCreateView.as_view(), name='note-add'),
     path('clients/', ClientListView.as_view(), name='clients'),
     path('client/<int:pk>', ClientUpdateView.as_view(), name='client-detail'),
-    path('notes/', ClientNoteCreateView.as_view(), name='note-add'),
-    path('court/', CourtDateView.as_view(), name='court'),
-    path('court/<int:pk>', CourtDateUpdateView.as_view(), name='court-detail'),
-    path('court/all', CourtDateListView.as_view(), name='dates'),
-    path('court/filter', views.court_date_client_list, name='court-filter'),
-]
 
+    path('client/list', views.client_list, name='list'),
+    path('client/create', views.client_create, name='create'),
+    path('client/<int:pk>/update', views.client_update, name='update'),
+    path('client/<int:pk>/evaluate', views.client_evaluate, name='eval'),
+    path('client/<int:pk>/note', views.client_note, name='note'),
+]

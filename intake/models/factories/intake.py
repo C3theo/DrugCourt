@@ -10,7 +10,8 @@ import factory
 from factory import DjangoModelFactory
 
 from ..intake import GenderOption
-from intake.models import Phase, Client, Referral
+from intake.models import Client, Referral
+from court.models import Phase
 from intake.models.intake import IntakeStatus
 # from profiles.models import Profile
 from scribe.models import Note
@@ -131,7 +132,7 @@ class ClientFactory(DjangoModelFactory):
     middle_initial = factory.Faker(
         'random_element', elements=list(string.ascii_uppercase))
     last_name = factory.Faker('last_name')
-    phase = factory.RelatedFactory('intake.models.factories.PhaseFactory')
+    # phase = factory.RelatedFactory('intake.models.factories.PhaseFactory')
 
     @classmethod
     def _setup_next_sequence(cls):

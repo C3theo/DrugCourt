@@ -1,0 +1,21 @@
+{% for tx_session in treatment %}
+<tr>
+    <td>{{ tx_session.client }}</td>
+    <td>{{ tx_session.session_date }}</td>
+    <td>{{ tx_session.attended }}</td>
+    <td>{{ tx_session.absence_reason }}</td>
+    <td>{{ tx_session.time_in }}</td>
+    <td>{{ tx_session.time_out }}</td>
+    <td>
+        <button type="button"
+                class="btn btn-warning btn-sm js-update-treatment"
+                data-url="{% url 'treatment:update' tx_session.id %}">
+          <span class="fas fa-edit"></span> Edit
+        </button>
+        <button type="button" class="btn btn-warning btn-sm js-treatment-note" data-url="{% url 'treatment:note' tx_session.client.id %}"><span class="far fa-sticky-note"></span> Note</button>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="7" class="text-center bg-warning">No Treatment Sessions</td>
+</tr>
+{% endfor %}

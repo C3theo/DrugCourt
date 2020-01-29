@@ -1,0 +1,43 @@
+{% extends "core/module_base.html" %}
+{% load crispy_forms_tags django_tables2 %}
+
+{% block card-header %}Court Module{% endblock %}
+
+{% block help-text %}Use the drop down to filter by Client.{% endblock %}
+{% block filter %}
+
+
+<!-- pick a client and view court dates or add court dates. -->
+
+<form method="GET">
+  {{ filter.form.as_p }}
+  <button type="submit">
+    <i class="fas fa-search"></i>
+    Search
+  </button>
+</form>
+
+<table class="table table-bordered table-light table-striped">
+  <thead>
+    <tr>
+      <th>Client</th>
+      <th>Court Date</th>
+      <th>Event</th>
+      <th>Type</th>
+      <th> Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for court_date in filter.qs %}
+    <tr>
+      <!-- TODO: Check how many times this hits database -->
+      <td>{{ court_date.client.full_name }}</td>
+      <td>{{ court_date.court_date }}</td>
+      <td>{{ court_date.event }}</td>
+      <td>{{ court_date.court_date_type }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

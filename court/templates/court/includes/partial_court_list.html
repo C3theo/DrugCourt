@@ -1,0 +1,18 @@
+{% for court_date in court_dates %}
+<tr>
+    <td>{{ court_date.client}}</td>
+    <td>{{ court_date.court_date }}</td>
+    <td>{{ court_date.event }}</td>
+    <td>
+        <button type="button"
+                class="btn btn-warning btn-sm js-update-court"
+                data-url="{% url 'court:update' court_date.id %}">
+          <span class="fas fa-edit"></span> Edit
+        </button>
+        <button type="button" class="btn btn-warning btn-sm js-create-court-note" data-url="{% url 'court:note' court_date.client.id %}"><span class="far fa-sticky-note"></span> Note</button>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="7" class="text-center bg-warning">No court_date</td>
+</tr>
+{% endfor %}

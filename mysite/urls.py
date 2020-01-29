@@ -19,9 +19,11 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 from django.conf import settings
 
+#from court import urls as app_name_urls
+
 from material.frontend import urls as frontend_urls
 
-admin.site.site_header = "Court Case Management Admin"
+admin.site.site_header = "Accountibiity Court Admin"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +33,8 @@ urlpatterns = [
     path('home/', include('core.urls', namespace='core')),
     path('intake/', include('intake.urls', namespace='intake')),
     path('notes/', include('scribe.urls', namespace='scribe')),
+    path('court/', include('court.urls', namespace='court')),
+    path('treatment/', include('treatment.urls', namespace='treatment')),
 ]
 
 if settings.DEBUG:

@@ -17,13 +17,13 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql', 
-#         'HOST': 'localhost',      
-#         'NAME': 'acc_court',
-#         'USER': os.getenv('POSTGRES_USERNAME'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql', 
+        'HOST': 'localhost',      
+        'NAME': 'acm',
+        'USER': os.getenv('POSTGRES_USERNAME'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+    }
+}
 

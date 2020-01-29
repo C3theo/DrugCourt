@@ -8,3 +8,4 @@ UI
 *.map
 scss
 staticfiles
+settings.json

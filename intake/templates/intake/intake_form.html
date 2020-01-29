@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block card-header %}Intake Module{% endblock %}
-{% block bread %}<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">Intake</a></li>{% endblock %}
+
 {% block card-body %}
 
 <form method="POST">
@@ -11,7 +11,7 @@
         <div class="form-group col-3">
             {{ client_form.first_name|as_crispy_field }}
         </div>
-        <div class="form-group col-1">
+        <div class="form-group col-2">
             {{ client_form.middle_initial|as_crispy_field }}
         </div>
         <div class="form-group col-3">

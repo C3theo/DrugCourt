@@ -1,9 +1,7 @@
 {% extends "core/module_base.html" %}
 
 {% block card-header %}Intake Module{% endblock card-header %}
-{% block bread %}<li class="breadcrumb-item"><a href="{% url 'intake:start' %}">
-        Intake</a></li>
-{% endblock %}
+
 {% block help-text %}Search ClientID to start Client Intake Process{% endblock %}
 
 {% block filter %}
@@ -21,6 +19,7 @@
         <tr>
             <th scope="col">ClientID</th>
             <th scope="col">First Name </th>
+            <th scope="col">MI</th>
             <th scope="col">Last Name</th>
             <th scope="col">Status</th>
             <th scope="col">Phase</th>

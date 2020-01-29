@@ -1,0 +1,49 @@
+{% extends "core/module_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block card-header %}Court Module{% endblock %}
+
+{% block card-title %}Court Schedule{% endblock %}
+{% block help-text %}Schedule Court Dates for Client{% endblock %}
+{% block card-body %}
+
+{% if object.id %}
+{% include "scribe/note_modal.html" %}
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.client|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-3">
+            {{ form.court_date|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+
+        <div class="form-group col-4">
+            {{ form.event|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="form-row">
+
+        <div class="form-group col-2">
+            {{ form.court_date_type|as_crispy_field }}
+        </div>
+    </div>
+
+
+    <div class="form-row">
+
+        <div class="form-group col-2">
+            {{ form.attendance|as_crispy_field }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mb-5"">Save</button>
+</form>
+    {% endblock %}
