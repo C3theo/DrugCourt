@@ -20,7 +20,6 @@ django-fsm==2.7.0
 django-guardian==2.1.0
 django-material==1.6.0
 django-model-utils==4.0.0
-django-pyodbc-azure==2.1.0.0
 django-selenium-login==2.0.0
 django-tables2==2.2.1
 django-viewflow==1.6.0
