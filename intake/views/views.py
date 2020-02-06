@@ -39,11 +39,12 @@ def client_list(request):
 
     return render(request, 'intake/client_list.html', {'clients': clients})
 
-def paginate_clients(request, data, by=25):
+
+def paginate_clients(request, data, count=25):
 
     client_list = Client.objects.all().order_by('id')
     page = request.GET.get('page', 1)
-    paginator = Paginator(client_list)
+    paginator = Paginator(client_list, count)
 
     try:
         clients = paginator.page(page)
@@ -57,18 +58,26 @@ def paginate_clients(request, data, by=25):
 
     return data
 
-def save_client_form(request, template_name, forms=None, context=None):
+def add_forms_to_context(forms):
+    context = dict()
+    for form in forms:
+        context[f'{form.instance._meta.model_name}_form'] = form
+
+    return context
+
+def save_ajax_form(request, template_name=None, forms=None, context=None):
     """
         Helper function for adding form to context.
     """
     data = dict()
-
+    
     if request.method == 'POST':
-        for form in forms:
+        valid_ctr = 0
+        for _, form in context:
             if form.is_valid():
+                form.save()
+                valid_ctr += 1
 
-                data['form_is_valid'] = True
-                data = paginate_clients(request, data)
             # save Note Form
             # try:
             #     # ???
@@ -76,23 +85,22 @@ def save_client_form(request, template_name, forms=None, context=None):
             #     note = form.save(commit=False)
             #     note.author = request.user
             #     note.save()
-                
+
             # except (KeyError, TypeError):
             #     form.save()
-
+        if valid_ctr == len(forms):
+            data['form_is_valid'] = True
         else:
             data['form_is_valid'] = False
-    
-    # if context:
-    #     context['form'] = form
-    # else:
-    #     context = {"form": form}
 
-
+    #    data['form_is_valid'] = True if valid_ctr == len(forms) else False
+        
+    data = paginate_clients(request, data)
     data['html_form'] = render_to_string(template_name,
                                          context,
                                          request=request
                                          )
+    
     return JsonResponse(data)
 
 
@@ -105,7 +113,7 @@ def client_create(request):
         form = ClientReferralMultiForm(request.POST)
     else:
         form = ClientReferralMultiForm()
-    return save_client_form(request, form, 'intake/includes/partial_client_create.html')
+    return save_ajax_form(request, forms=form, template_name='intake/includes/partial_client_create.html')
 
 
 def client_update(request, pk):
@@ -113,21 +121,17 @@ def client_update(request, pk):
     if request.method == 'POST':
         client_form = ClientForm(request.POST, instance=client)
         referral_form = ReferralForm(request.POST, instance=client.referral)
-        # form = ClientReferralMultiForm(request.POST, instance={
-        #     'client': client,
-        #     'referral': client.referral
-        # })
-    else: # GET Request
+
+    else: # GET Request (loadForm)
         
         client_form = ClientForm(instance=client)
         referral_form = ReferralForm(instance=client.referral)
 
-        # form = ClientReferralMultiForm(instance={
-        #     'client': client,
-        #     'referral': client.referral
-        # })
+    forms = (client_form, referral_form)
+    context = add_forms_to_context(forms)
+    context['client'] = client
 
-    return save_client_form(request, form, 'intake/includes/partial_client_update.html')
+    return save_ajax_form(request, context=context, forms=forms, template_name='intake/includes/partial_client_update.html')
 
 
 def client_evaluate(request, pk):
@@ -135,33 +139,27 @@ def client_evaluate(request, pk):
     referral = get_object_or_404(Referral, pk=pk)
     decisions = referral.decisions
     if request.method == 'POST':
-        form = ReferralDecisionMultiForm(request.POST, instance={
-            'referral': referral,
-            'pre_decision': decisions[0],
-            'da_decision': decisions[1],
-            'dc_decision': decisions[2],
-        })
-    else:
-        form = ReferralDecisionMultiForm(instance={
-            'referral': referral,
-            'pre_decision': decisions[0],
-            'da_decision': decisions[1],
-            'dc_decision': decisions[2],
-        })
 
-    return save_client_form(request, form, 'intake/includes/partial_client_evaluate.html')
+        forms = ( DecisionForm(request.POST, instance=decision) for decision in decisions )
+        
+    else:
+        forms = ( DecisionForm(instance=decision) for decision in decisions )
+
+    context = {'referral': referral, 'forms': forms}
+
+    return save_ajax_form(request, context=context, template_name='intake/includes/partial_client_evaluate.html')
 
 def client_note(request, pk):
 
     client = get_object_or_404(Client, pk=pk)
-    context = {'client': client}
     if request.method == 'POST':
         form = NoteForm(request.POST, initial={'note_type': 'General'})
     else:
         form = NoteForm(initial={'note_type': 'General'})
+    
+    context = {'client': client, 'form': form}
 
-    return save_client_form(request, form, 'intake/includes/partial_client_note.html', context=context)
-
+    return save_ajax_form(request, 'intake/includes/partial_client_note.html', context=context)
 
 
 class IntakeFilterView(LoginRequiredMixin, SingleTableView):
