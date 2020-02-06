@@ -20,14 +20,21 @@ import string
 User = get_user_model()
 tzinfo = timezone.get_current_timezone()
 
-def delete_factory_inventory(factory_cls):
 
-    model = factory_cls._meta.model
-    inventory = model.objects.all()
-    for each in inventory:
-        each.delete()
+@factory.django.mute_signals(post_save)
+class ReferralFactory(DjangoModelFactory):
 
-    return f'{len(inventory)} objects deleted'
+    class Meta:
+        model = Referral
+
+    status = factory.Faker('random_element', elements=[
+                           x[0] for x in Referral.STATUS_CHOICES])
+    client = factory.SubFactory('intake.models.factories.ClientFactory')
+    referrer = factory.Faker('name')
+    # TODO: Make SubFactory
+    date_received = factory.Faker('date_this_decade', before_today=True, after_today=False)
+    date_completed = factory.Faker('date_this_decade', before_today=False, after_today=True)
+    # provider = factory.SubFactory('intake.models.factories.Provider')
 
 
 # @factory.django.mute_signals(post_save)
@@ -142,20 +149,6 @@ class ClientFactory(DjangoModelFactory):
             return 1
 
 
-@factory.django.mute_signals(post_save)
-class ReferralFactory(DjangoModelFactory):
-
-    class Meta:
-        model = Referral
-
-    status = factory.Faker('random_element', elements=[
-                           x[0] for x in Referral.STATUS_CHOICES])
-    client = factory.SubFactory('intake.models.factories.ClientFactory')
-    referrer = factory.Faker('name')
-    # TODO: Make SubFactory
-    date_received = factory.Faker('date_this_decade', before_today=True, after_today=False)
-    date_completed = factory.Faker('date_this_decade', before_today=False, after_today=True)
-    # provider = factory.SubFactory('intake.models.factories.Provider')
 
 # with factory.debug():
 #     obj = ClientFactory()

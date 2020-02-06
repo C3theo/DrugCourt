@@ -39,44 +39,54 @@ def client_list(request):
 
     return render(request, 'intake/client_list.html', {'clients': clients})
 
+def paginate_clients(request, data, by=25):
 
+    client_list = Client.objects.all().order_by('id')
+    page = request.GET.get('page', 1)
+    paginator = Paginator(client_list)
 
-def save_client_form(request, form, template_name, context=None):
+    try:
+        clients = paginator.page(page)
+    except PageNotAnInteger:
+        clients = paginator.page(1)
+    except EmptyPage:
+        clients = paginator.page(paginator.num_pages)
+
+    data['html_client_list'] = render_to_string(
+        'intake/includes/partial_client_list.html', {'clients': clients})
+
+    return data
+
+def save_client_form(request, template_name, forms=None, context=None):
+    """
+        Helper function for adding form to context.
+    """
     data = dict()
 
     if request.method == 'POST':
-        if form.is_valid():
+        for form in forms:
+            if form.is_valid():
 
-            try:
-                note = form.save(commit=False)
-                note.client = context['client']
-                note.author = request.user
-                note.save()
+                data['form_is_valid'] = True
+                data = paginate_clients(request, data)
+            # save Note Form
+            # try:
+            #     # ???
+            #     client = context['client']
+            #     note = form.save(commit=False)
+            #     note.author = request.user
+            #     note.save()
                 
-            except (KeyError, TypeError):
-                form.save()
+            # except (KeyError, TypeError):
+            #     form.save()
 
-            data['form_is_valid'] = True
-            client_list = Client.objects.all()
-            page = request.GET.get('page', 1)
-
-            paginator = Paginator(client_list, 25)
-            try:
-                clients = paginator.page(page)
-            except PageNotAnInteger:
-                clients = paginator.page(1)
-            except EmptyPage:
-                clients = paginator.page(paginator.num_pages)
-
-            data['html_client_list'] = render_to_string(
-                'intake/includes/partial_client_list.html', {'clients': clients})
         else:
             data['form_is_valid'] = False
     
-    if context:
-        context['form'] = form
-    else:
-        context = {"form": form}
+    # if context:
+    #     context['form'] = form
+    # else:
+    #     context = {"form": form}
 
 
     data['html_form'] = render_to_string(template_name,
@@ -87,6 +97,10 @@ def save_client_form(request, form, template_name, context=None):
 
 
 def client_create(request):
+    """
+        Handle GET/POST requests and instantiate forms.
+    """
+
     if request.method == 'POST':
         form = ClientReferralMultiForm(request.POST)
     else:
@@ -97,15 +111,21 @@ def client_create(request):
 def client_update(request, pk):
     client = get_object_or_404(Client, pk=pk)
     if request.method == 'POST':
-        form = ClientReferralMultiForm(request.POST, instance={
-            'client': client,
-            'referral': client.referral
-        })
-    else:
-        form = ClientReferralMultiForm(instance={
-            'client': client,
-            'referral': client.referral
-        })
+        client_form = ClientForm(request.POST, instance=client)
+        referral_form = ReferralForm(request.POST, instance=client.referral)
+        # form = ClientReferralMultiForm(request.POST, instance={
+        #     'client': client,
+        #     'referral': client.referral
+        # })
+    else: # GET Request
+        
+        client_form = ClientForm(instance=client)
+        referral_form = ReferralForm(instance=client.referral)
+
+        # form = ClientReferralMultiForm(instance={
+        #     'client': client,
+        #     'referral': client.referral
+        # })
 
     return save_client_form(request, form, 'intake/includes/partial_client_update.html')
 
@@ -134,13 +154,15 @@ def client_evaluate(request, pk):
 def client_note(request, pk):
 
     client = get_object_or_404(Client, pk=pk)
-    context = {'client': client, 'note_type': 'General'}
+    context = {'client': client}
     if request.method == 'POST':
-        form = NoteForm(request.POST, initial=context)
+        form = NoteForm(request.POST, initial={'note_type': 'General'})
     else:
-        form = NoteForm(initial=context)
+        form = NoteForm(initial={'note_type': 'General'})
 
     return save_client_form(request, form, 'intake/includes/partial_client_note.html', context=context)
+
+
 
 class IntakeFilterView(LoginRequiredMixin, SingleTableView):
     """
@@ -394,7 +416,7 @@ def _get_form_submit(request, formcls, prefix=None):
             formcls:
             prefix
     """
-    # data = request.POST if prefix in request.POST.keys() else None
-    data = request.POST
+    data = request.POST if prefix in request.POST.keys() else None
+    # data = request.POST
 
     return formcls(data, prefix=prefix)

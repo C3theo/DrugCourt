@@ -15,9 +15,10 @@ class NoteForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         """
-            Change client field to readonly
+            Change client field to readonly, and add
         """
 
+        # self.client = kwargs.pop('client')
         super(NoteForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
         if instance:
@@ -27,16 +28,11 @@ class NoteForm(ModelForm):
 
     class Meta:
         model = Note
-        fields = ['text', 'note_type']
+        fields = ['client', 'text', 'note_type']
         widgets = {
             'note_type': TextInput(),}
         labels = {
             'text': 'Client Notes', }
-        
-        # widgets = {
-        #     'client': TextInput()
-        # } 
-
 
 NoteFormSet = inlineformset_factory(
     Client, Note, form=NoteForm, extra=1, fields=['text'])
