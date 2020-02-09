@@ -106,6 +106,16 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql', 
+        'HOST': 'localhost',      
+        'NAME': 'dev',
+        'USER': os.getenv('POSTGRES_USERNAME'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+    }
+}
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # default
     'guardian.backends.ObjectPermissionBackend',
