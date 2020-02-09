@@ -13,14 +13,12 @@ from court.filters import CourtDateFilter
 
 from intake.models import IntakeStatus, Client
 from scribe.forms import NoteForm
+from core.helpers import save_ajax_form, paginate_model
 
 
 def court_date_list(request):
-    court_dates = CourtDates.objects.all()
+    court_dates = paginate_model(request, CourtDates)
     return render(request, 'court/court_date_list.html', {'court_dates': court_dates})
-
-# TODO: Refactor out
-
 
 def save_court_form(request, form, template_name, context=False):
     data = dict()
@@ -38,7 +36,7 @@ def save_court_form(request, form, template_name, context=False):
                 form.save()
 
             data['form_is_valid'] = True
-            court_dates = CourtDates.objects.all()
+            court_dates = paginate_model(request, CourtDates)
             data['html_court_list'] = render_to_string(
                 'court/includes/partial_court_list.html', {'court_dates': court_dates})
 

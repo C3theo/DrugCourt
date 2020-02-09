@@ -12,7 +12,7 @@
         </button>
         <button type="button" class="btn btn-warning btn-sm js-create-client-note" data-url="{% url 'intake:note' client.id %}"><span class="far fa-sticky-note"></span> Note</button>
         {% if client.status != 'Accepted' %}
-        <button type="button" class="btn btn-warning btn-sm js-eval-client" data-url="{% url 'intake:eval' client.referral.id %}">
+        <button type="button" class="btn btn-warning btn-sm js-eval-client" data-url="">
             <span class="fas fa-user-check"></span> Evaluate
         </button>
         {% endif %}

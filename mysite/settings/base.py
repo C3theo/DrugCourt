@@ -29,15 +29,6 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG')
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql', 
-        'HOST': 'localhost',      
-        'NAME': 'acm',
-        'USER': os.getenv('POSTGRES_USERNAME'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-    }
-}
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', ]
 INTERNAL_IPS = ['127.0.0.1']

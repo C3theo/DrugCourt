@@ -1,4 +1,0 @@
-{
-  "intake/tests/unit/views.py::AjaxViewTest::test_save_client_form": true,
-  "intake/tests/unit/views.py::test_save_client_form": true
-}

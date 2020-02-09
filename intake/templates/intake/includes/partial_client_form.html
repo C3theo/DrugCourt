@@ -2,30 +2,30 @@
 
 <div class="form-row">
     <div class="form-group col-3">
-        {{ client_form.first_name|as_crispy_field }}
+        {{ forms.client_form.first_name|as_crispy_field }}
     </div>
     <div class="form-group col-2">
-        {{ client_form.middle_initial|as_crispy_field }}
+        {{ forms.client_form.middle_initial|as_crispy_field }}
     </div>
     <div class="form-group col-3">
-        {{ client_form.last_name|as_crispy_field }}
+        {{ forms.client_form.last_name|as_crispy_field }}
     </div>
 </div>
 <div class="form-row">
     <div class="form-group col-6">
-        {{ client_form.ssn|as_crispy_field }}
+        {{ forms.client_form.ssn|as_crispy_field }}
     </div>
     <div class="form-group col-4">
-        {{ client_form.gender|as_crispy_field }}
+        {{ forms.client_form.gender|as_crispy_field }}
     </div>
 </div>
 
 <div class="form-row">
     <div class="form-group col-4">
-        {{ referral_form.referrer|as_crispy_field }}
+        {{ forms.referral_form.referrer|as_crispy_field }}
     </div>
     <div class="form-group col-4">
-        {{ referral_form.date_received|as_crispy_field }}
+        {{ forms.referral_form.date_received|as_crispy_field }}
     </div>
 </div>
 

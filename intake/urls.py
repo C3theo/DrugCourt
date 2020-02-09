@@ -3,9 +3,6 @@ from django.urls import include, path, re_path
 from django.views import generic
 
 from . import views
-from .views import (ClientUpdateView, ClientListView, ClientNoteCreateView,
-                    CriminalBackgroundCreateView, ReferralDecisionUpdateView,
-                    ClientReferralCreateView, ClientReferralUpdateView, IntakeFilterView)
 
 app_name = 'intake'
 
