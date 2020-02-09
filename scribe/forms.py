@@ -30,9 +30,20 @@ class NoteForm(ModelForm):
         model = Note
         fields = ['client', 'text', 'note_type']
         widgets = {
-            'note_type': TextInput(),}
+            'note_type': TextInput(), }
         labels = {
             'text': 'Client Notes', }
 
-NoteFormSet = inlineformset_factory(
-    Client, Note, form=NoteForm, extra=1, fields=['text'])
+    def save(self, commit=True):
+        """
+        """
+
+        try:
+            note = super(NoteForm, self).save(commit=False)
+            self.instance.client = client
+            if commit:
+                note.save(commit=True)
+        except Exception as e:
+            # raise(e)
+            import pdb
+            pdb.set_trace()

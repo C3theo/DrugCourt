@@ -8,10 +8,63 @@ from core.helpers import add_forms_to_context, paginate_model, save_ajax_form
 from intake.models import Client
 from scribe.forms import NoteForm
 
-from .forms import TxAttendanceForm
-from .models import TxAttendance
+from .forms import TxAttendanceForm, ObjectivesForm
+from .models import TxAttendance, Objectives
 
 # Create your views here.
+
+
+def objectives_list(request):
+
+    objectives_list = paginate_model(request, Objectives)
+
+    return render(request, 'treatment/objectives_list.html', {'objectives': objectives_list})
+
+def objective_create(request):
+    if request.method == 'POST':
+        form = ObjectivesForm(request.POST)
+    else:
+        form = ObjectivesForm()
+    context = IndexedOrderedDict()
+    context['objectives'] = form.instance
+    context = add_forms_to_context((form,), context)
+    return save_ajax_form(request, context=context,
+                          form_template='treatment/includes/partial_objectives_create.html',
+                          list_template='treatment/includes/partial_objectives_list.html')
+
+def objective_update(request, pk):
+    objectives = get_object_or_404(TxAttendance, pk=pk)
+    if request.method == 'POST':
+        form = TxAttendanceForm(request.POST, instance=objectives)
+    else:
+        form = TxAttendanceForm(instance=objectives)
+
+    context = IndexedOrderedDict()
+    context['objectives'] = form.instance
+    context = add_forms_to_context((form,), context)
+    return save_ajax_form(request, context=context,
+                          form_template='treatment/includes/partial_treatment_update.html',
+                          list_template='treatment/includes/partial_objectives_list.html')
+
+
+def objective_note(request, pk):
+
+    client = get_object_or_404(Client, pk=pk)
+    context = {'client': client, 'note_type': 'Treatment'}
+    if request.method == 'POST':
+        form = NoteForm(request.POST, initial=context)
+    else:
+        form = NoteForm(initial=context)
+
+    context = IndexedOrderedDict()
+    context['client'] = client
+    context['forms'] = {'note_form': form}
+
+    return save_ajax_form(request, list_template='treatment/includes/partial_objectives_list.html',
+                          form_template='intake/includes/partial_client_note.html',
+                          context=context)
+
+
 
 
 def treatment_list(request):

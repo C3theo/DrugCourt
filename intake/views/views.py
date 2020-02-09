@@ -13,7 +13,7 @@ from django_tables2.views import MultiTableMixin, SingleTableView
 from indexed import IndexedOrderedDict
 
 from core.helpers import add_forms_to_context, paginate_model, save_ajax_form
-from scribe.forms import NoteForm, NoteFormSet
+from scribe.forms import NoteForm
 from scribe.models import Note
 from scribe.tables import NoteTable
 

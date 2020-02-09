@@ -3,7 +3,7 @@ from intake.models import Client
 from model_utils import Choices
 from model_utils.models import TimeStampedModel 
 
-# Create your models here.
+
 class ProbGoalStatusOptions:
 
     Active = 'Active'
