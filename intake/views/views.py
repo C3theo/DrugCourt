@@ -19,14 +19,12 @@ from scribe.tables import NoteTable
 from core.helpers import save_ajax_form, paginate_model
 
 from .filters import ClientFilter, ReferralFilter
-from ..forms import (ClientForm, ClientFormset, ClientReferralMultiForm,
-                     CriminalBackgroundForm, DecisionForm,
-                     ReferralDecisionMultiForm, ReferralForm, ReferralQueryForm)
+from ..forms import (ClientForm, ClientFormset,CriminalBackgroundForm, DecisionForm, , ReferralForm, ReferralQueryForm)
 from ..models import Client, CriminalBackground, Decision, Referral
 from .tables import ClientTable, ClientCourtTable
 
 from collections import OrderedDict
-from indexed import IndexedOrderedDict 
+from indexed import IndexedOrderedDict
 
 
 def client_list(request):
@@ -42,7 +40,8 @@ def add_forms_to_context(forms, context):
         model name as prefix.
     """
 
-    context['forms'] = {f'{form.instance._meta.model_name}_form': form for form in forms}
+    context['forms'] = {
+        f'{form.instance._meta.model_name}_form': form for form in forms}
 
     return context
 
@@ -53,14 +52,12 @@ def client_create(request):
     """
 
     if request.method == 'POST':
-        # form = ClientReferralMultiForm(request.POST)
         client_form = ClientForm(request.POST)
         referral_form = ReferralForm(request.POST)
     else:
-        # form = ClientReferralMultiForm()
         client_form = ClientForm()
         referral_form = ReferralForm()
-    
+
     forms = (client_form, referral_form)
     context = IndexedOrderedDict()
     context['client'] = None

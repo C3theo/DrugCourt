@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_fsm',
     'django_extensions',
-    # 'betterforms',
+    
     # 'guardian',
     'behave_django',
     # 'material',
