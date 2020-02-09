@@ -3,7 +3,7 @@ from django.urls import include, path, re_path
 from django.views import generic
 
 from . import views
-from .views import (CourtDateUpdateView, CourtDateListView, CourtDateView)
+
 
 app_name = 'court'
 

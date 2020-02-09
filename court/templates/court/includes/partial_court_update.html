@@ -1,4 +1,4 @@
-<form method="post" action="{% url 'court:update' form.instance.pk %}" class="js-court-update-form">
+<form method="post" action="{% url 'court:update' court_date.pk %}" class="js-court-update-form">
     {% csrf_token %}
     <div class="modal-header">
       <h4 class="modal-title">Update Court Date</h4>

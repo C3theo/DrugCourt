@@ -25,7 +25,7 @@ $(function () {
       dataType: 'json',
       success: function (data) {
         if (data.form_is_valid) {
-          $("#court-table tbody").html(data.html_court_list); ~
+          $("#court-table tbody").html(data.html_court_date_list); ~
             $("#modal-court").modal("hide");
         }
         else {

@@ -1,49 +1,33 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import transaction
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render, get_object_or_404
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-from django_tables2.views import SingleTableView, MultiTableMixin
+from django_tables2.views import MultiTableMixin, SingleTableView
+from indexed import IndexedOrderedDict
 
+from core.helpers import add_forms_to_context, paginate_model, save_ajax_form
 from scribe.forms import NoteForm, NoteFormSet
 from scribe.models import Note
 from scribe.tables import NoteTable
 
-from core.helpers import save_ajax_form, paginate_model
-
-from .filters import ClientFilter, ReferralFilter
-from ..forms import (ClientForm, ClientFormset,CriminalBackgroundForm, DecisionForm, , ReferralForm, ReferralQueryForm)
+from ..forms import (ClientForm, ClientFormset, CriminalBackgroundForm,
+                     DecisionForm, ReferralForm, ReferralQueryForm)
 from ..models import Client, CriminalBackground, Decision, Referral
-from .tables import ClientTable, ClientCourtTable
-
-from collections import OrderedDict
-from indexed import IndexedOrderedDict
+from .filters import ClientFilter, ReferralFilter
+from .tables import ClientCourtTable, ClientTable
 
 
 def client_list(request):
     clients = paginate_model(request, Client)
-    # import pdb; pdb.set_trace()
 
     return render(request, 'intake/client_list.html', {'clients': clients})
-
-
-def add_forms_to_context(forms, context):
-    """
-        Add multiple different forms to context, with
-        model name as prefix.
-    """
-
-    context['forms'] = {
-        f'{form.instance._meta.model_name}_form': form for form in forms}
-
-    return context
 
 
 def client_create(request):
@@ -60,7 +44,7 @@ def client_create(request):
 
     forms = (client_form, referral_form)
     context = IndexedOrderedDict()
-    context['client'] = None
+    context['client'] = client_form.instance
     context = add_forms_to_context(forms, context)
 
     return save_ajax_form(
@@ -68,6 +52,9 @@ def client_create(request):
 
 
 def client_update(request, pk):
+    """
+    """
+
     client = get_object_or_404(Client, pk=pk)
     if request.method == 'POST':
         client_form = ClientForm(request.POST, instance=client)
@@ -87,17 +74,20 @@ def client_update(request, pk):
 
 
 def client_evaluate(request, pk):
+    """
+    """
 
     referral = get_object_or_404(Referral, pk=pk)
     decisions = referral.decisions
+    
     if request.method == 'POST':
 
         forms = (DecisionForm(request.POST, instance=decision)
                  for decision in decisions)
-
     else:
         forms = (DecisionForm(instance=decision) for decision in decisions)
     context = IndexedOrderedDict()
+    context['client'] = referral.client
     context['referral'] = referral
     context['forms'] = forms
 

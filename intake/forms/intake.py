@@ -7,14 +7,13 @@ from crispy_forms.layout import (HTML, TEMPLATE_PACK, Button, ButtonHolder,
                                  Row, Submit)
 from django.forms import ModelChoiceField, ModelForm, ModelMultipleChoiceField
 from django.forms.models import inlineformset_factory
-from django.forms.widgets import TextInput, DateInput
+from django.forms.widgets import DateInput, TextInput
 from django.template.loader import render_to_string
 from django_fsm import TransitionNotAllowed
 
-
 from intake.models import Client, CriminalBackground, Decision, Referral
-from scribe.models import Note
 from scribe.forms import NoteForm
+from scribe.models import Note
 
 from .custom_formset import Formset
 
@@ -74,6 +73,7 @@ class ReferralForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ReferralForm, self).__init__(*args, **kwargs)
+        self.kwargs = kwargs
 
         self.helper = FormHelper(self)
         self.helper.form_tag = False
@@ -84,6 +84,21 @@ class ReferralForm(ModelForm):
         widgets = {'date_received': DateInput(attrs={
                 'type': 'date'
             })}
+
+    def save(self, commit=True, client=None):
+        """
+        """
+
+        try:
+            referral = super(ReferralForm, self).save(commit=False)
+            self.instance.client = client
+            if commit:
+                referral.save(commit=True)
+        except Exception as e:
+            # raise(e)
+            import pdb; pdb.set_trace()
+            
+
 
 
 class ReferralEvalForm(ModelForm):
@@ -129,6 +144,20 @@ class DecisionForm(ModelForm):
         labels = {
             'verdict': 'Decision',
             'made_by': 'Deciding Party'}
+    
+    def save(self, commit=True):
+        """
+        """
+
+      
+        decision = super(DecisionForm, self).save(commit=False)
+        if commit:
+            decision.save()
+
+        referral = self.instance.referral
+        if referral.all_decisions_approved():
+            referral.approve()
+
 
 
 # class ReferralDecisionMultiForm(MultiModelForm):

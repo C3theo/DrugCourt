@@ -9,7 +9,7 @@ app_name = 'scribe'
 
 urlpatterns = [
 
-    path('', NoteListView.as_view(), name='all'),
+    # path('', NoteListView.as_view(), name='all'),
 
 ]
 

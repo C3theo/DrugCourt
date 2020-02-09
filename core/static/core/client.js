@@ -12,7 +12,7 @@ $(function () {
       },
       success: function (data) {
         $("#modal-client .modal-content").html(data.html_form);
-        console.log('test');
+
       }
     });
   };
@@ -28,6 +28,7 @@ $(function () {
         if (data.form_is_valid) {
           $("#client-table tbody").html(data.html_client_list);
           $("#modal-client").modal("hide");
+          
         }
         else {
           $("#modal-client .modal-client").html(data.html_form);

@@ -23,11 +23,12 @@ class IntakeStatus:
         (STATUS_PENDING, STATUS_PENDING),
         (STATUS_SCREEN, STATUS_SCREEN),
         (STATUS_ACCEPTED, STATUS_ACCEPTED),
-        
-        )
+
+    )
+
 
 class ClientStatus:
-    
+
     Choices = Choices(
         ('Active', 'Active'),
         ('Declined', 'Declined'),
@@ -40,6 +41,7 @@ class ClientStatus:
         ('Administrative Discharge', 'Administrative Discharge'),
         ('Deferred', 'Deferred')
     )
+
 
 class GenderOption:
 
@@ -110,7 +112,7 @@ class Client(ConcurrentTransitionMixin, models.Model):
         return f'{self.full_name}'
 
     class Meta:
-        
+
         app_label = 'intake'
         verbose_name_plural = 'clients'
 
@@ -167,7 +169,7 @@ class Referral(ConcurrentTransitionMixin, models.Model):
             pretrial_decision.save()
 
     def get_absolute_url(self):
-        return reverse('intake:referral-detail', kwargs={'pk': self.id})
+        return reverse('intake:update', kwargs={'pk': self.id})
 
     def __str__(self):
         return f'ReferralID:{self.id} - ClientID: {self.client}'
@@ -176,8 +178,6 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         for each in self.decisions:
             each.verdict = Decision.STATUS_CHOICES['Approved']
             each.save()
-
- 
 
     ### Transition Conditions ###
 
@@ -207,8 +207,10 @@ class Referral(ConcurrentTransitionMixin, models.Model):
         # p = Phase(phase_id='Phase One')
         # p.save()
         # self.client.phase = p
-        self.client.status = IntakeStatus.STATUS_ACCEPTED
-        self.client.save()
+        # import pdb; pdb.set_trace()
+        if self.client.status != IntakeStatus.STATUS_ACCEPTED:
+            self.client.status = IntakeStatus.STATUS_ACCEPTED
+            self.client.save()
 
 
 class Decision(models.Model):
@@ -246,5 +248,5 @@ class Decision(models.Model):
         return f"{self.made_by} Decision for {self.referral.client}"
 
     class Meta:
-        
+
         permissions = [('can_decide', 'Can Decide')]

@@ -1,4 +1,8 @@
-from factories.intake import ReferralFactory
+from .intake import ReferralFactory
+
+
+# def create_pending_clients(factory.):
+
 
 def populate_fake_db(factory=ReferralFactory, size=25):
     """
@@ -6,7 +10,6 @@ def populate_fake_db(factory=ReferralFactory, size=25):
     """
 
     factory.create_batch(size)
-
 
 
 def delete_factory_inventory(factory=ReferralFactory):
