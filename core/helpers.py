@@ -52,7 +52,7 @@ def save_ajax_form(request, form_template=None, list_template=None, context=None
                         form.save()
 
                     valid_ctr += 1
-
+            
             if valid_ctr == len(context['forms']):
                 data['form_is_valid'] = True
             else:
@@ -72,7 +72,9 @@ def save_ajax_form(request, form_template=None, list_template=None, context=None
     model_class = model[1].__class__
     models = paginate_model(request, model_class)
     model_dict = {paginator_name: models}
-    html_list = f'html_{model[0]}_list'
+    # import pdb; pdb.set_trace()
+    # html_list = f'html_{model[0]}_list'
+    html_list = 'html_model_list'
     
 
     data[html_list] = render_to_string(

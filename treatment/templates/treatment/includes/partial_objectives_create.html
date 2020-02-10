@@ -2,7 +2,7 @@
 {% load crispy_forms_tags pdb %}
 
 
-<form method="post" action="{% url 'treatment:create' %}" class="js-treatment-create-form">
+<form method="post" action="{% url 'treatment:objectives_create' %}" class="js-objectives-create-form">
   {% csrf_token %}
   <div class="modal-header">
       <h4 class="modal-title">Add Objective</h4>

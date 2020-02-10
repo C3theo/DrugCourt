@@ -33,17 +33,17 @@ def objective_create(request):
                           list_template='treatment/includes/partial_objectives_list.html')
 
 def objective_update(request, pk):
-    objectives = get_object_or_404(TxAttendance, pk=pk)
+    objectives = get_object_or_404(Objectives, pk=pk)
     if request.method == 'POST':
-        form = TxAttendanceForm(request.POST, instance=objectives)
+        form = ObjectivesForm(request.POST, instance=objectives)
     else:
-        form = TxAttendanceForm(instance=objectives)
+        form = ObjectivesForm(instance=objectives)
 
     context = IndexedOrderedDict()
     context['objectives'] = form.instance
     context = add_forms_to_context((form,), context)
     return save_ajax_form(request, context=context,
-                          form_template='treatment/includes/partial_treatment_update.html',
+                          form_template='treatment/includes/partial_objectives_update.html',
                           list_template='treatment/includes/partial_objectives_list.html')
 
 

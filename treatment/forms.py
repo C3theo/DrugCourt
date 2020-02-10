@@ -17,8 +17,10 @@ class TxAttendanceForm(ModelForm):
                    'time_in': TimeInput(attrs={'type': 'time'}),
                    'time_out': TimeInput(attrs={'type': 'time'})}
 
+
 class ObjectivesForm(ModelForm):
     met_date = DateInput(attrs={'type': 'date'})
+    obj_target = DateInput(attrs={'type': 'date'})
 
     class Meta:
         model = Objectives
@@ -26,5 +28,6 @@ class ObjectivesForm(ModelForm):
                     'obj_num', 'obj_target',
                     'closed', 'met', 'met_date',
                     'tx_rating', 'client_rating', ]
-        
-        widgets = {'met_date': DateInput(attrs={'type': 'date'})}
+
+        widgets = {'met_date': DateInput(attrs={'type': 'date'}),
+                'obj_target': DateInput(attrs={'type': 'date'})}
