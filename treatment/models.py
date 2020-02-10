@@ -56,6 +56,9 @@ class Objectives(TimeStampedModel):
     tx_rating = models.IntegerField()
     client_rating = models.IntegerField()
 
+    def meta(self):
+        return self._meta
+
 class ProbGoals(TimeStampedModel):
     client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
@@ -67,6 +70,8 @@ class ProbGoals(TimeStampedModel):
     prob_goal_target = models.DateField()
     prob_goal_status = models.CharField(max_length=25, choices=ProbGoalStatusOptions.CHOICES)
     status_date = models.DateField()
+
+    
 
 class TxAttendance(TimeStampedModel):
     client = models.ForeignKey(
