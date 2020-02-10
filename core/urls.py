@@ -5,5 +5,7 @@ app_name = 'core'
 urlpatterns = [
 
     path('', views.home, name='home'),
+    path('', views.ajax_search, name='search'),
+
 
 ]
