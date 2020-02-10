@@ -12,7 +12,8 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_tables2.views import MultiTableMixin, SingleTableView
 from indexed import IndexedOrderedDict
 
-from core.helpers import add_forms_to_context, paginate_model, save_ajax_form
+from core.helpers import (add_forms_to_context, get_ajax_search_results,
+                          paginate_model, save_ajax_form)
 from scribe.forms import NoteForm
 from scribe.models import Note
 from scribe.tables import NoteTable
@@ -25,9 +26,18 @@ from .tables import ClientCourtTable, ClientTable
 
 
 def client_list(request):
-    clients = paginate_model(request, Client)
+    
+    context = get_ajax_search_results(request, Client)
+    if request.is_ajax():
+        html = render_to_string(
+            template_name='intake/includes/partial_client_list.html',
+            context=context
+        )
 
-    return render(request, 'intake/client_list.html', {'clients': clients})
+        data_dict = {"html_model_list": html}
+        return JsonResponse(data=data_dict, safe=False)
+    else:
+        return render(request, 'intake/client_list.html', context)
 
 
 def client_create(request):

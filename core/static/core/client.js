@@ -1,7 +1,7 @@
 $(function () {
 
-  var loadForm = function () {
-    var btn = $(this);
+  let loadForm = function () {
+    let btn = $(this);
     $.ajax({
       url: btn.attr("data-url"),
       type: 'GET',
@@ -17,8 +17,8 @@ $(function () {
     });
   };
   
-  var saveForm = function () {
-    var form = $(this);
+  let saveForm = function () {
+    let form = $(this);
     $.ajax({
       url: form.attr("action"),
       data: form.serialize(),

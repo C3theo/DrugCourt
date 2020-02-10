@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from indexed import IndexedOrderedDict
 
-from core.helpers import add_forms_to_context, paginate_model, save_ajax_form
+from core.helpers import add_forms_to_context, paginate_model, save_ajax_form, get_ajax_search_results
 from intake.models import Client
 from scribe.forms import NoteForm
 
@@ -15,10 +15,10 @@ from .models import TxAttendance, Objectives
 
 
 def objectives_list(request):
-
-    objectives_list = paginate_model(request, Objectives)
-
-    return render(request, 'treatment/objectives_list.html', {'objectives': objectives_list})
+    context = ajax_search(request, model=Objectives, template='treatment/includes/partial_objectives_list.html')
+    
+    # import pdb; pdb.set_trace()
+    return render(request, 'treatment/objectives_list.html', context)
 
 def objective_create(request):
     if request.method == 'POST':
