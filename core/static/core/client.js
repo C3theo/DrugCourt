@@ -43,16 +43,16 @@ $(function () {
   $("#modal-client").on("submit", ".js-client-create-form", saveForm);
 
   // Update client
-  $("#client-table").on("click", ".js-update-client", loadForm);
-  $("#modal-client").on("submit", ".js-client-update-form", saveForm);
+  $("#client-table").on("click", ".js-update-model", loadForm);
+  $("#modal-client").on("submit", ".js-model-update-form", saveForm);
 
   // Delete client
-  $("#client-table").on("click", ".js-delete-client", loadForm);
-  $("#modal-client").on("submit", ".js-client-delete-form", saveForm);
+  $("#client-table").on("click", ".js-delete-model", loadForm);
+  $("#modal-client").on("submit", ".js-model-delete-form", saveForm);
 
   //Eval client
-  $("#client-table").on("click", ".js-eval-client", loadForm);
-  $("#modal-client").on("submit", ".js-client-eval-form", saveForm);
+  $("#client-table").on("click", ".js-eval-model", loadForm);
+  $("#modal-client").on("submit", ".js-model-eval-form", saveForm);
 
   // Client Notes
   $("#client-table").on("click", ".js-create-client-note", loadForm);

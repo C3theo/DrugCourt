@@ -1,6 +1,6 @@
 {% load pdb crispy_forms_tags %}
 
-<form method="post" action="{% url 'intake:eval' referral.pk %}" class="js-client-eval-form">
+<form method="post" action="{% url 'intake:eval' referral.pk %}" class="js-model-eval-form">
     {% csrf_token %}
     <div class="modal-header">
         <h4 class="modal-title">Evaluate Referral</h4>

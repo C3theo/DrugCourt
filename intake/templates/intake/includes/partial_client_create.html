@@ -2,7 +2,7 @@
 {% load crispy_forms_tags pdb %}
 
 
-<form method="post" action="{% url 'intake:create' %}" class="js-client-create-form">
+<form method="post" action="{% url 'intake:create' %}" class="js-model-create-form">
   {% csrf_token %}
   <div class="modal-header">
       <h4 class="modal-title">Referral</h4>

@@ -12,7 +12,6 @@ $(function () {
       },
       success: function (data) {
         $("#modal-model .modal-content").html(data.html_form);
-        // console.log('test');
       }
     });
   };
@@ -25,7 +24,6 @@ $(function () {
       type: form.attr("method"),
       dataType: 'json',
       success: function (data) {
-        console.log('test');
         if (data.form_is_valid) {
           $("#model-table tbody").html(data.html_model_list);
           $("#modal-model").modal("hide");
@@ -49,6 +47,11 @@ $(function () {
   // Delete model
   $("#model-table").on("click", ".js-delete-model", loadForm);
   $("#modal-model").on("submit", ".js-model-delete-form", saveForm);
+
+    //Eval client
+    $("#model-table").on("click", ".js-eval-model", loadForm);
+    $("#modal-model").on("submit", ".js-model-eval-form", saveForm);
+  
 
   // model Note
   $("#model-table").on("click", ".js-model-note", loadForm);

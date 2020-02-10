@@ -10,20 +10,16 @@
     
     <p>
     
-    <button type="button" class="btn btn-primary js-create-client" data-url="{% url 'intake:create' %}">
+    <button type="button" class="btn btn-primary js-create-model" data-url="{% url 'intake:create' %}">
         <span class="fas fa-plus"></span>
         Add Referral
     </button>
 </p>
-<div class="col-6 align-left">
-    <i id="search-icon" class="fas fa-search"></i>
-    <input id="user-input" placeholder="Search">
-</div>
 </div>
 {# icon and search-box #}
 
 
-<table class="table table-striped table-bordered table-hover" id="client-table">
+<table class="table table-striped table-bordered table-hover" id="model-table">
     <thead>
         <tr>
             <th>First Name</th>
@@ -40,45 +36,26 @@
     </tbody>
 </table>
 
-
-{% if clients.has_other_pages %}
-
-<nav>
-<ul class="pagination justify-content-center">
-        {% if clients.has_previous %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ clients.previous_page_number }}">&laquo;</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <span class="page-link" >&laquo;</span></li>
-        {% endif %}
-
-        {% for i in clients.paginator.page_range %}
-        {% if clients.number == i %}
-        <li class="page-item active"><span class="page-link" >{{ i }} <span class="sr-only">(current)</span></span></li>
-        {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-        {% endif %}
-        {% endfor %}
-        {% if clients.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ clients.next_page_number }}">&raquo;</a></li>
-        {% else %}
-      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-      {% endif %}
-    </ul>
-</nav>
-{% endif %}
-
-<div class="modal fade" id="modal-client">
+<div class="modal fade" id="modal-model">
     <div class="modal-dialog">
         <div class="modal-content">
         </div>
     </div>
     {% endblock filter %}
-
+    
+    {% block extracss %}
+    {% endblock extracss %}
+    
     {% block javascript %}
-    <!-- TODO -->
-    <script src="{% static 'core/client.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/r-2.2.3/sp-1.0.1/sl-1.3.1/datatables.min.css"/>
+ 
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/r-2.2.3/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#model-table').DataTable();
+        });
+    </script>
+    <script src="{% static 'core/ajaxforms.js' %}"></script>
     <script src="{% static 'core/search.js' %}"></script>
     {% endblock javascript %}

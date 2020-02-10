@@ -13,8 +13,9 @@ def get_ajax_search_results(request, model=None):
     context = {}
     url_parameter = request.GET.get("q")
     if url_parameter:
-        models = model.objects.filter(first_name__icontains=url_parameter).order_by('id')
+        models = model.objects.filter(last_name__icontains=url_parameter, ) | model.objects.filter(first_name__icontains=url_parameter, )
         # import pdb; pdb.set_trace()
+        models.order_by('id')
     else:
         models = model.objects.all().order_by('id')
     paginator = paginate_model(request, models)
