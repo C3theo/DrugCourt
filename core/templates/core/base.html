@@ -23,12 +23,6 @@
 	<!-- <link rel="stylesheet" type="text/css" href="{% static 'core/main.css' %}"> -->
 	{% block extracss %}
 	{% endblock extracss %}
-
-	<!-- Custom JavaScript -->
-	<script src="https://kit.fontawesome.com/6e20f2b51a.js"></script>
-
-
-
 </head>
 
 <body>
@@ -89,7 +83,7 @@
 		</div>
 	</nav>
 
-	<main role="main" class="container mx-auto" style="width:50">
+	<main role="main" class="container mx-auto" style="width:50; padding-top: 70px;">
 		{% if messages %}
 		<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
 			<div class="toast" data-autohide="false" id="note-toast" role="alert" aria-live="assertive"
@@ -137,6 +131,9 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
 		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 		crossorigin="anonymous"></script>
+	<!-- Custom JavaScript -->
+	<script src="https://kit.fontawesome.com/6e20f2b51a.js"></script>
+
 	{% block javascript %}
 
 	{% endblock javascript%}

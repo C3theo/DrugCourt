@@ -114,5 +114,6 @@ def client_note(request, pk):
     context = IndexedOrderedDict()
     context['client'] = client
     context['forms'] = {'note_form': form}
+    
 
     return save_ajax_form(request, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_note.html', context=context)
