@@ -81,9 +81,19 @@ def save_ajax_form(request,  context=None):
 
 
 
-def render_ajax(context, data, form_template=None, list_template=None):
-    # Set first model in the context to the paginator
+def render_ajax(request, context, data, form_template=None, list_template=None):
+    """
+        Renders Ajax form and table data.
 
+        Args:
+            request(HTTPRequest):
+            context(dict):
+            data(dict):
+            form_template(str):
+            list_template(str):
+
+    """
+    # Set first model in the context to the paginator
     model = context.items()[0]
     paginator_name = model[1]._meta.verbose_name_plural
     paginator_name = paginator_name.replace(' ', '_').replace('ss', 's')
@@ -91,11 +101,6 @@ def render_ajax(context, data, form_template=None, list_template=None):
     model_class = model[1].__class__
     models = model_class.objects.all().order_by('id')
     # models = paginate_model(request, model_class)
-    import pdb; pdb.set_trace()
-    # try:
-    #     models = model.objects.all().order_by('id')
-    # except AttributeError:
-    #     models = model[1].objects.all().order_by('id')
 
     model_dict = {paginator_name: models}
     # html_list = f'html_{model[0]}_list'
@@ -112,6 +117,13 @@ def render_ajax(context, data, form_template=None, list_template=None):
 
 
 def paginate_model(request, query, count=25):
+    """
+
+        Args:
+            request(HTTPRequest):
+            query(Query):
+            count(int):
+    """
 
     try:
         page = request.GET.get('page', 1)
@@ -123,7 +135,8 @@ def paginate_model(request, query, count=25):
             models = paginator.page(1)
         except EmptyPage:
             models = paginator.page(paginator.num_pages)
-    except TypeError:
+
+    except TypeError: #???
         models = query.objects.all().order_by('id')
 
     return models
