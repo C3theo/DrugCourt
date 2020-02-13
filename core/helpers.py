@@ -14,14 +14,14 @@ def get_ajax_search_results(request, model=None):
     url_parameter = request.GET.get("q")
     if url_parameter:
         models = model.objects.filter(last_name__icontains=url_parameter, ) | model.objects.filter(first_name__icontains=url_parameter, )
-        # import pdb; pdb.set_trace()
+        
         models.order_by('id')
     else:
         models = model.objects.all().order_by('id')
-    paginator = paginate_model(request, models)
+    # paginator = paginate_model(request, models)
+    
 
-    # import pdb; pdb.set_trace()
-    context[model._meta.verbose_name_plural.replace('ss', 's')] = paginator
+    context[model._meta.verbose_name_plural.replace('ss', 's')] = models
     return context
 
   
@@ -48,7 +48,7 @@ def delete_all_migrations():
         os.unlink(f)
 
 
-def save_ajax_form(request, form_template=None, list_template=None, context=None):
+def save_ajax_form(request,  context=None):
     """
         Helper function for validating multiple forms and
         adding to JsonResponse.
@@ -79,15 +79,25 @@ def save_ajax_form(request, form_template=None, list_template=None, context=None
                     form.save()
                     data['form_is_valid'] = True
 
+
+
+def render_ajax(context, data, form_template=None, list_template=None):
     # Set first model in the context to the paginator
 
     model = context.items()[0]
-    paginator_name = context.items()[0][1]._meta.verbose_name_plural
+    paginator_name = model[1]._meta.verbose_name_plural
     paginator_name = paginator_name.replace(' ', '_').replace('ss', 's')
+
     model_class = model[1].__class__
-    models = paginate_model(request, model_class)
+    models = model_class.objects.all().order_by('id')
+    # models = paginate_model(request, model_class)
+    import pdb; pdb.set_trace()
+    # try:
+    #     models = model.objects.all().order_by('id')
+    # except AttributeError:
+    #     models = model[1].objects.all().order_by('id')
+
     model_dict = {paginator_name: models}
-    # import pdb; pdb.set_trace()
     # html_list = f'html_{model[0]}_list'
     html_list = 'html_model_list'
 
@@ -98,7 +108,6 @@ def save_ajax_form(request, form_template=None, list_template=None, context=None
                                          context,
                                          request=request
                                          )
-    # import pdb; pdb.set_trace()
     return JsonResponse(data)
 
 

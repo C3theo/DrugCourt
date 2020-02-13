@@ -13,11 +13,10 @@ from .models import TxAttendance, Objectives
 
 # Create your views here.
 
-
 def objectives_list(request):
-    context = ajax_search(request, model=Objectives, template='treatment/includes/partial_objectives_list.html')
+    context = get_ajax_search_results(request, model=Objectives)
     
-    # import pdb; pdb.set_trace()
+    
     return render(request, 'treatment/objectives_list.html', context)
 
 def objective_create(request):

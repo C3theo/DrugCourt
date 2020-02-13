@@ -8,11 +8,11 @@
     <td>{{ tx_session.time_out }}</td>
     <td>
         <button type="button"
-                class="btn btn-warning btn-sm js-update-treatment"
+                class="btn btn-warning btn-sm js-update-model"
                 data-url="{% url 'treatment:update' tx_session.id %}">
           <span class="fas fa-edit"></span> Edit
         </button>
-        <button type="button" class="btn btn-warning btn-sm js-treatment-note" data-url="{% url 'treatment:note' tx_session.client.id %}"><span class="far fa-sticky-note"></span> Note</button>
+        <button type="button" class="btn btn-warning btn-sm js-model-note" data-url="{% url 'treatment:note' tx_session.client.id %}"><span class="far fa-sticky-note"></span> Note</button>
 </tr>
 {% empty %}
 <tr>
