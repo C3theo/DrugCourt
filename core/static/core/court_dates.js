@@ -12,6 +12,7 @@ $(function () {
       },
       success: function (data) {
         $("#modal-court .modal-content").html(data.html_form);
+        console.log('test');
       }
     });
   };

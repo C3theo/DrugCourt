@@ -529,7 +529,7 @@ class IntakeFormViewTest(SimpleTestCase):
         mock_form.return_value.is_bound = True
         mock_form.return_value.is_valid.return_value = True
         mock_client = MagicMock()
-        mock_client.client_id = 11111
+        mock_client.client_num = 11111
         mock_form.return_value.save.return_value = mock_client
 
         request = RequestFactory().post('/fake-path')
@@ -554,7 +554,7 @@ class IntakeFormViewTest(SimpleTestCase):
         mock_form.return_value.is_bound = False
         mock_form.return_value.is_valid.return_value = False
         mock_client = MagicMock()
-        mock_client.client_id = 11111
+        mock_client.client_num = 11111
         mock_form.return_value.save.return_value = mock_client
         request = RequestFactory().post('/fake-path')
         view = setup_viewTest(self.view, request)

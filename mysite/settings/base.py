@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
 
     # drug court apps
     'intake.apps.IntakeConfig',
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
     # 'viewflow.frontend',
     'widget_tweaks',
     'django_pdb',
+    'import_export',
 
 ]
 

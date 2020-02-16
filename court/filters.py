@@ -1,11 +1,11 @@
 from django_filters import FilterSet, ModelChoiceFilter, CharFilter
 
-from court.models import CourtDates
+from court.models import CourtDate
 
 class CourtDateFilter(FilterSet):
     
     class Meta:
-        model = CourtDates
+        model = CourtDate
         # fields = ['client']
         fields = ['client__first_name', 'client__last_name']
 

@@ -302,4 +302,4 @@ class AddClientTest(FunctionalTest):
                                         "/html/body/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/div[@class='table-container']/table[@class='table table-striped table-light']/tbody/tr[@class='even'][1]/td[4]")
                                     )
 
-        assert table_field.text == referral.client.client_id
+        assert table_field.text == referral.client.id

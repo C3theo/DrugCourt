@@ -1,7 +1,7 @@
 from django.db import models
 from intake.models import Client
 from model_utils import Choices
-from model_utils.models import TimeStampedModel 
+from model_utils.models import TimeStampedModel
 
 
 class ProbGoalStatusOptions:
@@ -44,7 +44,7 @@ class RatingChoice:
     CHOICES = Choices(zero,one,two,three)
 
 
-class Objectives(TimeStampedModel):
+class Objective(TimeStampedModel):
     client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
     description = models.TextField(max_length=250)
@@ -56,14 +56,11 @@ class Objectives(TimeStampedModel):
     tx_rating = models.IntegerField()
     client_rating = models.IntegerField()
 
-    def meta(self):
-        return self._meta
-
-class ProbGoals(TimeStampedModel):
+class ProbGoal(TimeStampedModel):
     client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
     objective = models.ForeignKey(
-        'objectives', on_delete=models.CASCADE, blank=True, null=True)
+        'Objective', on_delete=models.CASCADE, blank=True, null=True)
     prob_description = models.TextField(max_length=250)
     goal_description = models.TextField(max_length=250)
     prob_goal_num = models.IntegerField()
@@ -71,7 +68,7 @@ class ProbGoals(TimeStampedModel):
     prob_goal_status = models.CharField(max_length=25, choices=ProbGoalStatusOptions.CHOICES)
     status_date = models.DateField()
 
-    
+
 
 class TxAttendance(TimeStampedModel):
     client = models.ForeignKey(
@@ -93,14 +90,14 @@ class TxProgress(TimeStampedModel):
     problems = models.TextField(max_length=250)
     next_review = models.DateField()
 
-class Ratings(TimeStampedModel):
+class Rating(TimeStampedModel):
     client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
     rating_date = models.DateField()
     prob_goal= models.ForeignKey(
-        'ProbGoals', on_delete=models.CASCADE, blank=True, null=True)
+        'ProbGoal', on_delete=models.CASCADE, blank=True, null=True)
     obj_id = models.ForeignKey(
-        'objectives', on_delete=models.CASCADE, blank=True, null=True)
+        'Objective', on_delete=models.CASCADE, blank=True, null=True)
     item_description = models.TextField(max_length=250)
     staff_rating = models.CharField(max_length=1, choices=RatingChoice.CHOICES)
     client_rating = models.CharField(max_length=1, choices=RatingChoice.CHOICES)

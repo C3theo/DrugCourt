@@ -1,3 +1,4 @@
+
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -9,14 +10,14 @@ from intake.models import Client
 from scribe.forms import NoteForm
 
 from .forms import TxAttendanceForm, ObjectivesForm
-from .models import TxAttendance, Objectives
+from .models import TxSession, Objective
 
 # Create your views here.
 
 
 def objectives_list(request):
-    context = ajax_search(request, model=Objectives, template='treatment/includes/partial_objectives_list.html')
-    
+    context = ajax_search(request, model=Objective, template='treatment/includes/partial_objectives_list.html')
+
     # import pdb; pdb.set_trace()
     return render(request, 'treatment/objectives_list.html', context)
 
@@ -26,18 +27,18 @@ def objective_create(request):
     else:
         form = ObjectivesForm()
     context = IndexedOrderedDict()
-    context['objectives'] = form.instance
+    context['objective'] = form.instance
     context = add_forms_to_context((form,), context)
     return save_ajax_form(request, context=context,
                           form_template='treatment/includes/partial_objectives_create.html',
                           list_template='treatment/includes/partial_objectives_list.html')
 
 def objective_update(request, pk):
-    objectives = get_object_or_404(Objectives, pk=pk)
+    objectives = get_object_or_404(Objective, pk=pk)
     if request.method == 'POST':
-        form = ObjectivesForm(request.POST, instance=objectives)
+        form = ObjectivesForm(request.POST, instance=objective)
     else:
-        form = ObjectivesForm(instance=objectives)
+        form = ObjectivesForm(instance=objective)
 
     context = IndexedOrderedDict()
     context['objectives'] = form.instance

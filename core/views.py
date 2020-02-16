@@ -6,4 +6,5 @@ from django.shortcuts import render
 def home(request):
     return render(request, 'core/home.html')
 
-
+def reset(request):
+    return render(request, 'core/password_reset_form.html')

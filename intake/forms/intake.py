@@ -97,7 +97,7 @@ class ReferralForm(ModelForm):
         except Exception as e:
             # raise(e)
             import pdb; pdb.set_trace()
-            
+
 
 
 
@@ -111,8 +111,7 @@ class ReferralEvalForm(ModelForm):
 
     class Meta:
         model = Referral
-        fields = ['provider',
-                  'date_received', 'date_completed']
+        fields = ['date_received', 'date_completed']
 
 
 
@@ -144,12 +143,12 @@ class DecisionForm(ModelForm):
         labels = {
             'verdict': 'Decision',
             'made_by': 'Deciding Party'}
-    
+
     def save(self, commit=True):
         """
         """
 
-      
+
         decision = super(DecisionForm, self).save(commit=False)
         if commit:
             decision.save()
@@ -172,8 +171,8 @@ class DecisionForm(ModelForm):
 #         """
 #             Save decisions before Referral
 #         """
-        
-    
+
+
 #         objects = super(ReferralDecisionMultiForm, self).save(commit=True)
 #         if commit:
 #             referral = objects['referral']

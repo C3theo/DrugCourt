@@ -65,10 +65,55 @@ def client_update(request, pk):
     """
     """
 
+<<<<<<< HEAD
+    model = Referral
+    form_class = ClientReferralMultiForm
+    template_name = 'intake/1_client_referral.html'
+
+    def get_context_data(self, **kwargs):
+        """
+            Initialize NoteForm with client and pass to context
+        """
+
+        note_form = NoteForm(prefix='note')
+        context = {'note_form': note_form}
+        return super().get_context_data(**context)
+
+    def post(self, request, *args, **kwargs):
+        """
+            Submit NoteForm separately from Referral/ClientForm.
+        """
+
+        referral = self.get_object()
+        self.success_url = referral.get_absolute_url()  # ???
+        note_form = _get_form_submit(
+            request, NoteForm, prefix='note')
+        if note_form.is_bound and note_form.is_valid():
+            note_form.instance.author = self.request.user
+            note_form.instance.client = referral.client
+            instance = note_form.save()
+            messages.success(
+                request, f'Note for {instance.client.full_name} ID: {instance.client.id}  saved successfully!')
+            return self.form_valid(note_form)
+
+        return super().post(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        """
+            Return the keyword arguments for instantiating client and referral forms.
+        """
+
+        kwargs = super(ClientReferralUpdateView, self).get_form_kwargs()
+        kwargs.update(instance={
+            'client': self.object.client,
+            'referral': self.object
+        })
+=======
     client = get_object_or_404(Client, pk=pk)
     if request.method == 'POST':
         client_form = ClientForm(request.POST, instance=client)
         referral_form = ReferralForm(request.POST, instance=client.referral)
+>>>>>>> origin/Dev-3
 
     else:  # GET Request (loadForm)
 

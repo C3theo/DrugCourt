@@ -43,4 +43,4 @@ class Note(models.Model):
         verbose_name_plural = 'notes'
 
     def __str__(self):
-        return f'Note: {self.client.client_id}'
+        return f'Note: {self.client.id}'

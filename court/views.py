@@ -10,7 +10,7 @@ from indexed import IndexedOrderedDict
 from core.helpers import add_forms_to_context, paginate_model, save_ajax_form
 from court.filters import CourtDateFilter
 from court.forms import CourtDateForm
-from court.models import CourtDates
+from court.models import CourtDate
 from court.tables import CourtDateTable
 from intake.models import Client, IntakeStatus
 from scribe.forms import NoteForm
@@ -31,7 +31,7 @@ def court_date_create(request):
     context = IndexedOrderedDict()
     context['court_date'] = form.instance
     context = add_forms_to_context((form,), context)
-    
+
     return save_ajax_form(request, context=context,
                           list_template='court/includes/partial_court_list.html',
                           form_template='court/includes/partial_court_create.html')
