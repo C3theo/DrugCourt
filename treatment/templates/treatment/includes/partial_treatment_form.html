@@ -1,0 +1,27 @@
+{% load crispy_forms_tags pdb %}
+<div class="form-row">
+    <div class="form-group col-6">
+        {{ forms.txattendance_form.client|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-6">
+        {{ forms.txattendance_form.session_date|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-6">
+        {{ forms.txattendance_form.attended|as_crispy_field }}
+    </div>
+    <div class="form-group col-6">
+        {{ forms.txattendance_form.absence_reason|as_crispy_field }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-6">
+        {{ forms.txattendance_form.time_in|as_crispy_field }}
+    </div>
+    <div class="form-group col-6">
+        {{ forms.txattendance_form.time_out|as_crispy_field }}
+    </div>
+</div>

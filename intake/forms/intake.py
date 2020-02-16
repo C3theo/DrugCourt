@@ -7,14 +7,13 @@ from crispy_forms.layout import (HTML, TEMPLATE_PACK, Button, ButtonHolder,
                                  Row, Submit)
 from django.forms import ModelChoiceField, ModelForm, ModelMultipleChoiceField
 from django.forms.models import inlineformset_factory
-from django.forms.widgets import TextInput
+from django.forms.widgets import DateInput, TextInput
 from django.template.loader import render_to_string
 from django_fsm import TransitionNotAllowed
 
-from betterforms.multiform import MultiModelForm
 from intake.models import Client, CriminalBackground, Decision, Referral
-from scribe.models import Note
 from scribe.forms import NoteForm
+from scribe.models import Note
 
 from .custom_formset import Formset
 
@@ -70,16 +69,36 @@ class ClientForm(ModelForm):
 
 
 class ReferralForm(ModelForm):
+    date_received = DateInput(attrs={'type': 'date'})
 
     def __init__(self, *args, **kwargs):
         super(ReferralForm, self).__init__(*args, **kwargs)
+        self.kwargs = kwargs
 
         self.helper = FormHelper(self)
         self.helper.form_tag = False
 
     class Meta:
         model = Referral
-        fields = ['client', 'referrer', 'date_received', 'date_completed']
+        fields = ('client', 'referrer', 'provider', 'date_received')
+        widgets = {'date_received': DateInput(attrs={
+                'type': 'date'
+            })}
+
+    def save(self, commit=True, client=None):
+        """
+        """
+
+        try:
+            referral = super(ReferralForm, self).save(commit=False)
+            self.instance.client = client
+            if commit:
+                referral.save(commit=True)
+        except Exception as e:
+            # raise(e)
+            import pdb; pdb.set_trace()
+
+
 
 
 class ReferralEvalForm(ModelForm):
@@ -95,27 +114,10 @@ class ReferralEvalForm(ModelForm):
         fields = ['date_received', 'date_completed']
 
 
-class ClientReferralMultiForm(MultiModelForm):
-    form_classes = {
-        'client': ClientForm,
-        'referral': ReferralForm,
-    }
-
-    def save(self, commit=True):
-        objects = super(ClientReferralMultiForm, self).save(commit=False)
-        if commit:
-            client = objects['client']
-            client.save()
-            referral = objects['referral']
-            referral.client = client
-            referral.save()
-            # note = objects['note']
-            # note.client = client
-            # note.save()
-        return objects
-
 
 class DecisionForm(ModelForm):
+
+    date_received = DateInput(attrs={'type': 'date'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -130,38 +132,54 @@ class DecisionForm(ModelForm):
 
     class Meta:
         model = Decision
-        fields = ['made_by', 'date_received',
-                  'date_completed', 'verdict']
+        fields = ['made_by', 'date_received', 'verdict']
         widgets = {
             'made_by': TextInput(),
+            'date_received': DateInput(attrs={
+                'type': 'date'
+            })
         }
 
         labels = {
             'verdict': 'Decision',
             'made_by': 'Deciding Party'}
 
-
-class ReferralDecisionMultiForm(MultiModelForm):
-    form_classes = {
-        'referral': ReferralEvalForm,
-        'pre_decision': DecisionForm,
-        'da_decision': DecisionForm,
-        'dc_decision': DecisionForm,
-    }
-
     def save(self, commit=True):
         """
-            Save decisions before Referral
         """
-        # import pdb; pdb.set_trace()
-    
-        objects = super(ReferralDecisionMultiForm, self).save(commit=True)
+
+
+        decision = super(DecisionForm, self).save(commit=False)
         if commit:
-            referral = objects['referral']
-            if referral.all_decisions_approved():
-                referral.approve()
-            referral.save()
-        return objects
+            decision.save()
+
+        referral = self.instance.referral
+        if referral.all_decisions_approved():
+            referral.approve()
+
+
+
+# class ReferralDecisionMultiForm(MultiModelForm):
+#     form_classes = {
+#         'referral': ReferralEvalForm,
+#         'pre_decision': DecisionForm,
+#         'da_decision': DecisionForm,
+#         'dc_decision': DecisionForm,
+#     }
+
+#     def save(self, commit=True):
+#         """
+#             Save decisions before Referral
+#         """
+
+
+#         objects = super(ReferralDecisionMultiForm, self).save(commit=True)
+#         if commit:
+#             referral = objects['referral']
+#             if referral.all_decisions_approved():
+#                 referral.approve()
+#             referral.save()
+#         return objects
 
 
 # ReferralDecisonFormset = inlineformset_factory(

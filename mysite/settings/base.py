@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY',
                        'jnq#vs9tmq!3-dll70l^m^!2j*%i+#o*+8v)21d@l^c91tls=1')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+DEBUG = os.environ.get('DJANGO_DEBUG')
 
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', ]
@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_fsm',
     'django_extensions',
-    # 'betterforms',
+    
     # 'guardian',
     'behave_django',
     # 'material',
@@ -73,7 +73,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
 
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -107,6 +107,16 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql', 
+        'HOST': 'localhost',      
+        'NAME': 'dev',
+        'USER': os.getenv('POSTGRES_USERNAME'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+    }
+}
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # default

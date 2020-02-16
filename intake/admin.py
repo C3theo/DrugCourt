@@ -20,10 +20,3 @@ admin.site.register(Client, ClientAdmin)
 admin.site.register(CriminalBackground)
 admin.site.register(Decision)
 admin.site.register(Referral)
-
-
-
-
-
-
-

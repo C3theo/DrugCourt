@@ -1,0 +1,45 @@
+{% extends "core/module_base.html" %}
+{% load crispy_forms_tags django_tables2 %}
+{% load static %}
+{% block card-header %}Objectives{% endblock card-header %}
+{% block help-text %}{% endblock help-text %}
+{% block filter %}
+<p>
+    <button type="button" class="btn btn-primary js-create-model" data-url="{% url 'treatment:objectives_create' %}">
+        <span class="fas fa-plus"></span>
+        Add Objectives
+    </button>
+</p>
+
+<table class="table table-striped table-bordered table-hover" id="model-table">
+    <thead>
+        <tr>
+            <th>Client</th>
+            <th>Objective</th>
+            <th>Target</th>
+            <th>Closed</th>
+            <th>Met</th>
+            <th>Met Date</th>
+            <th>Treatment Rating</th>
+            <th>Client Rating</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% include 'treatment/includes/partial_objectives_list.html' %}
+     
+    </tbody>
+</table>
+
+<div class="modal fade" id="modal-model">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+    {% endblock filter %}
+
+{% block javascript %}
+<script src="{% static 'core/objectives.js' %}"></script>
+<script src="{% static 'core/search.js' %}"></script>
+{% endblock javascript %}

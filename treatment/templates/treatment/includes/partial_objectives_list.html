@@ -1,0 +1,31 @@
+{% for objective in objectives %}
+<tr>
+    <td>{{ objective.client }}</td>
+    <td>{{ objective.obj_num }}</td>
+    <td>{{ objective.obj_target }}</td>
+    <td>{{ objective.closed }}</td>
+    <td>{{ objective.met }}</td>
+    <td>{{ objective.met_date }}</td>
+    <td>{{ objective.tx_rating }}</td>
+    <td>{{ objective.client_rating }}</td>
+    <td>
+        <button type="button"
+                class="btn btn-warning btn-sm js-update-model"
+                data-url="{% url 'treatment:objectives_update' objective.id %}">
+          <span class="fas fa-edit"></span> Edit
+        </button>
+        <button type="button" class="btn btn-warning btn-sm js-model-note" data-url="{% url 'treatment:note' objective.client.id %}"><span class="far fa-sticky-note"></span> Note</button>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="9" class="text-center bg-warning">No Objectives</td>
+</tr>
+{% endfor %}
+
+
+
+{# icon and search-box #}
+<div class="col-6 align-left">
+  <i id="search-icon" class="fas fa-search"></i>
+  <input id="user-input" placeholder="Search">
+</div>

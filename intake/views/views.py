@@ -1,174 +1,71 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import transaction
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render, get_object_or_404
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-from django_tables2.views import SingleTableView, MultiTableMixin
+from django_tables2.views import MultiTableMixin, SingleTableView
+from indexed import IndexedOrderedDict
 
-from scribe.forms import NoteForm, NoteFormSet
+from core.helpers import (add_forms_to_context, get_ajax_search_results,
+                          paginate_model, save_ajax_form)
+from scribe.forms import NoteForm
 from scribe.models import Note
 from scribe.tables import NoteTable
 
-from .filters import ClientFilter, ReferralFilter
-from ..forms import (ClientForm, ClientFormset, ClientReferralMultiForm,
-                     CriminalBackgroundForm, DecisionForm,
-                     ReferralDecisionMultiForm, ReferralForm, ReferralQueryForm)
+from ..forms import (ClientForm, ClientFormset, CriminalBackgroundForm,
+                     DecisionForm, ReferralForm, ReferralQueryForm)
 from ..models import Client, CriminalBackground, Decision, Referral
-from .tables import ClientTable, ClientCourtTable
+from .filters import ClientFilter, ReferralFilter
+from .tables import ClientCourtTable, ClientTable
 
 
 def client_list(request):
+    
+    context = get_ajax_search_results(request, Client)
+    if request.is_ajax():
+        html = render_to_string(
+            template_name='intake/includes/partial_client_list.html',
+            context=context
+        )
 
-    client_list = Client.objects.all()
-    page = request.GET.get('page', 1)
-
-    paginator = Paginator(client_list, 3)
-    try:
-        clients = paginator.page(page)
-    except PageNotAnInteger:
-        clients = paginator.page(1)
-    except EmptyPage:
-        clients = paginator.page(paginator.num_pages)
-
-    return render(request, 'intake/client_list.html', {'clients': clients})
-
-
-
-def save_client_form(request, form, template_name):
-    data = dict()
-
-    if request.method == 'POST':
-
-        if form.is_valid():
-            form.save()
-            data['form_is_valid'] = True
-            client_list = Client.objects.all()
-            page = request.GET.get('page', 1)
-
-            paginator = Paginator(client_list, 10)
-            try:
-                clients = paginator.page(page)
-            except PageNotAnInteger:
-                clients = paginator.page(1)
-            except EmptyPage:
-                clients = paginator.page(paginator.num_pages)
-
-            # TODO
-            data['html_client_list'] = render_to_string(
-                'intake/includes/partial_client_list.html', {'clients': clients})
-        else:
-            data['form_is_valid'] = False
-
-    context = {'form': form}
-    data['html_form'] = render_to_string(template_name,
-                                         context,
-                                         request=request
-                                         )
-    return JsonResponse(data)
+        data_dict = {"html_model_list": html}
+        return JsonResponse(data=data_dict, safe=False)
+    else:
+        return render(request, 'intake/client_list.html', context)
 
 
 def client_create(request):
+    """
+        Handle GET/POST requests and instantiate forms.
+    """
+
     if request.method == 'POST':
-        form = ClientReferralMultiForm(request.POST)
+        client_form = ClientForm(request.POST)
+        referral_form = ReferralForm(request.POST)
     else:
-        form = ClientReferralMultiForm()
-    return save_client_form(request, form, 'intake/includes/partial_client_create.html')
+        client_form = ClientForm()
+        referral_form = ReferralForm()
+
+    forms = (client_form, referral_form)
+    context = IndexedOrderedDict()
+    context['client'] = client_form.instance
+    context = add_forms_to_context(forms, context)
+
+    return save_ajax_form(
+        request, context=context, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_create.html')
 
 
 def client_update(request, pk):
-    client = get_object_or_404(Client, pk=pk)
-    if request.method == 'POST':
-        form = ClientReferralMultiForm(request.POST, instance={
-            'client': client,
-            'referral': client.referral
-        })
-    else:
-        form = ClientReferralMultiForm(instance={
-            'client': client,
-            'referral': client.referral
-        })
-
-    return save_client_form(request, form, 'intake/includes/partial_client_update.html')
-
-
-def client_evaluate(request, pk):
-
-    referral = get_object_or_404(Referral, pk=pk)
-    decisions = referral.decisions
-    if request.method == 'POST':
-        form = ReferralDecisionMultiForm(request.POST, instance={
-            'referral': referral,
-            'pre_decision': decisions[0],
-            'da_decision': decisions[1],
-            'dc_decision': decisions[2],
-        })
-    else:
-        form = ReferralDecisionMultiForm(instance={
-            'referral': referral,
-            'pre_decision': decisions[0],
-            'da_decision': decisions[1],
-            'dc_decision': decisions[2],
-        })
-
-    return save_client_form(request, form, 'intake/includes/partial_client_evaluate.html')
-
-
-class IntakeFilterView(LoginRequiredMixin, SingleTableView):
-    """
-        Intake Start Page
-    """
-
-    template_name = 'intake/0_client_referral_filter.html'
-    model = Client
-    table_class = ClientTable
-
-
-class ReferralDecisionUpdateView(LoginRequiredMixin, UpdateView):
-    """
-        Intake Client/Referral UpdateView
-    """
-    model = Referral
-    form_class = ReferralDecisionMultiForm
-    template_name = 'intake/2_referral_decision.html'
-    success_url = reverse_lazy('intake:start')
-
-    def get_form_kwargs(self):
-        """
-            Add Referral and 3 Associated decision objects to form.
-        """
-
-        kwargs = super(ReferralDecisionUpdateView, self).get_form_kwargs()
-
-        # TODO: change Decision.ROLE to be able to accesss in form
-        # This will make it so you can add decisions dynamically
-        # decisions = {f'{each.made_by}_decision': each for each in self.object.decisions}
-        # decisions = {f'decision_{i}': each for i, each in enumerate(self.object.decisions)}
-        # instance={'referral': self.object}
-        # instance.update(decisions)
-        # kwargs.update(instance=instance)
-
-        decisions = self.object.decisions
-        kwargs.update(instance={
-            'referral': self.object,
-            'pre_decision': decisions[0],
-            'da_decision': decisions[1],
-            'dc_decision': decisions[2],
-        })
-
-        return kwargs
-
-
-class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
     """
     """
 
+<<<<<<< HEAD
     model = Referral
     form_class = ClientReferralMultiForm
     template_name = 'intake/1_client_referral.html'
@@ -211,168 +108,56 @@ class ClientReferralUpdateView(LoginRequiredMixin, UpdateView):
             'client': self.object.client,
             'referral': self.object
         })
+=======
+    client = get_object_or_404(Client, pk=pk)
+    if request.method == 'POST':
+        client_form = ClientForm(request.POST, instance=client)
+        referral_form = ReferralForm(request.POST, instance=client.referral)
+>>>>>>> origin/Dev-3
 
-        return kwargs
+    else:  # GET Request (loadForm)
+
+        client_form = ClientForm(instance=client)
+        referral_form = ReferralForm(instance=client.referral)
+
+    forms = (client_form, referral_form)
+    context = IndexedOrderedDict()
+    context['client'] = client
+    context = add_forms_to_context(forms, context)
+
+    return save_ajax_form(request, context=context, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_update.html')
 
 
-class ClientReferralCreateView(LoginRequiredMixin, CreateView):
+def client_evaluate(request, pk):
     """
-        Intake Client/Referral CreationView
     """
 
-    model = Referral
-    form_class = ClientReferralMultiForm
-    template_name = 'intake/1_client_referral.html'
-    success_url = reverse_lazy('intake:start')
+    referral = get_object_or_404(Referral, pk=pk)
+    decisions = referral.decisions
+    
+    if request.method == 'POST':
+
+        forms = (DecisionForm(request.POST, instance=decision)
+                 for decision in decisions)
+    else:
+        forms = (DecisionForm(instance=decision) for decision in decisions)
+    context = IndexedOrderedDict()
+    context['client'] = referral.client
+    context['referral'] = referral
+    context['forms'] = forms
+
+    return save_ajax_form(request, context=context, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_evaluate.html')
 
 
-class ClientNoteCreateView(LoginRequiredMixin, CreateView):
-    """
-        View using Note Formsets
-    """
-    model = Client
-    template_name = 'intake/note.html'
-    form_class = ClientFormset
-    success_url = None
+def client_note(request, pk):
 
-    def get_context_data(self, **kwargs):
-        data = super(ClientNoteCreateView, self).get_context_data(**kwargs)
-        if self.request.POST:
-            data['client_notes'] = NoteFormSet(
-                self.request.POST, prefix='notes')
-        else:
-            data['client_notes'] = NoteFormSet(prefix='notes')
-        return data
+    client = get_object_or_404(Client, pk=pk)
+    if request.method == 'POST':
+        form = NoteForm(request.POST, initial={'note_type': 'General'})
+    else:
+        form = NoteForm(initial={'note_type': 'General'})
+    context = IndexedOrderedDict()
+    context['client'] = client
+    context['forms'] = {'note_form': form}
 
-    def form_valid(self, form):
-
-        context = self.get_context_data()
-        client_notes = context['client_notes']
-        with transaction.atomic():
-            form.instance.author = self.request.username
-            import pdb
-            pdb.set_trace()
-            self.object = form.save()
-            if client_notes.is_valid():
-                client_notes.instance = self.object
-                client_notes.save()
-
-        return super(ClientNoteCreateView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('intake:note-add')
-
-
-class CriminalBackgroundCreateView(LoginRequiredMixin, CreateView):
-    model = CriminalBackground
-    form_class = CriminalBackgroundForm
-    template_name = 'intake/criminal_background.html'
-
-
-class DecisionCreateView(LoginRequiredMixin, CreateView):
-    model = Decision
-    form_class = DecisionForm
-    template_name = 'intake/decision.html'
-
-
-class ClientUpdateView(LoginRequiredMixin, UpdateView):
-    model = Client
-    form_class = ClientForm
-    template_name = 'intake/client.html'
-
-
-class ClientListView(LoginRequiredMixin, SingleTableView):
-    model = Client
-    table_class = ClientTable
-    template_name = 'intake/client_filter.html'
-    context_object_name = 'clients'
-
-
-# class IntakeFormUpdateView(LoginRequiredMixin, CreateView):
-#     """
-#         Multi object UpdateView
-#     """
-#     model = Referral
-#     template_name = 'intake/0_client_referral_filter.html'
-
-    # def __init__(self, **kwargs):
-
-    #     super(IntakeFormView, TemplateView).__init__(**kwargs)
-    #     self.object = Client.objects.filter(pk=1)
-
-    # def get_context_data(self, **kwargs):
-    #     context = {'client_form': ClientForm(prefix='client'),
-    #               'note_form': NoteForm(prefix='note'),
-    #               'referral_form': ReferralForm(prefix='referral'),
-    #               'decision_form': DecisionForm(prefix='decision')}
-    #     return super().get_context_data(**context)
-
-    # def get(self, request, *args, **kwargs):
-    #     """
-    #     """
-
-    #     return self.render_to_response({'client_form': ClientForm(prefix='client'),
-    #                                     'note_form': NoteForm(prefix='note'),
-    #                                     'referral_form': ReferralForm(prefix='referral'),
-    #                                     'decision_form': DecisionForm(prefix='decision')})
-    #     # else:
-    #     #     self.object = self.get_object()
-    #     #     # import pdb
-    #     #     # pdb.set_trace()
-    #     #     # test = self.get_context_data(**kwargs)
-    #     #     return self.render_to_response(self.get_context_data(**kwargs))
-
-    # def post(self, request, *args, **kwargs):
-    #     """
-    #         Save form instance depending on form prefix.
-
-    #         Return Response object with forms in context.
-    #     """
-
-    #     client_form = _get_form_submit(
-    #         request, ClientForm, prefix='client')
-    #     note_form = _get_form_submit(request, NoteForm, prefix='note')
-    #     referral_form = _get_form_submit(
-    #         request, ReferralForm, prefix='referral')
-    #     decision_form = _get_form_submit(
-    #         request, DecisionForm, prefix='decision')
-
-    #     if client_form.is_bound and client_form.is_valid():
-    #         instance = client_form.save()
-    #         messages.success(
-    #             request, f'Client {instance.client_id} saved successfully.')
-    #         # return reverse()
-    #         # return HttpResponseRedirect(instance.get_success_url())
-
-    #     elif note_form.is_bound and note_form.is_valid():
-    #         instance = note_form.save()
-    #         messages.success(request, f'Referral saved successfully.')
-    #         # TODO: Add ForeignKeyField client
-
-    #     elif referral_form.is_bound and referral_form.is_valid():
-    #         instance = referral_form.save()
-    #         messages.success(
-    #             request, f'Note created at {instance.created_date}.')
-    #         # return HttpResponseRedirect(instance.client.get_success_url())
-    #     elif decision_form.is_bound and decision_form.is_valid():
-    #         instance = decision_form.save()
-    #         messages.success(
-    #             request, f'Referral Decision saved.')
-
-    #     return self.render_to_response({'client_form': client_form, 'note_form': note_form,
-    #                                     'referral_form': referral_form, 'decision_form': decision_form})
-
-
-def _get_form_submit(request, formcls, prefix=None):
-    """
-        Return bound form object if prefix is in POST request.
-
-        Args:
-            request:
-            formcls:
-            prefix
-    """
-    # data = request.POST if prefix in request.POST.keys() else None
-    data = request.POST
-
-    return formcls(data, prefix=prefix)
+    return save_ajax_form(request, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_note.html', context=context)

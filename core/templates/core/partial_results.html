@@ -1,0 +1,9 @@
+{% if models %}
+  <ul>
+  {% for model in models %}
+    <li>{{ artist.name }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No artists found.</p>
+{% endif %}

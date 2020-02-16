@@ -1,7 +1,7 @@
 $(function () {
 
-  var loadForm = function () {
-    var btn = $(this);
+  let loadForm = function () {
+    let btn = $(this);
     $.ajax({
       url: btn.attr("data-url"),
       type: 'GET',
@@ -12,13 +12,13 @@ $(function () {
       },
       success: function (data) {
         $("#modal-client .modal-content").html(data.html_form);
-        console.log('test');
+
       }
     });
   };
   
-  var saveForm = function () {
-    var form = $(this);
+  let saveForm = function () {
+    let form = $(this);
     $.ajax({
       url: form.attr("action"),
       data: form.serialize(),
@@ -26,9 +26,9 @@ $(function () {
       dataType: 'json',
       success: function (data) {
         if (data.form_is_valid) {
-          console.log('test');
           $("#client-table tbody").html(data.html_client_list);
           $("#modal-client").modal("hide");
+          
         }
         else {
           $("#modal-client .modal-client").html(data.html_form);
@@ -43,30 +43,19 @@ $(function () {
   $("#modal-client").on("submit", ".js-client-create-form", saveForm);
 
   // Update client
-  $("#client-table").on("click", ".js-update-client", loadForm);
-  $("#modal-client").on("submit", ".js-client-update-form", saveForm);
+  $("#client-table").on("click", ".js-update-model", loadForm);
+  $("#modal-client").on("submit", ".js-model-update-form", saveForm);
 
   // Delete client
-  $("#client-table").on("click", ".js-delete-client", loadForm);
-  $("#modal-client").on("submit", ".js-client-delete-form", saveForm);
+  $("#client-table").on("click", ".js-delete-model", loadForm);
+  $("#modal-client").on("submit", ".js-model-delete-form", saveForm);
 
   //Eval client
-  $("#client-table").on("click", ".js-eval-client", loadForm);
-  $("#modal-client").on("submit", ".js-client-eval-form", saveForm);
+  $("#client-table").on("click", ".js-eval-model", loadForm);
+  $("#modal-client").on("submit", ".js-model-eval-form", saveForm);
 
-  // This is working
-  // $(".js-create-court").click(function () {
-  //   $.ajax({
-  //     url: 'create',
-  //     type: 'get',
-  //     dataType: 'json',
-  //     beforeSend: function () {
-  //       $("#modal-court").modal("show");
-  //     },
-  //     success: function (data) {
-  //       $("#modal-court .modal-content").html(data.html_form);
-  //     }
-  //   });
-  // });
+  // Client Notes
+  $("#client-table").on("click", ".js-create-client-note", loadForm);
+  $("#modal-client").on("submit", ".js-client-note-form", saveForm);
 
 });

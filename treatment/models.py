@@ -1,9 +1,9 @@
 from django.db import models
 from intake.models import Client
 from model_utils import Choices
-from model_utils.models import TimeStampedModel 
+from model_utils.models import TimeStampedModel
 
-# Create your models here.
+
 class ProbGoalStatusOptions:
 
     Active = 'Active'
@@ -68,7 +68,9 @@ class ProbGoal(TimeStampedModel):
     prob_goal_status = models.CharField(max_length=25, choices=ProbGoalStatusOptions.CHOICES)
     status_date = models.DateField()
 
-class TxSession(TimeStampedModel):
+
+
+class TxAttendance(TimeStampedModel):
     client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
     session_date = models.DateField()
