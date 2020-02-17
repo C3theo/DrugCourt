@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import TxAttendance, Objectives
+from .models import TxSession, Objective
 
 from django.forms.widgets import DateInput, TimeInput
 
@@ -10,7 +10,7 @@ class TxAttendanceForm(ModelForm):
     time_out = TimeInput(attrs={'type': 'time'})
 
     class Meta:
-        model = TxAttendance
+        model = TxSession
         fields = ['client', 'session_date', 'attended', 'absence_reason', 'time_in',
                   'time_out']
         widgets = {'session_date': DateInput(attrs={'type': 'date'}),
@@ -23,7 +23,7 @@ class ObjectivesForm(ModelForm):
     obj_target = DateInput(attrs={'type': 'date'})
 
     class Meta:
-        model = Objectives
+        model = Objective
         fields = ['client', 'description',
                     'obj_num', 'obj_target',
                     'closed', 'met', 'met_date',

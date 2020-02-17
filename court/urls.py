@@ -4,7 +4,6 @@ from django.views import generic
 
 from . import views
 
-
 app_name = 'court'
 
 urlpatterns = [   

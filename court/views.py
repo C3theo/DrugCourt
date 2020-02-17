@@ -19,7 +19,7 @@ from scribe.forms import NoteForm
 def court_date_list(request):
     """
     """
-    court_dates = paginate_model(request, CourtDates)
+    court_dates = paginate_model(request, CourtDate)
     return render(request, 'court/court_date_list.html', {'court_dates': court_dates})
 
 
@@ -38,7 +38,7 @@ def court_date_create(request):
 
 
 def court_date_update(request, pk):
-    court = get_object_or_404(CourtDates, pk=pk)
+    court = get_object_or_404(CourtDate, pk=pk)
 
     if request.method == 'POST':
         form = CourtDateForm(request.POST, instance=court)

@@ -70,7 +70,7 @@ def objective_note(request, pk):
 
 def treatment_list(request):
 
-    treatment_list = paginate_model(request, TxAttendance)
+    treatment_list = paginate_model(request, TxSession)
 
     return render(request, 'treatment/treatment_list.html', {'tx_attendances': treatment_list})
 
@@ -89,7 +89,7 @@ def treatment_create(request):
 
 
 def treatment_update(request, pk):
-    treatment = get_object_or_404(TxAttendance, pk=pk)
+    treatment = get_object_or_404(TxSession, pk=pk)
     if request.method == 'POST':
         form = TxAttendanceForm(request.POST, instance=treatment)
     else:

@@ -80,7 +80,7 @@ class ReferralForm(ModelForm):
 
     class Meta:
         model = Referral
-        fields = ('client', 'referrer', 'provider', 'date_received')
+        fields = ('client', 'referrer',  'date_received')
         widgets = {'date_received': DateInput(attrs={
                 'type': 'date'
             })}

@@ -70,7 +70,7 @@ class ProbGoal(TimeStampedModel):
 
 
 
-class TxAttendance(TimeStampedModel):
+class TxSession(TimeStampedModel):
     client = models.ForeignKey(
         'intake.client', on_delete=models.CASCADE, blank=True, null=True)
     session_date = models.DateField()

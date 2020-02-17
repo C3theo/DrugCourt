@@ -136,10 +136,11 @@ class Referral(ConcurrentTransitionMixin, models.Model):
                       max_length=40, choices=STATUS_CHOICES, default=STATUS_PENDING)
     client = models.OneToOneField(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
-    referrer = models.CharField(max_length=20, null=True, blank=True)
+    referrer = models.CharField(max_length=50, null=True, blank=True)
     date_received = models.DateField(null=True, blank=True)
     date_completed = models.DateField(null=True, blank=True)
-
+   
+    
     @property
     def decisions(self):
         return self.decision_set.all()
