@@ -37,5 +37,34 @@
     {% endblock filter %}
 
 {% block javascript %}
-<script src="{% static 'core/court_dates.js' %}"></script>
+<script>
+    $.fn.dataTable.ext.buttons.alert = {
+        className: 'buttons-alert',
+
+        action: function (e, dt, node, config) {
+            alert(this.text());
+        }
+    };
+
+    $(document).ready(function () {
+        $('#model-table').DataTable({
+        //     dom: 'Bfrtip',
+        //     buttons: [
+        //     {
+        //         extend: 'alert',
+        //         text: 'My button 1'
+        //     },
+        //     {
+        //         extend: 'alert',
+        //         text: 'My button 2'
+        //     },
+        //     {
+        //         extend: 'alert',
+        //         text: 'My button 3'
+        //     }
+        // ],
+        });
+    });
+</script>
+<script src="{% static 'core/ajaxforms.js' %}"></script>
 {% endblock javascript %}

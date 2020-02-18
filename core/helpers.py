@@ -14,7 +14,6 @@ def get_ajax_search_results(request, model=None):
     url_parameter = request.GET.get("q")
     if url_parameter:
         models = model.objects.filter(last_name__icontains=url_parameter, ) | model.objects.filter(first_name__icontains=url_parameter, )
-        
         models.order_by('id')
     else:
         models = model.objects.all().order_by('id')
@@ -48,7 +47,7 @@ def delete_all_migrations():
         os.unlink(f)
 
 
-def save_ajax_form(request,  context=None):
+def save_ajax_form(request, context=None):
     """
         Helper function for validating multiple forms and
         adding to JsonResponse.
@@ -78,6 +77,8 @@ def save_ajax_form(request,  context=None):
                 if form.is_valid():
                     form.save()
                     data['form_is_valid'] = True
+    
+    return data
 
 
 
@@ -93,6 +94,7 @@ def render_ajax(request, context, data, form_template=None, list_template=None):
             list_template(str):
 
     """
+
     # Set first model in the context to the paginator
     model = context.items()[0]
     paginator_name = model[1]._meta.verbose_name_plural
@@ -100,10 +102,8 @@ def render_ajax(request, context, data, form_template=None, list_template=None):
 
     model_class = model[1].__class__
     models = model_class.objects.all().order_by('id')
-    # models = paginate_model(request, model_class)
 
     model_dict = {paginator_name: models}
-    # html_list = f'html_{model[0]}_list'
     html_list = 'html_model_list'
 
     data[html_list] = render_to_string(

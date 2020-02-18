@@ -20,6 +20,9 @@ def objectives_list(request):
     return render(request, 'treatment/objectives_list.html', context)
 
 def objective_create(request):
+    """
+    """
+    # import pdb; pdb.set_trace()
     if request.method == 'POST':
         form = ObjectivesForm(request.POST)
     else:

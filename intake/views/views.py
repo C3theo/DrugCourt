@@ -13,7 +13,7 @@ from django_tables2.views import MultiTableMixin, SingleTableView
 from indexed import IndexedOrderedDict
 
 from core.helpers import (add_forms_to_context, get_ajax_search_results,
-                          paginate_model, save_ajax_form)
+                          paginate_model, save_ajax_form, render_ajax)
 from scribe.forms import NoteForm
 from scribe.models import Note
 from scribe.tables import NoteTable
@@ -26,7 +26,7 @@ from .tables import ClientCourtTable, ClientTable
 
 
 def client_list(request):
-    
+
     context = get_ajax_search_results(request, Client)
     if request.is_ajax():
         html = render_to_string(
@@ -56,9 +56,10 @@ def client_create(request):
     context = IndexedOrderedDict()
     context['client'] = client_form.instance
     context = add_forms_to_context(forms, context)
-
-    return save_ajax_form(
-        request, context=context, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_create.html')
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       list_template='intake/includes/partial_client_list.html',
+                       form_template='intake/includes/partial_client_create.html')
 
 
 def client_update(request, pk):
@@ -80,7 +81,10 @@ def client_update(request, pk):
     context['client'] = client
     context = add_forms_to_context(forms, context)
 
-    return save_ajax_form(request, context=context, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_update.html')
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       list_template='intake/includes/partial_client_list.html',
+                       form_template='intake/includes/partial_client_update.html')
 
 
 def client_evaluate(request, pk):
@@ -89,7 +93,7 @@ def client_evaluate(request, pk):
 
     referral = get_object_or_404(Referral, pk=pk)
     decisions = referral.decisions
-    
+
     if request.method == 'POST':
 
         forms = (DecisionForm(request.POST, instance=decision)
@@ -100,8 +104,10 @@ def client_evaluate(request, pk):
     context['client'] = referral.client
     context['referral'] = referral
     context['forms'] = forms
-
-    return save_ajax_form(request, context=context, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_evaluate.html')
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       list_template='intake/includes/partial_client_list.html',
+                       form_template='intake/includes/partial_client_evaluate.html')
 
 
 def client_note(request, pk):
@@ -114,6 +120,7 @@ def client_note(request, pk):
     context = IndexedOrderedDict()
     context['client'] = client
     context['forms'] = {'note_form': form}
-    
-
-    return save_ajax_form(request, list_template='intake/includes/partial_client_list.html', form_template='intake/includes/partial_client_note.html', context=context)
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       list_template='intake/includes/partial_client_list.html',
+                       form_template='intake/includes/partial_client_note.html')
