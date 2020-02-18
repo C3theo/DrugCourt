@@ -4,25 +4,25 @@ from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from indexed import IndexedOrderedDict
 
-from core.helpers import add_forms_to_context, paginate_model, save_ajax_form, get_ajax_search_results
+from core.helpers import (add_forms_to_context, get_ajax_search_results,
+                          paginate_model, render_ajax, save_ajax_form)
 from intake.models import Client
 from scribe.forms import NoteForm
 
-from .forms import TxAttendanceForm, ObjectivesForm
-from .models import TxAttendance, Objectives
+from .forms import ObjectivesForm, TxAttendanceForm
+from .models import Objectives, TxAttendance
 
-# Create your views here.
 
 def objectives_list(request):
     context = get_ajax_search_results(request, model=Objectives)
-    
-    
+
     return render(request, 'treatment/objectives_list.html', context)
+
 
 def objective_create(request):
     """
     """
-    # import pdb; pdb.set_trace()
+
     if request.method == 'POST':
         form = ObjectivesForm(request.POST)
     else:
@@ -30,9 +30,11 @@ def objective_create(request):
     context = IndexedOrderedDict()
     context['objectives'] = form.instance
     context = add_forms_to_context((form,), context)
-    return save_ajax_form(request, context=context,
-                          form_template='treatment/includes/partial_objectives_create.html',
-                          list_template='treatment/includes/partial_objectives_list.html')
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       form_template='treatment/includes/partial_objectives_create.html',
+                       list_template='treatment/includes/partial_objectives_list.html')
+
 
 def objective_update(request, pk):
     objectives = get_object_or_404(Objectives, pk=pk)
@@ -44,9 +46,10 @@ def objective_update(request, pk):
     context = IndexedOrderedDict()
     context['objectives'] = form.instance
     context = add_forms_to_context((form,), context)
-    return save_ajax_form(request, context=context,
-                          form_template='treatment/includes/partial_objectives_update.html',
-                          list_template='treatment/includes/partial_objectives_list.html')
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       form_template='treatment/includes/partial_objectives_update.html',
+                       list_template='treatment/includes/partial_objectives_list.html')
 
 
 def objective_note(request, pk):
@@ -61,12 +64,10 @@ def objective_note(request, pk):
     context = IndexedOrderedDict()
     context['client'] = client
     context['forms'] = {'note_form': form}
-
-    return save_ajax_form(request, list_template='treatment/includes/partial_objectives_list.html',
-                          form_template='intake/includes/partial_client_note.html',
-                          context=context)
-
-
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       list_template='treatment/includes/partial_objectives_list.html',
+                       form_template='intake/includes/partial_client_note.html',)
 
 
 def treatment_list(request):
@@ -84,9 +85,10 @@ def treatment_create(request):
     context = IndexedOrderedDict()
     context['treatment'] = form.instance
     context = add_forms_to_context((form,), context)
-    return save_ajax_form(request, context=context,
-                          form_template='treatment/includes/partial_treatment_create.html',
-                          list_template='treatment/includes/partial_treatment_list.html')
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       form_template='treatment/includes/partial_treatment_create.html',
+                       list_template='treatment/includes/partial_treatment_list.html')
 
 
 def treatment_update(request, pk):
@@ -99,9 +101,10 @@ def treatment_update(request, pk):
     context = IndexedOrderedDict()
     context['treatment'] = form.instance
     context = add_forms_to_context((form,), context)
-    return save_ajax_form(request, context=context,
-                          form_template='treatment/includes/partial_treatment_update.html',
-                          list_template='treatment/includes/partial_treatment_list.html')
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       form_template='treatment/includes/partial_treatment_update.html',
+                       list_template='treatment/includes/partial_treatment_list.html')
 
 
 def treatment_note(request, pk):
@@ -116,7 +119,7 @@ def treatment_note(request, pk):
     context = IndexedOrderedDict()
     context['client'] = client
     context['forms'] = {'note_form': form}
-
-    return save_ajax_form(request, list_template='intake/includes/partial_client_list.html',
-                          form_template='intake/includes/partial_client_note.html',
-                          context=context)
+    data = render_ajax(request, context=context)
+    return save_ajax_form(request, context, data,
+                          list_template='intake/includes/partial_client_list.html',
+                          form_template='intake/includes/partial_client_note.html',)
