@@ -26,9 +26,9 @@
         </tr>
     </thead>
     <tbody>
-        
+
         {% include 'treatment/includes/partial_objectives_list.html' %}
-     
+
     </tbody>
 </table>
 
@@ -39,6 +39,35 @@
     </div>
     {% endblock filter %}
 
-{% block javascript %}
-<script src="{% static 'core/ajaxform.js' %}"></script>
-{% endblock javascript %}
+    {% block javascript %}
+    <script>
+        $.fn.dataTable.ext.buttons.alert = {
+            className: 'buttons-alert',
+
+            action: function (e, dt, node, config) {
+                alert(this.text());
+            }
+        };
+
+        $(document).ready(function () {
+            $('#model-table').DataTable({
+                //     dom: 'Bfrtip',
+                //     buttons: [
+                //     {
+                //         extend: 'alert',
+                //         text: 'My button 1'
+                //     },
+                //     {
+                //         extend: 'alert',
+                //         text: 'My button 2'
+                //     },
+                //     {
+                //         extend: 'alert',
+                //         text: 'My button 3'
+                //     }
+                // ],
+            });
+        });
+    </script>
+    <script src="{% static 'core/ajaxform.js' %}"></script>
+    {% endblock javascript %}
