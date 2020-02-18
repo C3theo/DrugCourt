@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django_tables2.views import SingleTableView
 from indexed import IndexedOrderedDict
 
-from core.helpers import add_forms_to_context, paginate_model, save_ajax_form
+from core.helpers import add_forms_to_context, paginate_model, save_ajax_form, render_ajax
 from court.filters import CourtDateFilter
 from court.forms import CourtDateForm
 from court.models import CourtDates
@@ -24,6 +24,7 @@ def court_date_list(request):
 
 
 def court_date_create(request):
+    # import pdb; pdb.set_trace()
     if request.method == 'POST':
         form = CourtDateForm(request.POST)
     else:
@@ -31,8 +32,8 @@ def court_date_create(request):
     context = IndexedOrderedDict()
     context['court_date'] = form.instance
     context = add_forms_to_context((form,), context)
-    
-    return save_ajax_form(request, context=context,
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
                           list_template='court/includes/partial_court_list.html',
                           form_template='court/includes/partial_court_create.html')
 
@@ -47,7 +48,8 @@ def court_date_update(request, pk):
     context = IndexedOrderedDict()
     context['court_date'] = form.instance
     context = add_forms_to_context((form,), context)
-    return save_ajax_form(request, context=context,
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
                           list_template='court/includes/partial_court_list.html',
                           form_template='court/includes/partial_court_update.html')
 
@@ -64,6 +66,7 @@ def court_date_note(request, pk):
     context['court_date'] = form.instance
     context['client'] = client
     context = add_forms_to_context((form,), context)
-    return save_ajax_form(request, context=context,
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
                           list_template='court/includes/partial_court_list.html',
                           form_template='intake/includes/partial_client_note.html')

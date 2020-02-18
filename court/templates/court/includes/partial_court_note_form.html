@@ -1,6 +1,6 @@
 {% load pdb crispy_forms_tags %}
 
-<form id="note-form" method="POST" action="{% url 'intake:note' client.pk %}" class="js-court-note-form">
+<form id="note-form" method="POST" action="{% url 'intake:note' client.pk %}" class="js-model-note-form">
     {% csrf_token %}
     <div class="modal-header">
         <h4 class="modal-title">Add Court Note</h4>

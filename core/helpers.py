@@ -105,7 +105,7 @@ def render_ajax(request, context, data, form_template=None, list_template=None):
 
     model_dict = {paginator_name: models}
     html_list = 'html_model_list'
-
+    import pdb; pdb.set_trace()
     data[html_list] = render_to_string(
         list_template, model_dict)
 

@@ -1,6 +1,6 @@
 $(function () {
 
-    $(".js-create-court").click(function () {
+    $(".js-create-model").click(function () {
       $.ajax({
         url: '/dates/create/',
         type: 'get',

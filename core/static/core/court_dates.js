@@ -25,7 +25,7 @@ $(function () {
       dataType: 'json',
       success: function (data) {
         if (data.form_is_valid) {
-          $("#court-table tbody").html(data.html_court_date_list); ~
+          $("#model-table tbody").html(data.html_court_date_list); ~
             $("#modal-court").modal("hide");
         }
         else {
@@ -37,19 +37,19 @@ $(function () {
   };
 
   // Create court
-  $(".js-create-court").click(loadForm);
-  $("#modal-court").on("submit", ".js-court-create-form", saveForm);
+  $(".js-create-model").click(loadForm);
+  $("#modal-court").on("submit", ".js-model-create-form", saveForm);
 
   // Update court
-  $("#court-table").on("click", ".js-update-court", loadForm);
-  $("#modal-court").on("submit", ".js-court-update-form", saveForm);
+  $("#model-table").on("click", ".js-update-model", loadForm);
+  $("#modal-model").on("submit", ".js-model-update-form", saveForm);
 
   // Delete court
-  $("#court-table").on("click", ".js-delete-court", loadForm);
+  $("#model-table").on("click", ".js-delete-court", loadForm);
   $("#modal-court").on("submit", ".js-court-delete-form", saveForm);
 
   // Client Notes
-  $("#court-table").on("click", ".js-create-court-note", loadForm);
+  $("#model-table").on("click", ".js-create-model-note", loadForm);
   $("#modal-court").on("submit", ".js-court-note-form", saveForm);
 
 });
