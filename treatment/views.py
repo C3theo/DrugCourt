@@ -119,7 +119,7 @@ def treatment_note(request, pk):
     context = IndexedOrderedDict()
     context['client'] = client
     context['forms'] = {'note_form': form}
-    data = render_ajax(request, context=context)
-    return save_ajax_form(request, context, data,
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
                           list_template='intake/includes/partial_client_list.html',
                           form_template='intake/includes/partial_client_note.html',)
