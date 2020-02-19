@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     # 'viewflow.frontend',
     'widget_tweaks',
     'django_pdb',
-
+    'import_export',
 ]
 
 MIDDLEWARE = [
