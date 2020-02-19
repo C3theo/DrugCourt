@@ -1,13 +1,12 @@
-# Create your models here.
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import F
 from django.urls import reverse
 from django.utils import timezone
-from model_utils import Choices
-from model_utils.models import TimeStampedModel
-
 from django_fsm import (ConcurrentTransitionMixin, FSMField,
                         TransitionNotAllowed, transition)
+from model_utils import Choices
+from model_utils.models import TimeStampedModel
 
 
 class CourtDates(TimeStampedModel):
@@ -43,23 +42,24 @@ class Phase(models.Model):
 
     CourtFrequency = Choices('Weekly', 'Biweekly', 'Monthly')
     CHOICES = Choices('Not in System', 'Phase One', 'Phase Two', 'Phase Three')
-
-    phase = models.CharField(
-        max_length=20, choices=CHOICES, null=True, blank=True)
+    phase = models.IntegerField(default=1,
+                                validators=[MaxValueValidator(10), MinValueValidator(1)])
+    # phase = models.CharField(
+    #     max_length=20, choices=CHOICES, null=True, blank=True)
     screens_per_week = models.IntegerField(default=1)
     meetings_per_week = models.IntegerField(default=1)
-    notes = models.ForeignKey('intake.Note', null=True,
-                              blank=True, on_delete=models.CASCADE)
+    # notes = models.ForeignKey('intake.Note', null=True,
+    #                           blank=True, on_delete=models.CASCADE)
     review_frequency = models.IntegerField(default=1)
-    step_sessions = models.CharField(max_length=2)
-    site_num = models.CharField(max_length=30)
+    step_sessions = models.IntegerField(default=1)
+    site_num = models.IntegerField(default=1)
     tx_hours = models.IntegerField()
     min_days = models.IntegerField()
-    review_freq = models.CharField(max_length=30)
+    review_freq = models.CharField(max_length=30, choices=CourtFrequency)
     employment_hours = models.IntegerField()  # Client Required Hours
 
     # Fee Per Phase
-    fees = models.CharField(max_length=4, null=True, blank=True)
+    # fees = models.CharField(max_length=4, null=True, blank=True)
     billing_amount = models.IntegerField()
     billing_total = models.IntegerField()
 
