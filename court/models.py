@@ -71,16 +71,16 @@ class FeeHistory(TimeStampedModel):
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     bill_amt = models.IntegerField()
     trans_date = models.DateField()
-    comments = models.TextField(max_length=15)  # money order/check
+    comments = models.CharField(max_length=15)  # money order/check
     submitted = models.BooleanField()
-    submit_by = models.TextField(max_length=15)
+    submit_by = models.CharField(max_length=15)
     submit_date = models.DateField
 
 
 class PhaseHistory(TimeStampedModel):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
-    phase = models.TextField(max_length=1)
+    phase = models.CharField(max_length=1)
     start_date = models.DateField()
     complete_date = models.DateField()
     complete = models.BooleanField()
@@ -92,7 +92,7 @@ class Screens(TimeStampedModel):
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     collect_date = models.DateField
     test_date = models.DateField
-    result = models.TextField(max_length=250)
+    result = models.CharField(max_length=250)
     result_confirmed = models.BooleanField
     positive_approved = models.BooleanField
 
@@ -101,11 +101,11 @@ class Sanctions(TimeStampedModel):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     sanc_date = models.DateField
-    sanc_desc = models.TextField(max_length=250)
+    sanc_desc = models.CharField(max_length=250)
     jail_days = models.IntegerField()
     jail_start = models.DateField
     Jail_end = models.DateField
     comm_srvc_hrs = models.IntegerField()
     Comm_srv_start = models.DateField
     comm_srv_end = models.DateField
-    comm_srvc_name = models.TextField(max_length=15)
+    comm_srvc_name = models.CharField(max_length=15)
