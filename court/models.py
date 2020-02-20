@@ -37,29 +37,24 @@ class CourtDates(TimeStampedModel):
     #     return reverse('court:detail', kwargs={'pk': self.id})
 
 
-class Phase(models.Model):
-    # Log changes to table/ audit
+class Phase(TimeStampedModel):
+    # contains phase info setup by Coordinator
 
-    CourtFrequency = Choices('Weekly', 'Biweekly', 'Monthly')
-    CHOICES = Choices('Not in System', 'Phase One', 'Phase Two', 'Phase Three')
-    phase = models.IntegerField(default=1,
-                                validators=[MaxValueValidator(10), MinValueValidator(1)])
-    # phase = models.CharField(
-    #     max_length=20, choices=CHOICES, null=True, blank=True)
+    FREQUENCY = Choices('Weekly', 'Biweekly', 'Monthly')
+    CHOICES = Choices('1', '2', '3', '4', '5')
+
+    site_num = models.CharField(max_length=1)
+    phase = models.CharField(max_length=1)
     screens_per_week = models.IntegerField(default=1)
     meetings_per_week = models.IntegerField(default=1)
-    # notes = models.ForeignKey('intake.Note', null=True,
-    #                           blank=True, on_delete=models.CASCADE)
-    review_frequency = models.IntegerField(default=1)
-    step_sessions = models.IntegerField(default=1)
-    site_num = models.IntegerField(default=1)
+    review_frequency = models.CharField(max_length=10, choices=FREQUENCY)
+    step_sessions = models.IntegerField()
+    tx_sessions = models.IntegerField()
     tx_hours = models.IntegerField()
-    min_days = models.IntegerField()
-    review_freq = models.CharField(max_length=30, choices=CourtFrequency)
-    employment_hours = models.IntegerField()  # Client Required Hours
+    min_phase_days = models.IntegerField()
+    weekly_employment_hours = models.IntegerField()  # Client Required Hours
+    phase_id = models.IntegerField()
 
-    # Fee Per Phase
-    # fees = models.CharField(max_length=4, null=True, blank=True)
     billing_amount = models.IntegerField()
     billing_total = models.IntegerField()
 
@@ -76,17 +71,19 @@ class FeeHistory(TimeStampedModel):
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     bill_amt = models.IntegerField()
     trans_date = models.DateField()
-    comments = models.TextField(max_length=15)  # money order/check
+    comments = models.CharField(max_length=15)  # money order/check
     submitted = models.BooleanField()
-    submit_by = models.TextField(max_length=15)
+    submit_by = models.CharField(max_length=15)
     submit_date = models.DateField
 
 
 class PhaseHistory(TimeStampedModel):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
-    phase = models.TextField(max_length=1)
-    completed = models.BooleanField
+    phase = models.CharField(max_length=1)
+    start_date = models.DateField()
+    complete_date = models.DateField()
+    complete = models.BooleanField()
     total_days = models.IntegerField()
 
 
@@ -95,7 +92,7 @@ class Screens(TimeStampedModel):
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     collect_date = models.DateField
     test_date = models.DateField
-    result = models.TextField(max_length=250)
+    result = models.CharField(max_length=250)
     result_confirmed = models.BooleanField
     positive_approved = models.BooleanField
 
@@ -104,11 +101,11 @@ class Sanctions(TimeStampedModel):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     sanc_date = models.DateField
-    sanc_desc = models.TextField(max_length=250)
+    sanc_desc = models.CharField(max_length=250)
     jail_days = models.IntegerField()
     jail_start = models.DateField
     Jail_end = models.DateField
     comm_srvc_hrs = models.IntegerField()
     Comm_srv_start = models.DateField
     comm_srv_end = models.DateField
-    comm_srvc_name = models.TextField(max_length=15)
+    comm_srvc_name = models.CharField(max_length=15)
