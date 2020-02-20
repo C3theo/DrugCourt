@@ -23,3 +23,17 @@ class CourtDateForm(ModelForm):
 
         widgets = {'attendance': CheckboxInput,
                    'court_date': DateInput(attrs={'type': 'date'})}
+
+class PhaseHistoryForm(ModelForm):
+
+
+    def __init__(self, *args, **kwargs):
+        super(PhaseHistoryForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
+
+    class Meta:
+        model = PhaseHistoryForm
+        fields = ['client', 'phase',
+                  'completed', 'total_days']
