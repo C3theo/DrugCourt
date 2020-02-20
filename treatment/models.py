@@ -52,12 +52,12 @@ class Objectives(TimeStampedModel):
     obj_target = models.DateField()
     closed = models.BooleanField()
     met = models.BooleanField()
-    met_date = models.DateField()
-    tx_rating = models.IntegerField()
-    client_rating = models.IntegerField()
+    met_date = models.DateField(blank=True, null=True)
+    tx_rating = models.IntegerField(blank = True, null=True)
+    client_rating = models.IntegerField(blank = True, null=True)
 
     def meta(self):
-        return self._meta
+        return self.meta
 
 class ProbGoals(TimeStampedModel):
     client = models.ForeignKey(

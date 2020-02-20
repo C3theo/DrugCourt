@@ -38,28 +38,23 @@ class CourtDates(TimeStampedModel):
     #     return reverse('court:detail', kwargs={'pk': self.id})
 
 
-class Phase(models.Model):
-    # Log changes to table/ audit
+class Phase(TimeStampedModel):
+    # contains phase info setup by Coordinator
 
-    CourtFrequency = Choices('Weekly', 'Biweekly', 'Monthly')
-    CHOICES = Choices('Not in System', 'Phase One', 'Phase Two', 'Phase Three')
+    FREQUENCY = Choices('Weekly', 'Biweekly', 'Monthly')
+    CHOICES = Choices('1', '2', '3', '4', '5')
 
-    phase = models.CharField(
-        max_length=20, choices=CHOICES, null=True, blank=True)
+    site_num = models.CharField(max_length=1)
+    phase = models.CharField(max_length=1)
     screens_per_week = models.IntegerField(default=1)
     meetings_per_week = models.IntegerField(default=1)
-    notes = models.ForeignKey('intake.Note', null=True,
-                              blank=True, on_delete=models.CASCADE)
-    review_frequency = models.IntegerField(default=1)
-    step_sessions = models.CharField(max_length=2)
-    site_num = models.CharField(max_length=30)
+    review_frequency = models.CharField(max_length=10, choices=FREQUENCY)
+    step_sessions = models.IntegerField()
+    tx_sessions = models.IntegerField()
     tx_hours = models.IntegerField()
-    min_days = models.IntegerField()
-    review_freq = models.CharField(max_length=30)
-    employment_hours = models.IntegerField()  # Client Required Hours
-
-    # Fee Per Phase
-    fees = models.CharField(max_length=4, null=True, blank=True)
+    min_phase_days = models.IntegerField()
+    weekly_employment_hours = models.IntegerField()  # Client Required Hours
+    phase_id = models.IntegerField()
     billing_amount = models.IntegerField()
     billing_total = models.IntegerField()
 
