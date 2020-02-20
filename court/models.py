@@ -81,7 +81,9 @@ class PhaseHistory(TimeStampedModel):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
     phase = models.TextField(max_length=1)
-    completed = models.BooleanField
+    start_date = models.DateField()
+    complete_date = models.DateField()
+    complete = models.BooleanField()
     total_days = models.IntegerField()
 
 
