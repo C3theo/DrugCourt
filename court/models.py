@@ -1,13 +1,12 @@
-# Create your models here.
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import F
 from django.urls import reverse
 from django.utils import timezone
-from model_utils import Choices
-from model_utils.models import TimeStampedModel
-
 from django_fsm import (ConcurrentTransitionMixin, FSMField,
                         TransitionNotAllowed, transition)
+from model_utils import Choices
+from model_utils.models import TimeStampedModel
 
 
 class CourtDates(TimeStampedModel):
@@ -55,6 +54,7 @@ class Phase(TimeStampedModel):
     min_phase_days = models.IntegerField()
     weekly_employment_hours = models.IntegerField()  # Client Required Hours
     phase_id = models.IntegerField()
+
     billing_amount = models.IntegerField()
     billing_total = models.IntegerField()
 

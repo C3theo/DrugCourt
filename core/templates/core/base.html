@@ -13,7 +13,6 @@
 	<!-- Fixes HTTP error not found for favicon.ico -->
 
 	<!-- Bootstrap CSS -->
-
 	<title>
 		{% block title %} Accountability Court Case Mgmt{% endblock %}
 	</title>
@@ -24,16 +23,11 @@
 		href="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/kt-2.5.1/sp-1.0.1/sl-1.3.1/datatables.min.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.css" /> -->
 
-
-
 	<!-- Custom styles for this template -->
 	{% block extracss %}
 	<!-- <link rel="stylesheet" type="text/css" href="{% static 'core/main.css' %}"> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'core/datatables.css' %}"> 
 	{% endblock extracss %}
-
-
-
-
 
 </head>
 
@@ -66,7 +60,8 @@
 
 			</ul>
 			<ul class="navbar-nav justify-content-end">
-				<li class=" navbar-nav navbar-text">{{ user.first_name }} {{ user.last_name }} ({{ user.groups.all.0 }}) </li>
+				<li class=" navbar-nav navbar-text">{{ user.first_name }} {{ user.last_name }} ({{ user.groups.all.0 }})
+				</li>
 				<li class="nav-item">
 					{% url 'logout' as logout_url %}
 					{% url 'login' as login_url %}
@@ -145,12 +140,10 @@
 		crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
 	<script src="https://kit.fontawesome.com/6e20f2b51a.js"></script>
-
-
 	<script type="text/javascript"
 		src="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/kt-2.5.1/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
-	
-		<!-- Custom JavaScript -->
+
+
 	{% block javascript %}
 
 	{% endblock javascript%}
