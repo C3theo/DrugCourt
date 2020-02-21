@@ -69,10 +69,6 @@ class ProbGoals(TimeStampedModel):
     prob_goal_num = models.IntegerField()
     prob_goal_target = models.DateField()
     prob_goal_status = models.CharField(max_length=25, choices=ProbGoalStatusOptions.CHOICES)
-
-
-
-
     status_date = models.DateField(blank=True, null=True)
 
 
