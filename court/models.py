@@ -80,7 +80,8 @@ class FeeHistory(TimeStampedModel):
 class PhaseHistory(TimeStampedModel):
     client = models.ForeignKey(
         'intake.Client', on_delete=models.CASCADE, blank=True, null=True)
-    phase = models.CharField(max_length=1)
+    phase = models.ForeignKey(
+        'court.Phase', on_delete=models.CASCADE, blank=True, null=True)
     start_date = models.DateField()
     complete_date = models.DateField()
     complete = models.BooleanField()

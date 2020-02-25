@@ -1,18 +1,20 @@
-{% for court_date in court_dates %}
+{% for phase in phases %}
 <tr>
-    <td>{{ court_date.client}}</td>
-    <td>{{ court_date.court_date }}</td>
-    <td>{{ court_date.event }}</td>
+    <td>{{ phase.client}}</td>
+    <td>{{ phase.phase }}</td>
+    <td>{{ phase.start_date }}</td>
+    <td>{{ phase.complete_date }}</td>
+    <td>{{ phase.total_days }}</td>
+    <td>{{ phase.complete }}</td>
     <td>
         <button type="button"
                 class="btn btn-warning btn-sm js-update-model"
-                data-url="{% url 'court:update' court_date.id %}">
+                data-url="{% url 'court:phase-update' phase.id %}">
           <span class="fas fa-edit"></span> Edit
         </button>
-        <button type="button" class="btn btn-warning btn-sm js-model-note" data-url="{% url 'court:note' court_date.client.id %}"><span class="far fa-sticky-note"></span> Note</button>
 </tr>
 {% empty %}
 <tr>
-    <td colspan="7" class="text-center bg-warning">No court_date</td>
+    <td colspan="7" class="text-center bg-warning">No Phases</td>
 </tr>
 {% endfor %}

@@ -1,14 +1,9 @@
 {% load pdb %}
-
-
 {% for client in clients %}
 <tr>
-    <td>{{ client.first_name }}</td>
-    <td>{{ client.middle_name }}</td>
-    <td>{{ client.last_name }}</td>
+    <td>{{ client.full_name }}</td>
     <td>{{ client.status }}</td>
-    <td>
-
+    <!-- <td>
         <button type="button" class="btn btn-warning btn-sm js-update-model"
             data-url="{% url 'intake:update' client.id %}">
             <span class="fas fa-edit"></span> Edit
@@ -19,7 +14,7 @@
             <span class="fas fa-user-check"></span> Evaluate
         </button>
         {% endif %}
-    </td>
+    </td> -->
 </tr>
 
 {% empty %}

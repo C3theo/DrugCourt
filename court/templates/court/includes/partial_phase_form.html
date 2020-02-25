@@ -1,16 +1,34 @@
 {% load crispy_forms_tags pdb %}
 <div class="form-row">
     <div class="form-group col-6">
-        {{ forms.courtdates_form.client|as_crispy_field }}
+        {{ forms.phasehistory_form.client|as_crispy_field }}
     </div>
 </div>
 <div class="form-row">
     <div class="form-group col-6">
-        {{ forms.courtdates_form.court_date|as_crispy_field }}
+        {{ forms.phasehistory_form.phase|as_crispy_field }}
     </div>
 </div>
+
 <div class="form-row">
     <div class="form-group col-6">
-        {{ forms.courtdates_form.event|as_crispy_field }}
+        {{ forms.phasehistory_form.start_date|as_crispy_field }}
+    </div>
+    <div class="form-group col-6">
+        {{ forms.phasehistory_form.complete_date|as_crispy_field }}
     </div>
 </div>
+
+<div class="form-row">
+    <div class="form-group col-6">
+        {{ forms.phasehistory_form.complete|as_crispy_field }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-6">
+        {{ forms.phasehistory_form.total_days|as_crispy_field }}
+    </div>
+</div>
+
+

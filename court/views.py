@@ -97,14 +97,13 @@ def phase_create(request):
                           list_template='court/includes/partial_phase_list.html',
                           form_template='court/includes/partial_phase_create.html')
 
-
 def phase_update(request, pk):
     phase = get_object_or_404(PhaseHistory, pk=pk)
 
     if request.method == 'POST':
-        form = PhaseHistoryForm(request.POST, instance=court)
+        form = PhaseHistoryForm(request.POST, instance=phase)
     else:
-        form = PhaseHistoryForm(instance=court)
+        form = PhaseHistoryForm(instance=phase)
     context = IndexedOrderedDict()
     context['phase'] = form.instance
     context = add_forms_to_context((form,), context)

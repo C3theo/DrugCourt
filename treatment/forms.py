@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from .models import TxAttendance, Objectives
 
-from django.forms.widgets import DateInput, TimeInput
+from django.forms.widgets import DateInput, TimeInput, Textarea
 
 
 class TxAttendanceForm(ModelForm):
@@ -30,4 +30,7 @@ class ObjectivesForm(ModelForm):
                     'tx_rating', 'client_rating', ]
 
         widgets = {'met_date': DateInput(attrs={'type': 'date'}),
-                'obj_target': DateInput(attrs={'type': 'date'})}
+                'obj_target': DateInput(attrs={'type': 'date'}),
+                'description': Textarea(attrs={'rows': 3, 'cols': 40}),
+
+                }

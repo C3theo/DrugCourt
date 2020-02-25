@@ -2,19 +2,19 @@
 {% load crispy_forms_tags pdb %}
 
 
-<form method="post" action="{% url 'court:create' %}" class="js-model-create-form">
+<form method="post" action="{% url 'court:phase-create' %}" class="js-model-create-form">
   {% csrf_token %}
   <div class="modal-header">
-      <h4 class="modal-title">Add Court Date</h4>
+      <h4 class="modal-title">Add Phase</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
   </div>
   <div class="modal-body">
-    {% include 'court/includes/partial_court_form.html' %}
+    {% include 'court/includes/partial_phase_form.html' %}
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="submit" class="btn btn-primary">Add Date</button>
+    <button type="submit" class="btn btn-primary">Add Phase</button>
   </div>
 </form>

@@ -23,9 +23,9 @@
         </tr>
     </thead>
     <tbody>
-        
+
         {% include 'court/includes/partial_court_list.html' %}
-     
+
     </tbody>
 </table>
 
@@ -36,35 +36,21 @@
     </div>
     {% endblock filter %}
 
-{% block javascript %}
-<script>
-    $.fn.dataTable.ext.buttons.alert = {
-        className: 'buttons-alert',
+    {% block javascript %}
+    <script>
+        $.fn.dataTable.ext.buttons.alert = {
+            className: 'buttons-alert',
 
-        action: function (e, dt, node, config) {
-            alert(this.text());
-        }
-    };
+            action: function (e, dt, node, config) {
+                alert(this.text());
+            }
+        };
 
-    $(document).ready(function () {
-        $('#model-table').DataTable({
-        //     dom: 'Bfrtip',
-        //     buttons: [
-        //     {
-        //         extend: 'alert',
-        //         text: 'My button 1'
-        //     },
-        //     {
-        //         extend: 'alert',
-        //         text: 'My button 2'
-        //     },
-        //     {
-        //         extend: 'alert',
-        //         text: 'My button 3'
-        //     }
-        // ],
+        $(document).ready(function () {
+            $('#model-table').DataTable({
+
+            });
         });
-    });
-</script>
-<script src="{% static 'core/ajaxforms.js' %}"></script>
-{% endblock javascript %}
+    </script>
+    <script src="{% static 'core/ajaxforms.js' %}"></script>
+    {% endblock javascript %}

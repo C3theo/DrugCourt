@@ -16,13 +16,16 @@
         <tr>
             <th>Client</th>
             <th>Objective</th>
+            <th>Description</th>
             <th>Target</th>
+            <th>Action</th>
+<!--             
             <th>Closed</th>
             <th>Met</th>
             <th>Met Date</th>
             <th>Treatment Rating</th>
             <th>Client Rating</th>
-            <th>Action</th>
+             -->
         </tr>
     </thead>
     <tbody>
@@ -41,31 +44,9 @@
 
     {% block javascript %}
     <script>
-        $.fn.dataTable.ext.buttons.alert = {
-            className: 'buttons-alert',
-
-            action: function (e, dt, node, config) {
-                alert(this.text());
-            }
-        };
-
         $(document).ready(function () {
             $('#model-table').DataTable({
-                //     dom: 'Bfrtip',
-                //     buttons: [
-                //     {
-                //         extend: 'alert',
-                //         text: 'My button 1'
-                //     },
-                //     {
-                //         extend: 'alert',
-                //         text: 'My button 2'
-                //     },
-                //     {
-                //         extend: 'alert',
-                //         text: 'My button 3'
-                //     }
-                // ],
+
             });
         });
     </script>

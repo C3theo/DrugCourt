@@ -149,6 +149,9 @@ class ClientFactory(DjangoModelFactory):
             return 1
 
 
+@factory.django.mute_signals(post_save)
+class ObjectiveFactory(DjangoModelFactory):
+
 
 # with factory.debug():
 #     obj = ClientFactory()
