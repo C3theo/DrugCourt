@@ -10,7 +10,7 @@ def home(request):
     context = get_ajax_search_results(request, Client)
     if request.is_ajax():
         html = render_to_string(
-            template_name='intake/includes/partial_client_list.html',
+            template_name='intake/includes/partial_client_home.html',
             context=context
         )
         data_dict = {"html_model_list": html}

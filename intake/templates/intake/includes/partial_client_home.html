@@ -1,0 +1,12 @@
+{% load pdb %}
+{% for client in clients %}
+<tr>
+    <td><a href="{% url 'intake:dash' client.pk %}">{{ client.full_name }}</a></td>
+    <td>{{ client.status }}</td>
+</tr>
+
+{% empty %}
+<tr>
+    <td colspan="7" class="text-center bg-warning">No Client</td>
+</tr>
+{% endfor %}

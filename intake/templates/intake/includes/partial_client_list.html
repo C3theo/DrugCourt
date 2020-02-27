@@ -1,7 +1,7 @@
 {% load pdb %}
 {% for client in clients %}
 <tr>
-    <td>{{ client.full_name }}</td>
+    <td><a href="{% url 'intake:dash' client.pk %}">{{ client.full_name }}</a></td>
     <td>{{ client.status }}</td>
     <!-- <td>
         <button type="button" class="btn btn-warning btn-sm js-update-model"

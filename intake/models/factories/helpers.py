@@ -12,9 +12,12 @@ def populate_fake_db(factory=ReferralFactory, size=25):
     factory.create_batch(size)
 
 
+## This is dumb
 def delete_factory_inventory(factory=ReferralFactory):
-
-    model = factory._meta.model
+    try:
+        model = factory._meta.model
+    except Exception:
+        model = factory
     inventory = model.objects.all()
     for each in inventory:
         each.delete()

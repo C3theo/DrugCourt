@@ -25,6 +25,13 @@ from .filters import ClientFilter, ReferralFilter
 from .tables import ClientCourtTable, ClientTable
 
 
+def client_dashboard(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+    context = {'client': client}
+
+    return render(request, 'intake/dashboard.html', context)
+
+
 def client_list(request):
 
     context = get_ajax_search_results(request, Client)
@@ -80,7 +87,6 @@ def client_update(request, pk):
     context = IndexedOrderedDict()
     context['client'] = client
     context = add_forms_to_context(forms, context)
-
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
                        list_template='intake/includes/partial_client_list.html',

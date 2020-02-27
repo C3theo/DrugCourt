@@ -2,25 +2,18 @@
 {% load static %}
 
 
-
-
-
-{% block main-header %}
-{% endblock main-header %}
-
 {% block main %}
-
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
     <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            {% block buttons %}
-            {% endblock buttons %}
-        </div>
+    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1>{% block main-header %}Dashboard{% endblock main-header %}</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        {% block buttons %}
+        {% endblock buttons %}
     </div>
-
-    <!-- <h2>{% block table-header %}{% endblock table-header %}</h2> -->
+    </div>
+    
+    {% block content %}
     <div class="table-responsive">
         <table class="table table-striped table-sm table-bordered table-hover" id="model-table">
             {% block table %}
@@ -32,11 +25,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% include 'intake/includes/partial_client_list.html' %}
+                {% include 'intake/includes/partial_client_home.html' %}
             </tbody>
         </table>
         {% endblock table %}
         </table>
+        {% endblock content %}
     </div>
 </main>
 {% endblock main %}

@@ -1,0 +1,104 @@
+{% extends "core/home.html" %}
+{% load static %}
+
+{% block main-header %}{{ client.full_name }}{% endblock main-header %}
+{% block buttons %}
+<div class="btn-group mr-2">
+    <button type="button" class="btn btn-sm btn-outline-primary js-create-model" data-url="/intake/client/create">
+        <span class="fas fa-plus" aria-hidden="true"></span>
+        Add Referral
+    </button>
+    <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+</div>
+<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+    This week
+</button>
+{% endblock %}
+
+{% block content %}
+
+<div class="card-columns">
+
+<div class="card">
+    <div class="card-header">
+    Referral
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Referral</h5>
+      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Referrer: {{client.referral.referrer}}</li>
+        <li class="list-group-item">Status: {{client.referral.status}}</li>
+      </ul>
+      <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+  </div>
+<div class="card">
+    <div class="card-header">
+    Court Dates
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Court Dates</h5>
+      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+      <ul class="list-group list-group-flush">
+          {% for date in client.courtdates_set.all %}
+        <li class="list-group-item">Court Date: {{date.court_date}}</li>
+        <li class="list-group-item">Event: {{date.event}}</li>
+        <li class="list-group-item">Phase: {{date.phase}}</li>
+        <hr>
+        {% endfor %}
+      </ul>
+      <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+  </div>
+  
+<div class="card">
+    <div class="card-header">
+    Objectives
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Objectives</h5>
+      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+      <ul class="list-group list-group-flush">
+          {% for objective in client.objectives_set.all %}
+        <li class="list-group-item">Num: {{objective.obj_num}}</li>
+        <li class="list-group-item">Target Date: {{objective.obj_target}}</li>
+        <li class="list-group-item">Description: {{objective.description}}</li>
+        {% endfor %}
+      </ul>
+      <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+  Treatment
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <ul class="list-group list-group-flush">
+        {% for treatment in treatment.objectives_set.all %}
+      <li class="list-group-item">Num: {{objective.obj_num}}</li>
+      <li class="list-group-item">Target Date: {{objective.obj_target}}</li>
+      <li class="list-group-item">Description: {{objective.description}}</li>
+      {% endfor %}
+    </ul>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        $('#model-table').DataTable({
+            select: true,
+            "dom": 'l<"toolbar">frtip',
+        });
+    });
+</script>
+<script src="{% static 'core/ajaxforms.js' %}"></script>
+{% endblock javascript %}
