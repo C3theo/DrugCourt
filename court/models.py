@@ -83,7 +83,7 @@ class PhaseHistory(TimeStampedModel):
     phase = models.ForeignKey(
         'court.Phase', on_delete=models.CASCADE, blank=True, null=True)
     start_date = models.DateField()
-    complete_date = models.DateField()
+    complete_date = models.DateField(blank=True, null=True)
     complete = models.BooleanField()
     total_days = models.IntegerField()
 
