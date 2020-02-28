@@ -117,7 +117,7 @@ def client_evaluate(request, pk):
 
 
 def client_note(request, pk):
-
+    # import pdb; pdb.set_trace()
     client = get_object_or_404(Client, pk=pk)
     if request.method == 'POST':
         form = NoteForm(request.POST, initial={'note_type': 'General'})

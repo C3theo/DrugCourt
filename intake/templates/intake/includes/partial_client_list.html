@@ -3,9 +3,9 @@
 <tr>
     <td><a href="{% url 'intake:dash' client.pk %}">{{ client.full_name }}</a></td>
     <td>{{ client.status }}</td>
-    <!-- <td>
+    <td>
         <button type="button" class="btn btn-warning btn-sm js-update-model"
-            data-url="{% url 'intake:update' client.id %}">
+            data-url="{% url 'intake:update' client.pk %}">
             <span class="fas fa-edit"></span> Edit
         </button>
         <button type="button" class="btn btn-warning btn-sm js-create-model" data-url="{% url 'intake:note' client.id %}"><span class="far fa-sticky-note"></span> Note</button>
@@ -14,7 +14,7 @@
             <span class="fas fa-user-check"></span> Evaluate
         </button>
         {% endif %}
-    </td> -->
+    </td>
 </tr>
 
 {% empty %}
