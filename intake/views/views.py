@@ -25,6 +25,7 @@ from .filters import ClientFilter, ReferralFilter
 from .tables import ClientCourtTable, ClientTable
 
 
+
 def client_dashboard(request, pk):
     client = get_object_or_404(Client, pk=pk)
     context = {'client': client}

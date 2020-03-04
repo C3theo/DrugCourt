@@ -1,65 +1,26 @@
-import os
-import shutil
-from pathlib import Path
-
-from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
 from intake.models import Client
 
-def get_ajax_search_results(request, model=None):
-    context = {}
-    url_parameter = request.GET.get("q")
-    if url_parameter:
-        models = model.objects.filter(last_name__icontains=url_parameter, ) | model.objects.filter(first_name__icontains=url_parameter, )
-        models.order_by('id')
-    else:
-        models = model.objects.all().order_by('id')
-    # paginator = paginate_model(request, models)
-    
-
-    context[model._meta.verbose_name_plural.replace('ss', 's')] = models
-    return context
-
-  
-def add_forms_to_context(forms, context):
-    """
-        Add multiple different forms to context, with
-        model name as prefix.
-    """
-
-    context['forms'] = {
-        f'{form.instance._meta.model_name}_form': form for form in forms}
-    return context
-
-
-def delete_all_migrations():
-    """
-        Delete migrations from all Apps.
-    """
-    base_path = Path(settings.BASE_DIR)
-    migration_files = [each for each in base_path.glob(
-        '../*/migrations/[!__init__]*.py')]
-
-    for f in migration_files:
-        os.unlink(f)
-
-
 def save_ajax_form(request, context=None):
     """
         Helper function for validating multiple forms and
         adding to JsonResponse.
+
+        Args:
+
+        Returns:
+            data (dict):
     """
     data = dict()
-
     if request.method == 'POST':
         valid_ctr = 0
         try:
             for _, form in context['forms'].items():
                 if form.is_valid():
-                    try:  # ReferralForm
+                    try:  # 
                         form.save(client=context['client'])
 
                     except (TypeError, KeyError):
@@ -72,14 +33,13 @@ def save_ajax_form(request, context=None):
             else:
                 data['form_is_valid'] = False
 
-        except (AttributeError, ):  # Decision Forms Generator
+        except (AttributeError, ):  # 
             for form in context['forms']:
                 if form.is_valid():
                     form.save()
                     data['form_is_valid'] = True
     
     return data
-
 
 
 def render_ajax(request, context, data, form_template=None, list_template=None):
@@ -115,6 +75,8 @@ def render_ajax(request, context, data, form_template=None, list_template=None):
     return JsonResponse(data)
 
 
+
+
 def paginate_model(request, query, count=25):
     """
 
@@ -139,3 +101,30 @@ def paginate_model(request, query, count=25):
         models = query.objects.all().order_by('id')
 
     return models
+
+
+
+def get_ajax_search_results(request, model=None):
+    context = {}
+    url_parameter = request.GET.get("q")
+    if url_parameter:
+        models = model.objects.filter(last_name__icontains=url_parameter, ) | model.objects.filter(first_name__icontains=url_parameter, )
+        models.order_by('id')
+    else:
+        models = model.objects.all().order_by('id')
+    # paginator = paginate_model(request, models)
+    
+
+    context[model._meta.verbose_name_plural.replace('ss', 's')] = models
+    return context
+
+  
+def add_forms_to_context(forms, context):
+    """
+        Add multiple different forms to context, with
+        model name as prefix.
+    """
+
+    context['forms'] = {
+        f'{form.instance._meta.model_name}_form': form for form in forms}
+    return context

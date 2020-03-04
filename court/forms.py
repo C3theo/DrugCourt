@@ -13,7 +13,10 @@ class CourtDateForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CourtDateForm, self).__init__(*args, **kwargs)
-
+        instance = getattr(self, 'instance', None)
+        if instance and instance.client is not None:
+            # import pdb; pdb.set_trace()
+            self.fields['client'].widget.attrs['readonly'] = True
         self.helper = FormHelper(self)
         self.helper.form_tag = False
 
@@ -24,6 +27,20 @@ class CourtDateForm(ModelForm):
 
         widgets = {'attendance': CheckboxInput,
                    'court_date': DateInput(attrs={'type': 'date'})}
+    
+    def save(self, client=None, commit=True):
+        """
+        """
+
+        try:
+            court_date = super(CourtDateForm, self).save(commit=False)
+            self.instance.client = client
+            if commit:
+                court_date.save(commit=True)
+        except Exception as e:
+            # raise(e)
+            import pdb
+            pdb.set_trace()
 
 
 class PhaseHistoryForm(ModelForm):

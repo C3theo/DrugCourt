@@ -1,0 +1,29 @@
+
+<div class="row mt-4">
+    <div class="col-9">
+        {% for objective in client.objectives_set.all %}
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Num: {{objective.obj_num}}</li>
+            <li class="list-group-item">Target Date: {{objective.obj_target}}</li>
+            <li class="list-group-item">Description: {{objective.description}}</li>
+        </ul>
+    </div>
+    <div class="col-3">
+        <div class="btn-group-vertical float-right">
+            <button type="button" class="btn btn-outline-primary btn-md js-update-model"
+                data-url="{% url 'treatment:objectives_update' objective.pk %}">
+                <span class="fas fa-edit"></span> Edit
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-md js-update-model"
+                data-url="{% url 'treatment:note' objective.client.pk %}">
+                <span class="far fa-sticky-note"></span> Note
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<button type="button" class="btn btn-primary js-create-model float-right mt-4 mb-4"
+    data-url="{% url 'treatment:objectives_create' %}">
+    <span class="fas fa-plus"></span>
+    Add Objectives
+</button>

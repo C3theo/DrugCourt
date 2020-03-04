@@ -13,15 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import RedirectView
-from django.conf import settings
+from rest_framework import routers
 
-#from court import urls as app_name_urls
+from core import views
+from treatment.urls import router as tx_router
+from intake.urls import router as intake_router
 
-from material.frontend import urls as frontend_urls
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)
+router.register(r'groups', views.GroupViewSet)
+router.registry.extend(tx_router.registry)
+router.registry.extend(intake_router.registry)
 
 admin.site.site_header = "Accountibiity Court Admin"
 
@@ -35,6 +42,10 @@ urlpatterns = [
     path('notes/', include('scribe.urls', namespace='scribe')),
     path('court/', include('court.urls', namespace='court')),
     path('treatment/', include('treatment.urls', namespace='treatment')),
+
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
 ]
 
 if settings.DEBUG:
@@ -42,4 +53,3 @@ if settings.DEBUG:
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
-

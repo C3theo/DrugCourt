@@ -1,0 +1,65 @@
+{% extends "core/home.html" %}
+{% load static %}
+
+{% block main-header %}{{ client.full_name }}{% endblock main-header %}
+{% block buttons %}
+<!-- <div class="btn-group mr-2">
+  <button type="button" class="btn btn-sm btn-outline-primary js-create-model" data-url="/intake/client/create">
+    <span class="fas fa-plus" aria-hidden="true"></span>
+    Add Referral
+  </button>
+  <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+</div>
+<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+  This week
+</button> -->
+{% endblock %}
+
+{% block content %}
+
+<div class="card-columns">
+
+  <div class="card" id="model">
+    <div class="card-header">
+      Objectives
+    </div>
+    <div class="card-body">
+      {% include 'intake/includes/partial_client_dashboard.html' %}
+    </div>
+  </div>
+
+
+  <div class="card" id="model-table">
+    <div class="card-header">
+      Treatment
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        {% for treatment in client.treatment_set.all %}
+        {% if treatment %}
+        <li class="list-group-item">Num: {{treatment.obj_num}}</li>
+        <li class="list-group-item">Target Date: {{treatment.obj_target}}</li>
+        <li class="list-group-item">Description: {{treatment.description}}</li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+      <button type="button" class="btn btn-primary btn-md js-create-model float-right mt-4 mb-4"
+        data-url="{% url 'treatment:create' %}">
+        <span class="fas fa-plus"></span>
+        Add Tx Session
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal fade" id="modal-model">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    </div>
+  </div>
+  {% endblock content %}
+
+  {% block javascript %}
+  <script src="{% static 'core/ajaxforms.js' %}"></script>
+  {% endblock javascript %}

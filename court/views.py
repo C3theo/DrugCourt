@@ -23,9 +23,15 @@ def court_date_list(request):
     return render(request, 'court/court_date_list.html', {'court_dates': court_dates})
 
 
-def court_date_create(request):
+def court_date_create(request, pk=None):
     """
     """
+
+    initial = {}
+    if pk is not None:
+        client = get_object_or_404(Client, pk=pk)
+        initial['client'] = client
+
     if request.method == 'POST':
         form = CourtDateForm(request.POST)
     else:
@@ -63,6 +69,7 @@ def court_date_note(request, pk):
         form = NoteForm(request.POST, initial=initial)
     else:
         form = NoteForm(initial=initial)
+    import pdb; pdb.set_trace()
     context = IndexedOrderedDict()
     context['court_date'] = form.instance
     context['client'] = client
@@ -71,8 +78,6 @@ def court_date_note(request, pk):
     return render_ajax(request, context, data,
                           list_template='court/includes/partial_court_list.html',
                           form_template='intake/includes/partial_client_note.html')
-
-
 
 def phase_list(request):
     """

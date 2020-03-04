@@ -23,6 +23,7 @@ class NoteForm(ModelForm):
         instance = getattr(self, 'instance', None)
         if instance:
             self.fields['note_type'].widget.attrs['readonly'] = True
+            self.fields['client'].widget.attrs['readonly'] = True
         self.helper = FormHelper(self)
         self.helper.form_tag = False
 
@@ -30,17 +31,18 @@ class NoteForm(ModelForm):
         model = Note
         fields = ['client', 'text', 'note_type']
         widgets = {
-            'note_type': TextInput(), }
+            'note_type': TextInput(), 'client': TextInput()}
         labels = {
             'text': 'Client Notes', }
 
-    def save(self, commit=True):
+    def save(self, client=None, commit=True):
         """
         """
 
+        import pdb; pdb.set_trace()
         try:
             note = super(NoteForm, self).save(commit=False)
-            self.instance.client = client
+            note.client = client
             if commit:
                 note.save(commit=True)
         except Exception as e:
