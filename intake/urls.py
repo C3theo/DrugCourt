@@ -2,7 +2,13 @@ from django.contrib.auth.decorators import login_required
 from django.urls import include, path, re_path
 from django.views import generic
 
+from rest_framework import routers
+
 from . import views
+
+router = routers.DefaultRouter()
+router.register(r'client', views.ClientViewSet)
+router.register(r'referral', views.ReferralViewSet)
 
 app_name = 'intake'
 

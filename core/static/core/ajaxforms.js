@@ -7,7 +7,6 @@ $(function () {
       type: 'GET',
       dataType: 'json',
       beforeSend: function () {
-        console.log('test');
         $("#modal-model .modal-content").html("");
         $("#modal-model").modal("show");
       },
@@ -42,7 +41,7 @@ $(function () {
   $("#modal-model").on("submit", ".js-model-create-form", saveForm);
 
   // Update model
-  $(".card-columns").on("click", ".js-update-model", loadForm);
+  $("#model-table").on("click", ".js-update-model", loadForm);
   $("#modal-model").on("submit", ".js-model-update-form", saveForm);
 
   // Delete model

@@ -3,14 +3,62 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from indexed import IndexedOrderedDict
+from rest_framework import viewsets
 
 from core.helpers import (add_forms_to_context, get_ajax_search_results,
                           paginate_model, render_ajax, save_ajax_form)
 from intake.models import Client
 from scribe.forms import NoteForm
 
-from .forms import ObjectivesForm, TxAttendanceForm
-from .models import Objectives, TxAttendance
+from .forms import ObjectivesForm, ProbGoalsForm, TxAttendanceForm
+from .models import Objectives, TxAttendance, ProbGoals
+from .serializers import ObjectivesSerializer, ProbGoalsSerializer
+
+
+class ObjectivesViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+
+    queryset = Objectives.objects.all().order_by('-obj_target')
+    serializer_class = ObjectivesSerializer
+
+
+class ProbGoalsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+
+    queryset = ProbGoals.objects.all()
+    serializer_class = ProbGoalsSerializer
+
+
+
+
+def probgoals_list(request, pk):
+    """
+        Args:
+            pk (int): Objective Primary key
+    """
+    objective = get_object_or_404(Objectives, pk=pk)
+    import pdb; pdb.set_trace()
+    
+    # probgoals = objective.probgoals_set
+
+    if request.method == 'POST':
+        form = ProbGoalsForm(request.POST)
+    else:
+        form = ProbGoalsFormm()
+    context = IndexedOrderedDict()
+    context['probgoals'] = form.instance
+    context = add_forms_to_context((form,), context)
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       form_template='treatment/includes/partial_objectives_create.html',
+                       list_template='treatment/includes/partial_objectives_list.html')
+
+
+
 
 
 def objectives_list(request):

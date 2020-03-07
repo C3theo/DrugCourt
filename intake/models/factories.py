@@ -1,14 +1,15 @@
-import logging
-import string
-from datetime import date
-from random import randrange
+# import logging
+# import string
+# from datetime import date
+# from random import randrange
 
-import factory
-from django.contrib.auth import get_user_model
-from django.db.models.signals import post_save
-from django.utils import timezone
-from factory import DjangoModelFactory
+# import factory
+# from django.contrib.auth import get_user_model
+# from django.db.models.signals import post_save
+# from django.utils import timezone
+# from factory import DjangoModelFactory
 
+from core.helpers.factories import *
 from court.models import CourtDates, Phase
 from intake.models import Client, Referral
 from intake.models.intake import IntakeStatus
@@ -16,10 +17,68 @@ from intake.models.intake import IntakeStatus
 from scribe.models import Note
 from treatment.models import Objectives
 
-from ..intake import GenderOption
+from .intake import GenderOption
 
 User = get_user_model()
 tzinfo = timezone.get_current_timezone()
+
+
+
+@factory.django.mute_signals(post_save)
+class ClientFactory(DjangoModelFactory):
+
+    class Meta:
+        model = Client
+        # django_get_or_create = ('client_id', 'birth_date',
+        #                         'created_date', 'gender', 'first_name', 'middle_initial', 'last_name', 'phase'
+        #                         )
+
+    client_id = factory.Sequence(lambda n: f'{n}')
+    status = IntakeStatus.STATUS_PENDING
+    birth_date = factory.Faker('date_of_birth')
+    created_date = timezone.now()
+    gender = factory.Faker('random_element', elements=[
+                           x[0] for x in GenderOption.CHOICES])
+    first_name = factory.Faker('first_name')
+    middle_initial = factory.Faker(
+        'random_element', elements=list(string.ascii_uppercase))
+    last_name = factory.Faker('last_name')
+
+    referral = factory.RelatedFactory(
+        'intake.models.factories.ReferralFactory', 'client')
+    objectives = factory.RelatedFactory(
+        'treatment.models.factories.ObjectivesFactory', 'client')
+    # probgoals = factory.RelatedFactory(
+    #     'treatment.models.factories.ProbGoals', 'client')
+
+
+    
+    # phase = factory.RelatedFactory('intake.models.factories.PhaseFactory')
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        try:
+            return Client.objects.latest('pk').pk + 1
+        except Client.DoesNotExist:
+            return 1
+
+    @factory.helpers.post_generation
+    def court_dates(self, create, extracted, **kwargs):
+        """
+            Creates a random number of CourtDate Instances
+        """
+        if not create:
+            return
+
+        if extracted:
+            assert isinstance(extracted, int)
+            CourtDatesFactory.create_batch(
+                size=extracted, client=self, **kwargs)
+        else:
+            import random
+            number_of_units = random.randint(1, 5)
+            for n in range(number_of_units):
+                CourtDatesFactory(client=self)
 
 
 @factory.django.mute_signals(post_save)
@@ -124,76 +183,6 @@ class PhaseFactory(DjangoModelFactory):
             return Phase.objects.latest('pk').pk + 1
         except Phase.DoesNotExist:
             return 1
-
-
-@factory.django.mute_signals(post_save)
-class ClientFactory(DjangoModelFactory):
-
-    class Meta:
-        model = Client
-        # django_get_or_create = ('client_id', 'birth_date',
-        #                         'created_date', 'gender', 'first_name', 'middle_initial', 'last_name', 'phase'
-        #                         )
-
-    client_id = factory.Sequence(lambda n: f'{n}')
-    status = IntakeStatus.STATUS_PENDING
-    birth_date = factory.Faker('date_of_birth')
-    created_date = timezone.now()
-    gender = factory.Faker('random_element', elements=[
-                           x[0] for x in GenderOption.CHOICES])
-    first_name = factory.Faker('first_name')
-    middle_initial = factory.Faker(
-        'random_element', elements=list(string.ascii_uppercase))
-    last_name = factory.Faker('last_name')
-
-    referral = factory.RelatedFactory(
-        'intake.models.factories.ReferralFactory', 'client')
-    objectives = factory.RelatedFactory(
-        'intake.models.factories.ObjectivesFactory', 'client')
-    # phase = factory.RelatedFactory('intake.models.factories.PhaseFactory')
-
-    @classmethod
-    def _setup_next_sequence(cls):
-        try:
-            return Client.objects.latest('pk').pk + 1
-        except Client.DoesNotExist:
-            return 1
-
-    @factory.helpers.post_generation
-    def court_dates(self, create, extracted, **kwargs):
-        import pdb; pdb.set_trace()
-        if not create:
-            return
-
-        if extracted:
-            assert isinstance(extracted, int)
-            CourtDatesFactory.create_batch(
-                size=extracted, client=self, **kwargs)
-        else:
-            import random
-            number_of_units = random.randint(1, 5)
-            for n in range(number_of_units):
-                CourtDatesFactory(client=self)
-
-
-@factory.django.mute_signals(post_save)
-class ObjectivesFactory(DjangoModelFactory):
-    class Meta:
-        model = Objectives
-    client = factory.SubFactory('intake.models.factories.ClientFactory')
-    description = factory.Faker('sentences', nb=3, ext_word_list=None)
-    obj_num = factory.Faker('random_element', elements=[
-        x for x in range(1, 10)])
-    obj_target = factory.Faker(
-        'date_this_decade', before_today=False, after_today=True)
-    closed = factory.Faker('boolean', chance_of_getting_true=50)
-    met = factory.Faker('boolean', chance_of_getting_true=50)
-    met_date = factory.Faker(
-        'date_this_decade', before_today=False, after_today=True)
-    tx_rating = factory.Faker('random_element', elements=[
-        x for x in range(1, 10)])
-    client_rating = factory.Faker('random_element', elements=[
-        x for x in range(1, 10)])
 
 
 @factory.django.mute_signals(post_save)

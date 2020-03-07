@@ -16,6 +16,11 @@ import logging.config
 from mysite.logs import formatter
 load_dotenv()
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -56,6 +61,8 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_fsm',
     'django_extensions',
+    'rest_framework',
+
     
     # 'guardian',
     'behave_django',

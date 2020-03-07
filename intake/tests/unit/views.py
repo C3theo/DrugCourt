@@ -1,13 +1,15 @@
-from unittest.mock import MagicMock, patch
+# from unittest.mock import MagicMock, patch
 
-import pytest
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.http.request import QueryDict
-from django.test import RequestFactory, SimpleTestCase, TestCase
-from django.urls import resolve
-from django_webtest import WebTest
+# import pytest
+# from django.contrib.auth.mixins import LoginRequiredMixin
+# from django.contrib.auth.models import User
+# from django.http.request import QueryDict
+# from django.test import RequestFactory, tests.SimpleTestCase, TestCase
+# from django.urls import resolve
+# from django_webtest import WebTest
 
+
+import core.tests as tests
 import intake.views as views
 from intake.forms import NoteForm
 
@@ -17,9 +19,7 @@ from intake.views import (ClientListView, ClientReferralCreateView,
                           IntakeFilterView, ReferralDecisionUpdateView, ClientReferralMultiForm)
 from mysite.urls import RedirectView
 
-from core.tests import setup_viewTest
-
-class AjaxViewTest(SimpleTestCase):
+class AjaxViewTest(tests.SimpleTestCase):
 
     def test_save_client_form(self):
         """
@@ -33,7 +33,7 @@ class AjaxViewTest(SimpleTestCase):
 
 
 @pytest.mark.skip()
-class IntakeFilterViewTest(SimpleTestCase):
+class IntakeFilterViewTest(tests.SimpleTestCase):
     """
         Intake Module Step: 0
     """
@@ -62,7 +62,7 @@ class IntakeFilterViewTest(SimpleTestCase):
         # self.assertDictContainsSubset({'filter': mock_filter}, response)
 
 @pytest.mark.skip()
-class ClientReferralCreateViewTest(SimpleTestCase):
+class ClientReferralCreateViewTest(tests.SimpleTestCase):
     """
         Intake Module Step: 1a
     """
@@ -105,7 +105,7 @@ class ClientReferralCreateViewTest(SimpleTestCase):
         self.fail()
 
 @pytest.mark.skip()
-class ClientReferralUpdateViewTest(SimpleTestCase):
+class ClientReferralUpdateViewTest(tests.SimpleTestCase):
     """
         Intake Module Step: 1b
     """
@@ -120,7 +120,7 @@ class ClientReferralUpdateViewTest(SimpleTestCase):
         self.assertIn(LoginRequiredMixin, self.view.__class__.__mro__)
 
 @pytest.mark.skip()
-class ReferralDecisionUpdateViewTest(SimpleTestCase):
+class ReferralDecisionUpdateViewTest(tests.SimpleTestCase):
     """
         Intake Module Step: 2
 
@@ -162,7 +162,7 @@ class ReferralDecisionUpdateViewTest(SimpleTestCase):
     # def test_referral_approve_called(self):
 
 @pytest.mark.skip()
-class ReferralCreateViewTest(SimpleTestCase):
+class ReferralCreateViewTest(tests.SimpleTestCase):
     """
         CreateView
     """
@@ -229,7 +229,7 @@ class ReferralCreateViewTest(SimpleTestCase):
         self.assertTrue(response)
 
 @pytest.mark.skip()
-class ReferralUpdateViewTest(SimpleTestCase):
+class ReferralUpdateViewTest(tests.SimpleTestCase):
     """ UpdateView """
 
     def setUp(self):
@@ -298,7 +298,7 @@ class ReferralUpdateViewTest(SimpleTestCase):
         self.assertTrue(response)
 
 @pytest.mark.skip()
-class ClientListViewTest(SimpleTestCase):
+class ClientListViewTest(tests.SimpleTestCase):
     """ SingleTableView """
 
     def setUp(self):
@@ -311,7 +311,7 @@ class ClientListViewTest(SimpleTestCase):
         self.assertIn(LoginRequiredMixin, self.view.__class__.__mro__)
 
 @pytest.mark.skip()
-class ClientUpdateViewTest(SimpleTestCase):
+class ClientUpdateViewTest(tests.SimpleTestCase):
     """
         UpdateView
     """
@@ -380,7 +380,7 @@ class ClientUpdateViewTest(SimpleTestCase):
         self.assertTrue(response)
 
 @pytest.mark.skip()
-class DecisionCreateViewTest(SimpleTestCase):
+class DecisionCreateViewTest(tests.SimpleTestCase):
 
     def setUp(self):
         self.view = DecisionCreateView()
@@ -432,7 +432,7 @@ class DecisionCreateViewTest(SimpleTestCase):
         self.assertTrue(response)
 
 @pytest.mark.skip()
-class CriminalBackgroundCreateViewTest(SimpleTestCase):
+class CriminalBackgroundCreateViewTest(tests.SimpleTestCase):
 
     def setUp(self):
         self.view = CriminalBackgroundCreateView()
@@ -486,7 +486,7 @@ class CriminalBackgroundCreateViewTest(SimpleTestCase):
 
 
 @pytest.mark.skip(reason='Not currently using this view')
-class IntakeFormViewTest(SimpleTestCase):
+class IntakeFormViewTest(tests.SimpleTestCase):
 
     def setUp(self):
         self.view = IntakeFormView()
