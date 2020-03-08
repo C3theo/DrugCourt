@@ -1,200 +1,218 @@
 {% load static %}
-{% load crispy_forms_tags django_tables2 %}
-
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
-	<!-- Required meta tags -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<!-- Fixes HTTP error not found for favicon.ico -->
-	<link rel="icon" href="data:,">
+    <title>
+    Case Management
+    </title>
 
-	<title>
-		{% block title %} Accountability Court Case Mgmt{% endblock %}
-	</title>
+  
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'core/style5.css' %}">
 
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" type="text/css" href="{% static 'core/main.css' %}">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css"
-		href="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/kt-2.5.1/sp-1.0.1/sl-1.3.1/datatables.min.css" />
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 
-	{% block extracss %}
+
+    {% block extracss %}
 	{% endblock extracss %}
 </head>
 
 <body>
-	<div class="container-fluid">
-		<div class="row">
-			{% block navbar-top %}
-			<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="staticNav">
-				<a class="navbar-brand mr-auto" href="{% url 'core:home' %}">
-					Case Management - Accountability Courts <i class="fas fa-balance-scale"></i>
-				</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse"
-					data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-					aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
 
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mx-auto">
-						<li class="nav-item">
-							{% url 'core:home' as home_url%}
-							<a class="nav-link {% if request.path == home_url %} active {% endif %}"
-								href=" {{ home_url }}">
-								<h5><i class="fas fa-home"></i> Dashboard</h5>
-							</a>
-						</li>
-						<li class='nav-item'>
-							<a class="nav-link" href='#'>
-								<h5><i class="far fa-question-circle"></i></h5>
-							</a>
-						</li>
-					</ul>
-					<ul class="navbar-nav justify-content-end">
-						<li class=" navbar-nav navbar-text">{{ user.first_name }} {{ user.last_name }}
-							({{ user.groups.all.0 }})
-						</li>
-						<li class="nav-item">
-							{% url 'logout' as logout_url %}
-							{% url 'login' as login_url %}
-							{% if user.is_authenticated %}
-							{% if request.path == logout_url %}
-							<a class="nav-link active" id="user-logout" href="{{ logout_url }}"><i
-									class="fas fa-sign-out-alt"></i> Logout</a>
-							{% else %}
-							<a class="nav-link" id="user-logout" href="{{ logout_url }}"><i
-									class="fas fa-sign-out-alt"></i>
-								Logout</a>
-							{% endif %}
-							{% else %}
-							{% if request.path == login_url %}
-							<a class="nav-link active" id="user-login" href="{{ login_url }}"><i
-									class="fas fa-sign-in-alt"></i>
-								Login</a>
-							{% else %}
-							<a class="nav-link" id="user-login" href="{{ login_url }}"><i
-									class="fas fa-sign-in-alt"></i>
-								Login</a>
-							{% endif %}
-							{% endif %}
-						</li>
-					</ul>
+    <div class="wrapper">
+        <!-- Sidebar Holder -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h5>Case Management</h5>
+            </div>
 
-				</div>
-			</nav>
-			{% endblock navbar-top %}
+            <ul class="list-unstyled components">
+               
+                <li class="active">
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Court</a>
+                    <ul class="collapse list-unstyled" id="homeSubmenu">
+                        <li>
+                            <a href="#">Dates</a>
+                        </li>
+                        <li>
+                            <a href="#">Phases</a>
+                        </li>
+                        <li>
+                            <a href="#">Calendar</a>
+                        </li>
+                        <li>
+                            <a href="#">Schedule</a>
+                        </li>
+                        <li>
+                            <a href="#">Sanctions</a>
+                        </li>
+                        <li>
+                            <a href="#">Incentives</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="active">
+                    <a href="#TxSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Treatment</a>
+                    <ul class="collapse list-unstyled" id="TxSubmenu">
+                        <li>
+                            <a href="#">Obj/Prob/Goal</a>
+                        </li>
+                        <li>
+                            <a href="#">Sessions</a>
+                        </li>
+                        <li>
+                            <a href="#">Group Sessions</a>
+                        </li>
+                        <li>
+                            <a href="#">Ratings</a>
+                        </li>
+                        <li>
+                            <a href="#">Incentives</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#CMSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Case Management</a>
+                    <ul class="collapse list-unstyled" id="CMSubmenu">
+                        <li>
+                            <a href="#">Obj/Prob/Goal</a>
+                        </li>
+                        <li>
+                            <a href="#">Sessions</a>
+                        </li>
+                        <li>
+                            <a href="#">Employment</a>
+                        </li>
+                        <li>
+                            <a href="#">Community Service</a>
+                        </li>
+                        <li>
+                            <a href="#">Ratings</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#ClientSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Client</a>
+                    <ul class="collapse list-unstyled" id="ClientSubmenu">
+                    <a href="#">Demographics</a>
+                    <a href="#">Education</a>
+                    <a href="#">Family</a>
+                    <a href="#">Medical</a>
+                    <a href="#">Contacts</a>
+                    <a href="#">Housing</a>
+                </ul></li>
+                <li>
+                    <a href="#StatsSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Stats</a>
+                    <ul class="collapse list-unstyled" id="StatsSubmenu">
+                    <a href="#">Demographics</a>
+                    <a href="#">Phase Data</a>
+                    <a href="#">Other Stuff</a>
+                </ul></li>
+                <li>
+                    <a href="{% url 'intake:list' %}">Intake</a>
+                </li>
+                <li>
+                    <a href="#' %}">Reporting</a>
+                </li>
+                <li>
+                    <a href="{% url 'admin:index' %}">Admin</a>
+                </li>
+            </ul>
+        </nav>
 
-			{% block side-nav %}
-			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
-				<div class="sidebar-sticky">
-					<ul class="nav flex-column">
-						<h6
-							class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-							<span>Modules</span>
-							<a class="d-flex align-items-center text-muted" href="#" aria-label="">
-							</a>
-						</h6>
-						<li class="nav-item">
-							{% url 'core:home' as home %}
-							<a class="nav-link {% if request.path == home %} active {% endif %}"
-								href="{% url 'core:home' %}">
-								<i class="fas fa-balance-scale"></i> Dashboard
-								<span class="sr-only">(current)</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							{% url 'court:list' as court %}
-							<a class="nav-link {% if request.path == court %} active{% endif %}"
-								href="{% url 'court:list' %}">
-								<i class="fas fa-gavel"></i> Court
+        <!-- Page Content Holder -->
+        <div id="content">
+ 
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
 
-								<span class="sr-only">(current)</span>
+                    <button type="button" id="sidebarCollapse" class="navbar-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
 
-							</a>
-						</li>
-						<li class="nav-item">
-							{% url 'treatment:list' as treatment %}
-							<a class="nav-link {% if request.path == treatment %} active{% endif %}"
-								href="{% url 'treatment:list'%}">
-								<i class="fas fa-notes-medical"></i> Treatment
-							</a>
-						</li>
-						<li class="nav-item">
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                            <li class="nav-item active">
+                                {% url 'core:home' as home_url%}
+								<a class="nav-link {% if request.path == home_url %} active {% endif %}" href=" {{ home_url }}"> <h5><i class="fas fa-balance-scale"></i></i>Accountability Court</h5> </a>  
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"></a>
+                             </li>
+                             <li class="nav-item">
+                                <a class="nav-link" href="#"></a>
+                             </li>
+                            <li class="navbar-nav navbar-text">
+                                {{ user.first_name }} {{ user.last_name }}
+								({{ user.groups.all.0 }})
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"></a>
+                             </li>
+                            <li class="nav-item">
+                                {% url 'logout' as logout_url %}
+								{% url 'login' as login_url %}
+								{% if user.is_authenticated %}
+								{% if request.path == logout_url %}
+								<a class="nav-link active" id="user-logout" href="{{ logout_url }}"> <i>class="fas fa-sign-out-alt"></i> Logout</a>
+								{% else %}
+								<a class="nav-link" id="user-logout" href="{{ logout_url }}"><i
+										class="fas fa-sign-out-alt"></i>
+									Logout</a>
+								{% endif %}
+								{% else %}
+								{% if request.path == login_url %}
+								<a class="nav-link active" id="user-login" href="{{ login_url }}"><i
+										class="fas fa-sign-in-alt"></i>
+									Login</a>
+								{% else %}
+								<a class="nav-link" id="user-login" href="{{ login_url }}"><i
+										class="fas fa-sign-in-alt"></i>
+									Login</a>
+								{% endif %}
+								{% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
 
-							<a class="nav-link" href="#">
-								<i class="fas fa-user-graduate"></i> Case Mgmt
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#">
-								<i class="fas fa-user"></i> Client
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#">
-								<i class="fas fa-business-time"></i> Reporting
-							</a>
-						</li>
-					</ul>
-				</div>
-			</nav>
-			{% endblock side-nav %}
-			<!-- <main role="main" class="container mx-auto" style="padding-top: 70px;"> -->
-				{% if messages %}
-				<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
-					<div class="toast" data-autohide="false" id="note-toast" role="alert" aria-live="assertive"
-						aria-atomic="true">
-						<div class="toast-header">
-							<strong class="mr-auto">Notification</strong>
-							<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="toast-body">
-							{% for message in messages %}
-							<p{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
-								{% endfor %}
-						</div>
-					</div>
-				</div>
-				{% endif %}
+            {% block main %}
+                
+            {% endblock main %}
+        </div>
+    </div>
 
-				{% block main %}
-				{% endblock main %}
-			<!-- </main> -->
-		</div>
-	</div>
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
-	<!-- Optional JavaScript -->
-	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-
-	<!--These script tags are not loading correctly  -->
-	<!-- 
-	<script type="text/javascript" src="{% static 'sass/node_modules/jquery/dist/jquery.slim.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'sass/node_modules/popper.js/dist/popper.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'sass/node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script> -->
-
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
-		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-		crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-		crossorigin="anonymous"></script>
-	<script src="https://kit.fontawesome.com/6e20f2b51a.js"></script>
-	<script type="text/javascript"
-		src="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/kt-2.5.1/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
-
-	{% block javascript %}
-	{% endblock javascript%}
-
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+        });
+    </script>
 </body>
 
 </html>
