@@ -35,17 +35,17 @@ class NoteForm(ModelForm):
         labels = {
             'text': 'Client Notes', }
 
-    def save(self, client=None, commit=True):
-        """
-        """
+    # def save(self, client=None, commit=True):
+    #     """
+    #     """
 
-        import pdb; pdb.set_trace()
-        try:
-            note = super(NoteForm, self).save(commit=False)
-            note.client = client
-            if commit:
-                note.save(commit=True)
-        except Exception as e:
-            # raise(e)
-            import pdb
-            pdb.set_trace()
+    #     import pdb; pdb.set_trace()
+    #     try:
+    #         note = super(NoteForm, self).save(commit=False)
+    #         note.client = client
+    #         if commit:
+    #             note.save(commit=True)
+    #     except Exception as e:
+    #         # raise(e)
+    #         import pdb
+    #         pdb.set_trace()

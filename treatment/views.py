@@ -33,33 +33,44 @@ class ProbGoalsViewSet(viewsets.ModelViewSet):
     serializer_class = ProbGoalsSerializer
 
 
-
-
-def probgoals_list(request, pk):
+def goal_create(request, pk):
     """
-        Args:
-            pk (int): Objective Primary key
     """
     objective = get_object_or_404(Objectives, pk=pk)
-    import pdb; pdb.set_trace()
-    
-    # probgoals = objective.probgoals_set
 
+    initial = {'objective': objective, 'client': objective.client}
     if request.method == 'POST':
-        form = ProbGoalsForm(request.POST)
+        form = ProbGoalsForm(request.POST, initial=initial)
     else:
-        form = ProbGoalsFormm()
+        form = ProbGoalsForm(initial=initial)
     context = IndexedOrderedDict()
-    context['probgoals'] = form.instance
+    context['goal'] = form.instance
+    context['objective'] = objective
+    context['initial'] = initial
     context = add_forms_to_context((form,), context)
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                       form_template='treatment/includes/partial_objectives_create.html',
+                       form_template='treatment/includes/partial_goal_create.html',
                        list_template='treatment/includes/partial_objectives_list.html')
 
 
-
-
+def goal_update(request, pk):
+    goal = get_object_or_404(ProbGoals, pk=pk)
+    if request.method == 'POST':
+        form = ProbGoalsForm(request.POST, instance=goal)
+    else:
+        form = ProbGoalsForm(instance=goal)
+    # import pdb; pdb.set_trace()
+    context = IndexedOrderedDict()
+    context['goal'] = form.instance
+    context['objective'] = goal.objective
+    initial = {'objective': goal.objective, 'client': goal.objective.client}
+    context['initial'] = initial
+    context = add_forms_to_context((form,), context)
+    data = save_ajax_form(request, context=context)
+    return render_ajax(request, context, data,
+                       form_template='treatment/includes/partial_goal_update.html',
+                       list_template='treatment/includes/partial_objectives_list.html')
 
 def objectives_list(request):
     context = get_ajax_search_results(request, model=Objectives)
@@ -169,5 +180,5 @@ def treatment_note(request, pk):
     context['forms'] = {'note_form': form}
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                          list_template='intake/includes/partial_client_list.html',
-                          form_template='intake/includes/partial_client_note.html',)
+                       list_template='intake/includes/partial_client_list.html',
+                       form_template='intake/includes/partial_client_note.html',)

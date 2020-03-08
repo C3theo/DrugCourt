@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th></th>
-            <th>Client</th>
+            <!-- <th>Client</th> -->
             <th>Objective</th>
             <th>Description</th>
             <th>Target</th>
@@ -47,49 +47,56 @@
 
     <script>
 
-        function format(rowData) {
-            // let child_table = $('<table/>');
-
-            // child_table.createTHead();
-            // generateTableHead(child_table, rowData.goals[0]);
-            // console.log(rowData.goals);
-
-            return child_table;
-        }
-
-        function generateTableHead(table, data) {
-            let $thead = $('<thead>');
-            let $tr = $('<tr>');
-
-            table.append($thead);
-            $thead.append($tr);
-            for (let key in data[0]) {
-                let $th = $('<th>').text(key);
-                $tr.append($th);
-            }
-        }
-
         function generateTable(table, data) {
-            let $thead = $('<thead>');
+            let $thead = $('<thead>').attr({ class: 'thead-dark' });
             let $tr = $('<tr>');
+            let dropColumns = ['client', 'objective'];
 
+            // header
             table.append($thead);
             $thead.append($tr);
+            let $th = $('<th>');
+            $tr.append($th);
+
+            let objectiveUrl = '/treatment/objectives/' + data[0]['objective'] + '/goal/create';
+
+            let $add_button = $('<button>').attr({ class: 'btn btn-primary js-update-model', 'data-url': objectiveUrl, 'type': 'button' });
+            $span = $('<span>').attr({ class: 'fas fa-plus' }).text(' Problem Goal');
+            $add_button.append($span);
+
+            $th.append($add_button);
+
             for (let key in data[0]) {
-                let $th = $('<th>').text(key);
-                $tr.append($th);
+                if (dropColumns.indexOf(key) == -1) {
+                    let $th = $('<th>').text(key);
+                    $tr.append($th);
+
+                }
             }
 
+            // body
             $tbody = $('<tbody>');
             table.append($tbody);
 
             for (element of data) {
+
                 let $tr = $('<tr>');
+                let $td = $('<td>');
+
+                let goalUrl = '/treatment/objectives/goal/' + data[0]['id'] + '/update';
+                // buttons
+                $button = $('<button>').attr({ class: 'btn btn-warning btn-sm js-update-model', 'data-url': goalUrl });
+                $span = $('<span>').attr({ class: 'fas fa-edit' }).text(' Edit');
+                $button.append($span);
+                $td.append($button)
+                $tr.append($td);
+
                 for (let key in element) {
-                    let $td = $('<td>').text(element[key]);
-                    $tr.append($td);
-                    $tr.appendTo($tbody);
-                    // child_table.append(tr);
+                    if (dropColumns.indexOf(key) == -1) {
+                        let $td = $('<td>').text(element[key]);
+                        $tr.append($td);
+                        $tr.appendTo($tbody);
+                    }
                 }
             }
 
@@ -109,7 +116,7 @@
                         "data": null,
                         "defaultContent": ''
                     },
-                    { data: 'client' },
+                    // { data: 'client' },
                     { data: 'obj_num' },
                     { data: 'description' },
                     { data: 'obj_target' },
@@ -118,24 +125,22 @@
             });
 
             $('#model-table tbody').on('click', 'td.details-control', function () {
-                var tr = $(this).closest('tr');
+
+                let tr = $(this).closest('tr');
                 var row = table.row(tr);
 
                 if (row.child.isShown()) {
                     row.child.hide();
                     tr.removeClass('shown');
                 }
+
                 else {
-                    // let table = document.querySelector("table.child");
-                    // let data = Object.keys(goals[0]);
-
                     let goals = row.data().goals;
-                    let $child_table = $('<table/>').attr({ class: 'child' });
 
-                    // generateTableHead($child_table, goals[0]);
+                    let $child_table = $('<table/>').attr({ class: 'compact table table-striped table-bordered', id: 'model-table' });
+    
+
                     generateTable($child_table, goals);
-
-
                     row.child($child_table).show();
                     tr.addClass('shown');
                 }
@@ -143,5 +148,5 @@
         });
 
     </script>
-    <!-- <script src="{% static 'core/ajaxforms.js' %}"></script> -->
+    <script src="{% static 'core/ajaxforms.js' %}"></script>
     {% endblock javascript %}

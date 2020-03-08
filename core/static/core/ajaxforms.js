@@ -2,8 +2,9 @@ $(function () {
 
   var loadForm = function () {
     var btn = $(this);
+    let dataURL = btn.attr("data-url");
     $.ajax({
-      url: btn.attr("data-url"),
+      url: dataURL,
       type: 'GET',
       dataType: 'json',
       beforeSend: function () {
@@ -15,9 +16,10 @@ $(function () {
       }
     });
   };
-  
+
   var saveForm = function () {
     var form = $(this);
+
     $.ajax({
       url: form.attr("action"),
       data: form.serialize(),
@@ -25,7 +27,7 @@ $(function () {
       dataType: 'json',
       success: function (data) {
         if (data.form_is_valid) {
-          $("#model-table tbody").html(data.html_model_list);
+          // $("#model-table tbody").html(data.html_model_list);
           $("#modal-model").modal("hide");
         }
         else {
@@ -37,7 +39,7 @@ $(function () {
   };
 
   // Create model
-  $(".js-create-model").click(loadForm);
+  $(".js-create-goal").click(loadForm);
   $("#modal-model").on("submit", ".js-model-create-form", saveForm);
 
   // Update model
@@ -48,10 +50,10 @@ $(function () {
   $("#model-table").on("click", ".js-delete-model", loadForm);
   $("#modal-model").on("submit", ".js-model-delete-form", saveForm);
 
-    //Eval client
-    $("#model-table").on("click", ".js-eval-model", loadForm);
-    $("#modal-model").on("submit", ".js-model-eval-form", saveForm);
-  
+  //Eval client
+  $("#model-table").on("click", ".js-eval-model", loadForm);
+  $("#modal-model").on("submit", ".js-model-eval-form", saveForm);
+
 
   // model Note
   $("#model-table").on("click", ".js-model-note", loadForm);

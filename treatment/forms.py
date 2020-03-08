@@ -11,14 +11,33 @@ class ProbGoalsForm(ModelForm):
 
     class Meta:
         model = ProbGoals
-        fields = ['client',
-                  'objective',
-                  'prob_description',
-                  'goal_description',
-                  'prob_goal_num',
-                  'prob_goal_target',
-                  'prob_goal_status',
-                  'status_date', ]
+        # 'client',
+        #           'objective',
+        fields = [
+            'prob_description',
+            'goal_description',
+            'prob_goal_num',
+            'prob_goal_target',
+            'prob_goal_status',
+            'status_date', ]
+
+    def save(self, client=None, objective=None, commit=True):
+        """
+        """
+        
+        try:
+            probgoal = super(ProbGoalsForm, self).save(commit=False)
+            # import pdb; pdb.set_trace()
+            probgoal.client = client
+            probgoal.objective = objective
+
+            if commit:
+                probgoal.save()
+
+        except NameError as e:
+            import pdb
+            pdb.set_trace()
+            raise(e)
 
 
 class TxAttendanceForm(ModelForm):

@@ -20,6 +20,6 @@ path('objectives/create/', views.objective_create, name='objectives_create'),
 path('objectives/<int:pk>/update', views.objective_update, name='objectives_update'),
 path('objectives/<int:pk>/note', views.objective_note, name='objectives_note'),
 
-# Ajax
-path('objectives/<int:pk>/probgoals', views.probgoals_list, name='probgoals'),
+path('objectives/<int:pk>/goal/create', views.goal_create, name='goal_create'),
+path('objectives/goal/<int:pk>/update', views.goal_update, name='goal_update'),
 ]

@@ -9,13 +9,13 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 from factory import DjangoModelFactory
 
-from intake.models.factories import ClientFactory
+# from intake.models import ClientFactory
 
 
 # def create_pending_clients(factory.):
 
 
-def populate_fake_db(factory=ClientFactory, size=25):
+def populate_fake_db(factory=None, size=25):
     """
         Helper function to create fake Models instances.
     """
@@ -24,7 +24,7 @@ def populate_fake_db(factory=ClientFactory, size=25):
 
 
 ## This is dumb
-def delete_factory_inventory(factory=ClientFactory):
+def delete_factory_inventory(factory=None):
     try:
         model = factory._meta.model
     except Exception:

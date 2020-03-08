@@ -1,12 +1,12 @@
 td.details-control {
     
     background: url('../img/plus-circle-solid.svg') no-repeat center center;
-    /* content: "f057"; */
+    background-size: 2rem 2rem;
     cursor: pointer;
 }
 
 tr.shown td.details-control {
     /* https://fontawesome.com/icons/times-circle?style=solid */
     background: url('../img/times-circle-solid.svg') no-repeat center center;
-    content: "f057";
+    background-size: 2rem 2rem;
 }
