@@ -13,6 +13,7 @@ $(function () {
       },
       success: function (data) {
         $("#modal-model .modal-content").html(data.html_form);
+        console.log();
       }
     });
   };

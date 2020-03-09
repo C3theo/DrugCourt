@@ -105,6 +105,8 @@
         $(document).ready(function () {
             var tbl = $('#model-table');
             var table = tbl.DataTable({
+                "processing": true,
+                "serverSide": true,
                 ajax: {
                     url: tbl.attr('data-url'),
                     dataSrc: 'results'
@@ -138,7 +140,7 @@
                     let goals = row.data().goals;
 
                     let $child_table = $('<table/>').attr({ class: 'compact table table-striped table-bordered', id: 'model-table' });
-    
+
 
                     generateTable($child_table, goals);
                     row.child($child_table).show();

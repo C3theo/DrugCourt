@@ -9,22 +9,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <title>
-    Case Management
+        Case Management
     </title>
 
-  
+    <link rel="stylesheet" type="text/css" href="{% static 'core/main.css' %}">
     <!-- Bootstrap CSS CDN -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <!-- Our Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'core/style5.css' %}">
-
-    <!-- Font Awesome JS -->
-    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" type="text/css"
+		href="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/kt-2.5.1/sp-1.0.1/sl-1.3.1/datatables.min.css" />
+    
 
     {% block extracss %}
-	{% endblock extracss %}
+    {% endblock extracss %}
 </head>
 
 <body>
@@ -37,9 +36,10 @@
             </div>
 
             <ul class="list-unstyled components">
-               
+
                 <li class="active">
-                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Court</a>
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false"
+                        class="dropdown-toggle">Court</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li>
                             <a href="#">Dates</a>
@@ -62,7 +62,8 @@
                     </ul>
                 </li>
                 <li class="active">
-                    <a href="#TxSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Treatment</a>
+                    <a href="#TxSubmenu" data-toggle="collapse" aria-expanded="false"
+                        class="dropdown-toggle">Treatment</a>
                     <ul class="collapse list-unstyled" id="TxSubmenu">
                         <li>
                             <a href="#">Obj/Prob/Goal</a>
@@ -82,7 +83,8 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#CMSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Case Management</a>
+                    <a href="#CMSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Case
+                        Management</a>
                     <ul class="collapse list-unstyled" id="CMSubmenu">
                         <li>
                             <a href="#">Obj/Prob/Goal</a>
@@ -102,22 +104,26 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#ClientSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Client</a>
+                    <a href="#ClientSubmenu" data-toggle="collapse" aria-expanded="false"
+                        class="dropdown-toggle">Client</a>
                     <ul class="collapse list-unstyled" id="ClientSubmenu">
-                    <a href="#">Demographics</a>
-                    <a href="#">Education</a>
-                    <a href="#">Family</a>
-                    <a href="#">Medical</a>
-                    <a href="#">Contacts</a>
-                    <a href="#">Housing</a>
-                </ul></li>
+                        <a href="#">Demographics</a>
+                        <a href="#">Education</a>
+                        <a href="#">Family</a>
+                        <a href="#">Medical</a>
+                        <a href="#">Contacts</a>
+                        <a href="#">Housing</a>
+                    </ul>
+                </li>
                 <li>
-                    <a href="#StatsSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Stats</a>
+                    <a href="#StatsSubmenu" data-toggle="collapse" aria-expanded="false"
+                        class="dropdown-toggle">Stats</a>
                     <ul class="collapse list-unstyled" id="StatsSubmenu">
-                    <a href="#">Demographics</a>
-                    <a href="#">Phase Data</a>
-                    <a href="#">Other Stuff</a>
-                </ul></li>
+                        <a href="#">Demographics</a>
+                        <a href="#">Phase Data</a>
+                        <a href="#">Other Stuff</a>
+                    </ul>
+                </li>
                 <li>
                     <a href="{% url 'intake:list' %}">Intake</a>
                 </li>
@@ -132,7 +138,7 @@
 
         <!-- Page Content Holder -->
         <div id="content">
- 
+
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
 
@@ -141,7 +147,9 @@
                         <span></span>
                         <span></span>
                     </button>
-                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fas fa-align-justify"></i>
                     </button>
 
@@ -149,43 +157,47 @@
                         <ul class="nav navbar-nav ml-auto">
                             <li class="nav-item active">
                                 {% url 'core:home' as home_url%}
-								<a class="nav-link {% if request.path == home_url %} active {% endif %}" href=" {{ home_url }}"> <h5><i class="fas fa-balance-scale"></i></i>Accountability Court</h5> </a>  
+                                <a class="nav-link {% if request.path == home_url %} active {% endif %}"
+                                    href=" {{ home_url }}">
+                                    <h5><i class="fas fa-balance-scale"></i></i>Accountability Court</h5>
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#"></a>
-                             </li>
-                             <li class="nav-item">
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="#"></a>
-                             </li>
+                            </li>
                             <li class="navbar-nav navbar-text">
                                 {{ user.first_name }} {{ user.last_name }}
-								({{ user.groups.all.0 }})
+                                ({{ user.groups.all.0 }})
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#"></a>
-                             </li>
+                            </li>
                             <li class="nav-item">
                                 {% url 'logout' as logout_url %}
-								{% url 'login' as login_url %}
-								{% if user.is_authenticated %}
-								{% if request.path == logout_url %}
-								<a class="nav-link active" id="user-logout" href="{{ logout_url }}"> <i>class="fas fa-sign-out-alt"></i> Logout</a>
-								{% else %}
-								<a class="nav-link" id="user-logout" href="{{ logout_url }}"><i
-										class="fas fa-sign-out-alt"></i>
-									Logout</a>
-								{% endif %}
-								{% else %}
-								{% if request.path == login_url %}
-								<a class="nav-link active" id="user-login" href="{{ login_url }}"><i
-										class="fas fa-sign-in-alt"></i>
-									Login</a>
-								{% else %}
-								<a class="nav-link" id="user-login" href="{{ login_url }}"><i
-										class="fas fa-sign-in-alt"></i>
-									Login</a>
-								{% endif %}
-								{% endif %}
+                                {% url 'login' as login_url %}
+                                {% if user.is_authenticated %}
+                                {% if request.path == logout_url %}
+                                <a class="nav-link active" id="user-logout" href="{{ logout_url }}"> <i>class="fas
+                                        fa-sign-out-alt"></i> Logout</a>
+                                {% else %}
+                                <a class="nav-link" id="user-logout" href="{{ logout_url }}"><i
+                                        class="fas fa-sign-out-alt"></i>
+                                    Logout</a>
+                                {% endif %}
+                                {% else %}
+                                {% if request.path == login_url %}
+                                <a class="nav-link active" id="user-login" href="{{ login_url }}"><i
+                                        class="fas fa-sign-in-alt"></i>
+                                    Login</a>
+                                {% else %}
+                                <a class="nav-link" id="user-login" href="{{ login_url }}"><i
+                                        class="fas fa-sign-in-alt"></i>
+                                    Login</a>
+                                {% endif %}
+                                {% endif %}
                             </li>
                         </ul>
                     </div>
@@ -193,17 +205,39 @@
             </nav>
 
             {% block main %}
-                
+
             {% endblock main %}
         </div>
     </div>
 
     <!-- jQuery CDN - Slim version (=without AJAX) -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
     <!-- Popper.JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script> -->
     <!-- Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script> -->
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/6e20f2b51a.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/kt-2.5.1/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
+    <!-- Font Awesome JS -->
+    <!-- <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+        integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+        crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+        integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+        crossorigin="anonymous"></script> -->
+
+    {% block javascript %}
+    {% endblock javascript %}
 
     <script type="text/javascript">
         $(document).ready(function () {
