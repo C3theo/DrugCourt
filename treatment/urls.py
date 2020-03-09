@@ -3,7 +3,7 @@ from rest_framework import routers
 
 from . import views
 
-app_name = 'intake'
+app_name = 'treatment'
 
 router = routers.DefaultRouter()
 router.register(r'objectives', views.ObjectivesViewSet)
