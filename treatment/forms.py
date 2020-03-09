@@ -8,6 +8,8 @@ class ProbGoalsForm(ModelForm):
     """
 
     """
+    status_date = DateInput(attrs={'type': 'date'})
+    prob_goal_target = DateInput(attrs={'type': 'date'})
 
     class Meta:
         model = ProbGoals
@@ -21,10 +23,14 @@ class ProbGoalsForm(ModelForm):
             'prob_goal_status',
             'status_date', ]
 
+        widgets = {'status_date': DateInput(attrs={'type': 'date'}),
+                   'prob_goal_target': DateInput(attrs={'type': 'date'}),
+                   }
+
     def save(self, client=None, objective=None, commit=True):
         """
         """
-        
+
         try:
             probgoal = super(ProbGoalsForm, self).save(commit=False)
             # import pdb; pdb.set_trace()

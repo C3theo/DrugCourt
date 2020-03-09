@@ -48,7 +48,7 @@
         function generateTable(table, data) {
             let $thead = $('<thead>').attr({ class: 'thead-dark' });
             let $tr = $('<tr>');
-            let dropColumns = ['client', 'objective'];
+            let dropColumns = ['client', 'objective', 'id'];
 
             // header
             table.append($thead);
@@ -81,7 +81,7 @@
                 let $tr = $('<tr>');
                 let $td = $('<td>');
 
-                let goalUrl = '/treatment/objectives/goal/' + data[0]['id'] + '/update';
+                let goalUrl = '/treatment/objectives/goal/' + element['id'] + '/update';
                 // buttons
                 $button = $('<button>').attr({ class: 'btn btn-warning btn-sm js-update-model', 'data-url': goalUrl });
                 $span = $('<span>').attr({ class: 'fas fa-edit' }).text(' Edit');
@@ -104,7 +104,7 @@
             var tbl = $('#model-table');
             var table = tbl.DataTable({
                 "processing": true,
-                "serverSide": true,
+                // "serverSide": true,
                 ajax: {
                     url: tbl.attr('data-url'),
                     dataSrc: 'results'
