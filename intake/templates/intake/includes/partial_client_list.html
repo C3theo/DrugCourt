@@ -8,9 +8,11 @@
             data-url="{% url 'intake:update' client.pk %}">
             <span class="fas fa-edit"></span> Edit
         </button>
-        <button type="button" class="btn btn-warning btn-sm js-create-model" data-url="{% url 'intake:note' client.id %}"><span class="far fa-sticky-note"></span> Note</button>
-        {% if client.status != 'Accepted' %}
-        <button type="button" class="btn btn-warning btn-sm js-eval-model" data-url="{% url 'intake:eval' client.referral.id %}">
+        <button type="button" class="btn btn-warning btn-sm js-create-model"
+            data-url="{% url 'intake:note' client.id %}"><span class="far fa-sticky-note"></span> Note</button>
+        {% if client.referral.id != None %}
+        <button type="button" class="btn btn-warning btn-sm js-eval-model"
+            data-url="{% url 'intake:eval' client.referral.id %}">
             <span class="fas fa-user-check"></span> Evaluate
         </button>
         {% endif %}

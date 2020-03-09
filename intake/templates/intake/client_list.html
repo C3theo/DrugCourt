@@ -1,8 +1,8 @@
-{% extends "core/base.html" %}
+{% extends "core/home.html" %}
 {% load crispy_forms_tags django_tables2 %}
 {% load static %}
 
-{% block filter %}
+{% block content %}
 
 <table class="table table-striped table-bordered table-hover" id="model-table">
     <thead>
@@ -19,15 +19,10 @@
     </tbody>
 </table>
 
-<div class="modal fade" id="modal-model">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
-    {% endblock filter %}
+    {% endblock content %}
 
     {% block extracss %}
-    <link rel="stylesheet" type="text/css" href="{% static 'core/datatables.css' %}"> 
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'core/datatables.css' %}">  -->
     {% endblock extracss %}
 
     {% block javascript %}
@@ -38,12 +33,12 @@
             $('#model-table').DataTable({
                 select: true,
                 "dom": 'l<"toolbar">frtip',
-                initComplete: function () {
-                    $("div.toolbar").html(`<button type="button" class="btn btn-primary js-create-model" data-url="/intake/client/create">
-            <span class="fas fa-plus" aria-hidden="true"></span>
-            Add Referral
-        </button>`);
-                }
+        //         initComplete: function () {
+        //             $("div.toolbar").html(`<button type="button" class="btn btn-primary js-create-model" data-url="/intake/client/create">
+        //     <span class="fas fa-plus" aria-hidden="true"></span>
+        //     Add Referral
+        // </button>`);
+        //         }
             });
         });
 
