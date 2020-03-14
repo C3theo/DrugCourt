@@ -23,29 +23,32 @@ def court_date_list(request):
     return render(request, 'court/court_date_list.html', {'court_dates': court_dates})
 
 
-def court_date_create(request, pk=None):
+def court_date_create(request, id):
     """
     """
-
-    initial = {}
-    if pk is not None:
-        client = get_object_or_404(Client, pk=pk)
-        initial['client'] = client
 
     if request.method == 'POST':
         form = CourtDateForm(request.POST)
     else:
         form = CourtDateForm()
     context = IndexedOrderedDict()
+    if id:
+        client = get_object_or_404(Client, pk=id)
+        initial = {'client': client}
+    
     context['court_date'] = form.instance
+    context['initial'] = initial
+    context['client'] = client
+
     context = add_forms_to_context((form,), context)
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                          list_template='court/includes/partial_court_list.html',
-                          form_template='court/includes/partial_court_create.html')
+                       form_template='court/includes/partial_court_create.html')
 
 
 def court_date_update(request, pk):
+    """
+    """
     court = get_object_or_404(CourtDates, pk=pk)
 
     if request.method == 'POST':
@@ -57,11 +60,13 @@ def court_date_update(request, pk):
     context = add_forms_to_context((form,), context)
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                          list_template='court/includes/partial_court_list.html',
-                          form_template='court/includes/partial_court_update.html')
+                       list_template='court/includes/partial_court_list.html',
+                       form_template='court/includes/partial_court_update.html')
 
 
 def court_date_note(request, pk):
+    """
+    """
 
     client = get_object_or_404(Client, pk=pk)
     initial = {'client': client, 'note_type': 'Court'}
@@ -69,15 +74,15 @@ def court_date_note(request, pk):
         form = NoteForm(request.POST, initial=initial)
     else:
         form = NoteForm(initial=initial)
-    import pdb; pdb.set_trace()
     context = IndexedOrderedDict()
     context['court_date'] = form.instance
     context['client'] = client
     context = add_forms_to_context((form,), context)
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                          list_template='court/includes/partial_court_list.html',
-                          form_template='intake/includes/partial_client_note.html')
+                       list_template='court/includes/partial_court_list.html',
+                       form_template='intake/includes/partial_client_note.html')
+
 
 def phase_list(request):
     """
@@ -99,8 +104,9 @@ def phase_create(request):
     context = add_forms_to_context((form,), context)
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                          list_template='court/includes/partial_phase_list.html',
-                          form_template='court/includes/partial_phase_create.html')
+                       list_template='court/includes/partial_phase_list.html',
+                       form_template='court/includes/partial_phase_create.html')
+
 
 def phase_update(request, pk):
     phase = get_object_or_404(PhaseHistory, pk=pk)
@@ -114,7 +120,5 @@ def phase_update(request, pk):
     context = add_forms_to_context((form,), context)
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                          list_template='court/includes/partial_phase_list.html',
-                          form_template='court/includes/partial_phase_update.html')
-
-
+                       list_template='court/includes/partial_phase_list.html',
+                       form_template='court/includes/partial_phase_update.html')

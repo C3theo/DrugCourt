@@ -1,5 +1,5 @@
 {% extends "core/home.html" %}
-{% load static %}
+{% load static pdb %}
 
 {% block main-header %}{{ client.full_name }}{% endblock main-header %}
 {% block buttons %}
@@ -17,136 +17,267 @@
 
 {% block content %}
 
-<div class="card-columns">
-  <div class="card" id="model-table">
-    <div class="card-header">
-      Referral
+<div id="model-table">
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+        aria-controls="nav-home" aria-selected="true">Court</a>
+      <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
+        aria-controls="nav-profile" aria-selected="false">Treatment</a>
+      <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab"
+        aria-controls="nav-contact" aria-selected="false">Objectives</a>
     </div>
-    <div class="card-body">
-      <div class="row mt-4">
-        <div class="col-9">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Referrer: {{client.referral.referrer}}</li>
-            <li class="list-group-item">Status: {{client.referral.status}}</li>
-          </ul>
-        </div>
-        <div class="col-3">
-          <div class="btn-group float-right" role="group">
-            <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Actions
-            </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-              <button type="button" class="dropdown-item btn btn-sm js-update-model"
-                data-url="{% url 'intake:update' client.id %}">
-                <span class="fas fa-edit"></span> Edit
-              </button>
-              <button type="button" class="dropdown-item btn btn-sm js-create-model"
-                data-url="{% url 'intake:note' client.id %}"><span class="far fa-sticky-note"></span> Note</button>
-              {% if client.status != 'Accepted' %}
-              <button type="button" class="dropdown-item btn btn-sm js-eval-model"
-                data-url="{% url 'intake:eval' client.referral.id %}">
-                <span class="fas fa-user-check"></span> Evaluate
-              </button>
-              {% endif %}
-            </div>
-          </div>
-        </div>
+  </nav>
 
-        </li>
-      </div>
+  <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <p class="pt-5">
+        <!-- {# client.pk|pdb #} -->
+        <button type="button" class="btn btn-primary js-update-model" data-url="{% url 'court:create' client.id %}">
+          <span class="fas fa-plus"></span>
+          Add Court Date
+        </button>
+      </p>
+      <table class="table table-striped table-bordered table-hover " id="courtDate">
+        <caption>List of Court Dates</caption>
+        <thead>
+          <tr>
+            <!-- <th>Client</th> -->
+            <th>Court Date</th>
+            <th>Event Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
 
+          {% include 'court/includes/partial_court_list.html' %}
+
+        </tbody>
+      </table>
     </div>
-  </div>
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+      <p class="pt-5">
+        <button type="button" class="btn btn-primary js-update-model" data-url="{% url 'treatment:create' client.id %}">
+          <span class="fas fa-plus"></span>
+          Add Treatment Session
+        </button>
+      </p>
+      <table class="table table-striped table-bordered table-hover" id="treatment">
+        <thead>
+          <tr>
+            <!-- <th>Client</th> -->
+            <th>Session Date</th>
+            <th>Attended?</th>
+            <th>Absence Reason</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
 
-  <div class="card" id="model-table">
-    <div class="card-header">
-      Court Dates
-    </div>
-    <div class="card-body">
-      <h5 class="card-title"></h5>
-      {% for court_date in client.courtdates_set.all %}
-      <div class="row mt-4">
-        <div class="col-9">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Court Date: {{court_date.court_date}}</li>
-            <li class="list-group-item">Event: {{court_date.event}}</li>
-            <li class="list-group-item">Phase: {{court_date.phase}}</li>
-          </ul>
-        </div>
-        <div class="col-3">
-          <div class="btn-group float-right" role="group">
-            <button id="btnGroupDrop3" type="button" class="btn btn-primary btn-sm dropdown-toggle"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Actions
-            </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupDrop3">
-              <button type="button" class="dropdown-item btn btn-sm js-update-model"
-                data-url="{% url 'court:update' court_date.id %}">
-                <span class="fas fa-edit"></span> Edit
-              </button>
-              <button type="button" class="dropdown-item btn btn-sm js-update-model"
-                data-url="{% url 'court:note' court_date.client.id %}">
-                <span class="far fa-sticky-note"></span> Note
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-      </ul>
-      <button type="button" class="btn btn-primary js-create-model float-right mt-4 mb-4"
-        data-url="{% url 'court:create' %}">
-        <span class="fas fa-plus"></span>
-        Add Court Date
-      </button>
-    </div>
+          {% include 'treatment/includes/partial_treatment_list.html' %}
 
-  </div>
-
-  <div class="card" id="model">
-    <div class="card-header">
-      Objectives
+        </tbody>
+      </table>
     </div>
-    <div class="card-body">
-      {% include 'intake/includes/partial_client_dashboard.html' %}
+    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+      <p class="pt-5">
+        <button type="button" class="btn btn-primary js-update-model"
+          data-url="{% url 'treatment:objectives_create' client.id %}">
+          <span class="fas fa-plus"></span>
+          Add Objectives
+        </button>
+      </p>
+
+      <table class="table table-striped table-bordered table-hover"
+        data-url="{% url 'treatment:client_objectives' client.id %}" id="objectives" client='{{ client.id }}'
+        style="width:100%">
+        <thead>
+          <tr>
+            <th></th>
+            <!-- <th>Client</th> -->
+            <th>Objective</th>
+            <th>Description</th>
+            <th>Target</th>
+            <!-- <th>Action</th> -->
+          </tr>
+        </thead>
+      </table>
+
     </div>
   </div>
-
-
-  <div class="card" id="model-table">
-    <div class="card-header">
-      Treatment
-    </div>
-    <div class="card-body">
-      <ul class="list-group list-group-flush">
-        {% for treatment in client.treatment_set.all %}
-        {% if treatment %}
-        <li class="list-group-item">Num: {{treatment.obj_num}}</li>
-        <li class="list-group-item">Target Date: {{treatment.obj_target}}</li>
-        <li class="list-group-item">Description: {{treatment.description}}</li>
-        {% endif %}
-        {% endfor %}
-      </ul>
-      <button type="button" class="btn btn-primary btn-md js-create-model float-right mt-4 mb-4"
-        data-url="{% url 'treatment:create' %}">
-        <span class="fas fa-plus"></span>
-        Add Tx Session
-      </button>
-    </div>
-  </div>
-
 </div>
 
+{% endblock content %}
+
+{% block extracss %}
+<link rel="stylesheet" type="text/css" href="{% static 'core/row-details.css' %}">
+{% endblock extracss %}
+
+{% block javascript %}
+<script src="{% static 'core/ajaxforms.js' %}"></script>
+<script>
+  function generateTable(table, data, url) {
+    let $thead = $('<thead>').attr({ class: 'thead-dark' });
+    let $tr = $('<tr>');
+
+    // header
+    table.append($thead);
+    $thead.append($tr);
+    let $th = $('<th>');
+    $tr.append($th);
 
 
-<div class="modal fade" id="modal-model">
-  <div class="modal-dialog">
-    <div class="modal-content">
-    </div>
-  </div>
-  {% endblock content %}
+    //function
+    // if (data.length > 0) {
+    //   let objectiveUrl = `/treatment/objectives/${data[0]['objective']}'/goal/create`;
+    // } else {
+    //   let objectiveUrl = `/treatment/objectives/${objective}'/goal/create`;
+    // }
 
-  {% block javascript %}
-  <script src="{% static 'core/ajaxforms.js' %}"></script>
-  {% endblock javascript %}
+    let $add_button = $('<button>').attr({ class: 'btn btn-primary js-update-model', 'data-url': url, 'type': 'button' });
+    $span = $('<span>').attr({ class: 'fas fa-plus' }).text(' Problem Goal');
+    $add_button.append($span);
+    $th.append($add_button);
+
+    let dropColumns = ['client', 'objective', 'id'];
+    for (let key in data[0]) {
+      if (dropColumns.indexOf(key) == -1) {
+        let $th = $('<th>').text(key);
+        $tr.append($th);
+
+      }
+    }
+
+    // body
+    $tbody = $('<tbody>');
+    table.append($tbody);
+
+    for (element of data) {
+
+      let $tr = $('<tr>');
+      let $td = $('<td>');
+
+      let goalUrl = `/treatment/objectives/goal/${element['id']}/update`;
+      // buttons
+      $button = $('<button>').attr({ class: 'btn btn-warning btn-sm js-update-model', 'data-url': goalUrl });
+      $span = $('<span>').attr({ class: 'fas fa-edit' }).text(' Edit');
+      $button.append($span);
+      $td.append($button)
+      $tr.append($td);
+
+      for (let key in element) {
+        if (dropColumns.indexOf(key) == -1) {
+          let $td = $('<td>').text(element[key]);
+          $tr.append($td);
+          $tr.appendTo($tbody);
+        }
+      }
+    }
+  }
+
+  $(document).ready(function () {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+    });
+
+    $('#courtDate').DataTable({
+      columns: [
+        {
+          // "data": "office", // can be null or undefined
+          "defaultContent": ""
+        },
+        {
+          // "data": "office", // can be null or undefined
+          "defaultContent": ""
+        },
+        {
+          // "data": "office", // can be null or undefined
+          "defaultContent": ""
+        }]
+    });
+
+    $('#treatment').DataTable({
+      columns: [
+        // {
+        //   "defaultContent": ""
+        // },
+        {
+          "defaultContent": ""
+        },
+        {
+          "defaultContent": ""
+        },
+        {
+          "defaultContent": ""
+        },
+        {
+          "defaultContent": ""
+        },
+        {
+          "defaultContent": ""
+        },
+        {
+          "defaultContent": ""
+        },
+      ]
+    });
+
+    // Apply a search to the second table for the demo
+    // $('#treatment').DataTable().search('New York').draw();
+
+    var tbl = $('#objectives');
+    var table = tbl.DataTable({
+      ajax: {
+        url: tbl.attr('data-url'),
+        dataSrc: 'results'
+      },
+      columns: [
+        {
+          "className": 'details-control',
+          "orderable": false,
+          "data": null,
+          "defaultContent": ''
+        },
+        {
+          data: 'obj_num',
+          "defaultContent": ""
+        },
+        {
+          data: 'description',
+          "defaultContent": ""
+        },
+        {
+          data: 'obj_target',
+          "defaultContent": ""
+        },
+      ],
+      order: [[1, 'asc']]
+    });
+    console.log(`ajax: ${table.context[0]['ajax']['url']}`);
+    $('#objectives tbody').on('click', 'td.details-control', function () {
+
+      let tr = $(this).closest('tr');
+      var row = table.row(tr);
+
+      if (row.child.isShown()) {
+        row.child.hide();
+        tr.removeClass('shown');
+      }
+
+      else {
+        let goals = row.data().goals;
+
+        let $child_table = $('<table/>').attr({ class: 'compact table table-striped table-bordered' });
+
+        $client = tbl.attr('client')
+        generateTable($child_table, goals, $client);
+        row.child($child_table).show();
+        tr.addClass('shown');
+      }
+    });
+
+  });
+</script>
+{% endblock javascript %}

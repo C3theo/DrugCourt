@@ -53,11 +53,26 @@ class TxAttendanceForm(ModelForm):
 
     class Meta:
         model = TxAttendance
-        fields = ['client', 'session_date', 'attended', 'absence_reason', 'time_in',
+        fields = ['session_date', 'attended', 'absence_reason', 'time_in',
                   'time_out']
         widgets = {'session_date': DateInput(attrs={'type': 'date'}),
                    'time_in': TimeInput(attrs={'type': 'time'}),
                    'time_out': TimeInput(attrs={'type': 'time'})}
+
+    def save(self, client=None, commit=True):
+        """
+        """
+
+        try:
+            treatment = super(TxAttendanceForm, self).save(commit=False)
+            self.instance.client = client
+            if commit:
+                treatment.save()
+            return treatment
+        except Exception as e:
+            # raise(e)
+            import pdb
+            pdb.set_trace()
 
 
 class ObjectivesForm(ModelForm):
@@ -66,7 +81,7 @@ class ObjectivesForm(ModelForm):
 
     class Meta:
         model = Objectives
-        fields = ['client', 'description',
+        fields = ['description',
                   'obj_num', 'obj_target',
                   'closed', 'met', 'met_date',
                   'tx_rating', 'client_rating', ]
@@ -76,3 +91,18 @@ class ObjectivesForm(ModelForm):
                    'description': Textarea(attrs={'rows': 3, 'cols': 40}),
 
                    }
+
+    def save(self, client=None, commit=True):
+        """
+        """
+
+        try:
+            objective = super(ObjectivesForm, self).save(commit=False)
+            self.instance.client = client
+            if commit:
+                objective.save()
+            return objective
+        except Exception as e:
+            import pdb
+            pdb.set_trace()
+            raise(e)

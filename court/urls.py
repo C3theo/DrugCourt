@@ -9,7 +9,7 @@ app_name = 'court'
 
 urlpatterns = [   
     path('dates/list', views.court_date_list, name='list'),
-    path('dates/create', views.court_date_create, name='create'),
+    path('dates/create/<int:id>/client', views.court_date_create, name='create'),
     path('dates/<int:pk>/update', views.court_date_update, name='update'),
     path('dates/<int:pk>/note', views.court_date_note, name='note'),
     path('phase/list', views.phase_list, name='phase'),

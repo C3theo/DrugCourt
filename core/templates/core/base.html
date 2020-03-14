@@ -28,7 +28,7 @@
 
 <body>
 
-    <div class="wrapper">
+    <div class="wrapper border">
         <!-- Sidebar Holder -->
         <nav id="sidebar">
             <div class="sidebar-header">
@@ -37,7 +37,7 @@
 
             <ul class="list-unstyled components">
 
-                <li class="active">
+                <li class="">
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false"
                         class="dropdown-toggle">Court</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
@@ -61,7 +61,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="active">
+                <li class="">
                     <a href="#TxSubmenu" data-toggle="collapse" aria-expanded="false"
                         class="dropdown-toggle">Treatment</a>
                     <ul class="collapse list-unstyled" id="TxSubmenu">
@@ -159,7 +159,7 @@
                                 {% url 'core:home' as home_url%}
                                 <a class="nav-link {% if request.path == home_url %} active {% endif %}"
                                     href=" {{ home_url }}">
-                                    <h5><i class="fas fa-balance-scale"></i></i>Accountability Court</h5>
+                                    <h5><i class="fas fa-balance-scale"></i></i> Accountability Court</h5>
                                 </a>
                             </li>
                             <li class="nav-item">

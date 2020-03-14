@@ -15,6 +15,19 @@ from .models import Objectives, TxAttendance, ProbGoals
 from .serializers import ObjectivesSerializer, ProbGoalsSerializer
 
 
+class ClientObjectivesList(viewsets.ModelViewSet):
+    """
+    API endpoint that allows objectives to be viewed or edited.
+    """
+
+    # queryset = Objectives.objects.all().order_by('-obj_target')
+    serializer_class = ObjectivesSerializer
+
+    def get_queryset(self):
+        client_pk = self.kwargs['pk']
+        return Objectives.objects.filter(client__pk=client_pk)
+
+
 class ObjectivesViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -22,6 +35,10 @@ class ObjectivesViewSet(viewsets.ModelViewSet):
 
     queryset = Objectives.objects.all().order_by('-obj_target')
     serializer_class = ObjectivesSerializer
+
+    # def get_queryset(self):
+    #     client_pk = self.kwargs['pk']
+    #     return Purchase.objects.filter(client__pk=client_pk)
 
 
 class ProbGoalsViewSet(viewsets.ModelViewSet):
@@ -72,13 +89,14 @@ def goal_update(request, pk):
                        form_template='treatment/includes/partial_goal_update.html',
                        list_template='treatment/includes/partial_objectives_list.html')
 
+
 def objectives_list(request):
     context = get_ajax_search_results(request, model=Objectives)
 
     return render(request, 'treatment/objectives_list.html', context)
 
 
-def objective_create(request):
+def objective_create(request, id):
     """
     """
 
@@ -86,13 +104,18 @@ def objective_create(request):
         form = ObjectivesForm(request.POST)
     else:
         form = ObjectivesForm()
+    if id:
+        client = get_object_or_404(Client, pk=id)
+        initial = {'client': client}
+
     context = IndexedOrderedDict()
-    context['objectives'] = form.instance
+    context['objective'] = form.instance
+    context['initial'] = initial
+    context['client'] = client
     context = add_forms_to_context((form,), context)
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                       form_template='treatment/includes/partial_objectives_create.html',
-                       list_template='treatment/includes/partial_objectives_list.html')
+                       form_template='treatment/includes/partial_objectives_create.html',)
 
 
 def objective_update(request, pk):
@@ -136,18 +159,25 @@ def treatment_list(request):
     return render(request, 'treatment/treatment_list.html', {'tx_attendances': treatment_list})
 
 
-def treatment_create(request):
+def treatment_create(request, id):
+    """
+    """
     if request.method == 'POST':
         form = TxAttendanceForm(request.POST)
     else:
         form = TxAttendanceForm()
+
+    client = get_object_or_404(Client, pk=id)
+    initial = {'client': client}
     context = IndexedOrderedDict()
     context['treatment'] = form.instance
+    context['initial'] = initial
+    context['client'] = client
     context = add_forms_to_context((form,), context)
     data = save_ajax_form(request, context=context)
     return render_ajax(request, context, data,
-                       form_template='treatment/includes/partial_treatment_create.html',
-                       list_template='treatment/includes/partial_treatment_list.html')
+                       form_template='treatment/includes/partial_treatment_create.html',)
+    #    list_template='treatment/includes/partial_treatment_list.html')
 
 
 def treatment_update(request, pk):

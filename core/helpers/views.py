@@ -19,15 +19,16 @@ def save_ajax_form(request, context=None):
     data = dict()
     if request.method == 'POST':
         valid_ctr = 0
+        # import pdb; pdb.set_trace()
         try:
             for _, form in context['forms'].items():
                 if form.is_valid():
                     try:
                         # import pdb; pdb.set_trace()
-                        form.save(**context['initial'])
+                        model = form.save(**context['initial'])
 
                     except (TypeError, KeyError):
-                        form.save()
+                        model = form.save()
 
                     valid_ctr += 1
 
@@ -41,7 +42,6 @@ def save_ajax_form(request, context=None):
                 if form.is_valid():
                     form.save()
                     data['form_is_valid'] = True
-
     return data
 
 
@@ -68,9 +68,9 @@ def render_ajax(request, context, data, form_template=None, list_template=None):
 
     model_dict = {paginator_name: models}
     html_list = 'html_model_list'
-    data[html_list] = render_to_string(
-        list_template, model_dict)
-
+    # data[html_list] = render_to_string(
+    #     list_template, model_dict)
+    # import pdb; pdb.set_trace()
     data['html_form'] = render_to_string(form_template,
                                          context,
                                          request=request
