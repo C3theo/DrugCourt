@@ -91,7 +91,7 @@
       </p>
 
       <table class="table table-striped table-bordered table-hover"
-        data-url="{% url 'treatment:client_objectives' client.id %}" id="objectives" client='{{ client.id }}'
+        data-url="{% url 'treatment:client_objectives' client.id %}" id="objectives" objective='{{ objective.id }}'
         style="width:100%">
         <thead>
           <tr>
@@ -127,14 +127,6 @@
     $thead.append($tr);
     let $th = $('<th>');
     $tr.append($th);
-
-
-    //function
-    // if (data.length > 0) {
-    //   let objectiveUrl = `/treatment/objectives/${data[0]['objective']}'/goal/create`;
-    // } else {
-    //   let objectiveUrl = `/treatment/objectives/${objective}'/goal/create`;
-    // }
 
     let $add_button = $('<button>').attr({ class: 'btn btn-primary js-update-model', 'data-url': url, 'type': 'button' });
     $span = $('<span>').attr({ class: 'fas fa-plus' }).text(' Problem Goal');
@@ -258,23 +250,31 @@
     console.log(`ajax: ${table.context[0]['ajax']['url']}`);
     $('#objectives tbody').on('click', 'td.details-control', function () {
 
-      let tr = $(this).closest('tr');
-      var row = table.row(tr);
+      let $tr = $(this).closest('tr');
+      var row = table.row($tr);
 
       if (row.child.isShown()) {
         row.child.hide();
-        tr.removeClass('shown');
+        $tr.removeClass('shown');
       }
 
       else {
-        let goals = row.data().goals;
+        let data = row.data()
 
         let $child_table = $('<table/>').attr({ class: 'compact table table-striped table-bordered' });
 
-        $client = tbl.attr('client')
-        generateTable($child_table, goals, $client);
+        url = `/treatment/objectives/${data.pk}/goal/create`
+        // url = tbl.attr('data-url')
+        //function
+        // if (data.length > 0) {
+        //   let objectiveUrl = `/treatment/objectives/${data[0]['objective']}'/goal/create`;
+        // } else {
+        //   let objectiveUrl = `/treatment/objectives/${objective}'/goal/create`;
+        // }
+        let goals = data.goals;
+        generateTable($child_table, goals, url);
         row.child($child_table).show();
-        tr.addClass('shown');
+        $tr.addClass('shown');
       }
     });
 

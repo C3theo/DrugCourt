@@ -25,16 +25,20 @@ from .filters import ClientFilter, ReferralFilter
 from .tables import ClientCourtTable, ClientTable
 
 
-
 def client_dashboard(request, pk):
+    """
+    """
+
     client = get_object_or_404(Client, pk=pk)
     context = {'client': client, 'court_dates': client.courtdates_set.all(),
-    'tx_attendances': client.txattendance_set.all(), }
+               'tx_attendances': client.txattendance_set.all(), }
 
     return render(request, 'intake/dashboard.html', context)
 
 
 def client_list(request):
+    """
+    """
 
     context = get_ajax_search_results(request, Client)
     if request.is_ajax():

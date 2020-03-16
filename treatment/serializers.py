@@ -25,7 +25,7 @@ class ObjectivesSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Objectives
-        fields = ['client', 'description',
+        fields = ['pk', 'client', 'description',
                   'obj_num', 'obj_target',
                   'closed', 'met', 'met_date',
                   'tx_rating', 'client_rating', 'goals']

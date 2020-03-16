@@ -25,7 +25,7 @@ class ClientObjectivesList(viewsets.ModelViewSet):
 
     def get_queryset(self):
         client_pk = self.kwargs['pk']
-        return Objectives.objects.filter(client__pk=client_pk)
+        return Objectives.objects.filter(client__pk=client_pk).order_by('-pk')
 
 
 class ObjectivesViewSet(viewsets.ModelViewSet):
@@ -46,7 +46,7 @@ class ProbGoalsViewSet(viewsets.ModelViewSet):
     API endpoint that allows groups to be viewed or edited.
     """
 
-    queryset = ProbGoals.objects.all()
+    queryset = ProbGoals.objects.all().order_by('-pk')
     serializer_class = ProbGoalsSerializer
 
 
@@ -98,6 +98,8 @@ def objectives_list(request):
 
 def objective_create(request, id):
     """
+        Arguments:
+            id (int): Client Model Primary Key
     """
 
     if request.method == 'POST':
