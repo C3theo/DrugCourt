@@ -170,7 +170,7 @@
                             </li>
                             <li class="navbar-nav navbar-text">
                                 {{ user.first_name }} {{ user.last_name }}
-                                ({{ user.groups.all.0 }})
+                                {% if user.groups %}(){% endif %}
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#"></a>

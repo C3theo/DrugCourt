@@ -14,6 +14,7 @@ import os
 from dotenv import load_dotenv
 import logging.config
 from mysite.logs import formatter
+
 load_dotenv()
 
 REST_FRAMEWORK = {

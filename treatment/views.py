@@ -17,7 +17,7 @@ from .serializers import ObjectivesSerializer, ProbGoalsSerializer
 
 class ClientObjectivesList(viewsets.ModelViewSet):
     """
-    API endpoint that allows objectives to be viewed or edited.
+        API endpoint that allows objectives to be viewed or edited.
     """
 
     # queryset = Objectives.objects.all().order_by('-obj_target')
@@ -30,7 +30,7 @@ class ClientObjectivesList(viewsets.ModelViewSet):
 
 class ObjectivesViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+        API endpoint that allows users to be viewed or edited.
     """
 
     queryset = Objectives.objects.all().order_by('-obj_target')
@@ -43,7 +43,7 @@ class ObjectivesViewSet(viewsets.ModelViewSet):
 
 class ProbGoalsViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+        API endpoint that allows groups to be viewed or edited.
     """
 
     queryset = ProbGoals.objects.all().order_by('-pk')
@@ -53,9 +53,10 @@ class ProbGoalsViewSet(viewsets.ModelViewSet):
 def goal_create(request, pk):
     """
     """
+
     objective = get_object_or_404(Objectives, pk=pk)
 
-    initial = {'objective': objective, 'client': objective.client}
+    initial = {'objective': objective, 'client': objective.client, 'goals': objective.goals}
     if request.method == 'POST':
         form = ProbGoalsForm(request.POST, initial=initial)
     else:

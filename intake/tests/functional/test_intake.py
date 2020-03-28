@@ -1,5 +1,4 @@
 import logging
-import os
 import pdb
 import sys
 import time
@@ -16,23 +15,19 @@ from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.db.utils import IntegrityError
 from django.test import Client, override_settings
-from dotenv import load_dotenv
 
 import selenium.webdriver.chrome.service as service
+from intake.models import Client
+from intake.models.factories import ClientFactory, ReferralFactory
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.expected_conditions import \
+    element_to_be_clickable
 from selenium.webdriver.support.ui import Select, WebDriverWait
-from selenium.webdriver.support.expected_conditions import element_to_be_clickable
 
-
-from intake.models.factories import ClientFactory, ReferralFactory
-from intake.models import Client
 from .base import FunctionalTest
-
-
-load_dotenv()
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -41,111 +36,65 @@ folder_path = base / 'intake' / 'tests' / 'functional' / 'screenshots'
 
 
 @override_settings(DEBUG=True)
-class AddClientTest(FunctionalTest):
+class ClientDashboard(FunctionalTest):
     """
     """
 
-    def create_fake_user(self):
-        self.username = os.environ['TEST_USERNAME']
-        self.password = os.environ['TEST_PASSWORD']
-        self.user = User.objects.create(
-            username=self.username, password=self.password, email='roboto@gmail.com')
+    def test_add_court_date(self):
+        function_name = sys._getframe().f_code.co_name
+        take_screenshot = self.screenshot_flow(function_name)
+        client_link = self.wait_for(
+            lambda: self.browser.find_element_by_xpath('//*[@id="model-table"]/tbody/tr[1]/td[1]/a'))
+        href = client_link.get_attribute('href')
+        if href.split('/')[-1] == 'dashboard':
+            take_screenshot()
+            client_link.click()
 
-    def create_session_cookie(self):
-        self.session = SessionStore()
-        self.session[SESSION_KEY] = self.user.pk
-        self.session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
-        self.session[HASH_SESSION_KEY] = self.user.get_session_auth_hash()
-        self.session.create()
+        # User taken to client Dashboard
+        add_court_date_button = self.wait_for(
+            lambda: self.browser.find_element_by_xpath('//*[@id="nav-home"]/p/button'))
+        take_screenshot()
+        add_court_date_button.click()
 
-    def add_cookie_to_browser(self):
-        self.browser.get(self.live_server_url + '/404_no_such_url/')
-        self.browser.add_cookie(dict(
-            name=settings.SESSION_COOKIE_NAME,
-            value=self.session.session_key,
-            path='/',
-        ))
-        self.browser.refresh()
+        # Modal form appears for User to fill in.
+        modal = self.wait_for(
+            lambda: self.browser.find_element_by_xpath(
+                '//*[@id="modal-model"]/div[1]/div/form/div[1]'))
+        take_screenshot()
+        event_option = self.wait_for(
+            lambda: self.browser.find_element_by_id('id_event')
+        )
+        select = Select(event_option)
+        select.select_by_value('Entry')
 
-    def create_pre_authenticated_session(self):
-        self.create_fake_user()
-        self.create_session_cookie()
-        self.add_cookie_to_browser()
+        court_date_type_option = self.wait_for(
+            lambda: self.browser.find_element_by_id('id_court_date_type')
+        )
+        select = Select(court_date_type_option)
+        select.select_by_value('New')
+        inputs = ['07/07/1970']
+        date = self.wait_for(
+            lambda: self.browser.find_element_by_id('id_court_date')
+        )
+        self.send_keys_with_tabs(inputs, date)
+        submit = self.wait_for(
+            lambda: self.browser.find_element_by_xpath(
+                '//*[@id="modal-model"]/div[1]/div/form/div[3]/button[2]')
+        )
 
-    def send_keys_with_tabs(self, inputs=None, form=None):
-        keys = list(zip(inputs, [Keys.TAB]*len(inputs)))
-        keys = [j for i in keys for j in i]
-        form.send_keys(keys)
+        # User submits form
+        take_screenshot()
+        submit.click()
+        import pdb; pdb.set_trace()
 
-    def screenshot_submit(self, button=None, path=None):
-        self.browser.save_screenshot(path)
-        button.click()
 
-    def screenshot_flow(self, function_name=None):
-        """
-            Save screenshots in folder with labels and sequence number.
-        """
 
-        try:
-            function_path = folder_path / function_name
-        except TypeError:
-            function_path = folder_path
-
-        prev_name = None
-        page_count = 0
-        total_count = 0
-
-        prev_url_namespace = '_'.join(self.browser.current_url.split('/')[3:])
-
-        def take_screenshot(name='screenshot', window=self.browser):
-            nonlocal prev_name
-            nonlocal page_count
-            nonlocal total_count
-            nonlocal prev_url_namespace
-            url_namespace = '_'.join(self.browser.current_url.split('/')[3:])
-            if prev_name != name or prev_url_namespace != url_namespace:
-                page_count = 0
-            screenshot_path = function_path / \
-                f'{total_count}_{url_namespace}_{name}_{page_count}.png'
-            screenshot_path = screenshot_path.__str__()
-
-            # Check if window is webdriver or element
-            try:
-                window.save_screenshot(screenshot_path)
-            except AttributeError("'WebDriver' object has no attribute 'screenshot'"):
-                window.screenshot(screenshot_path)
-            page_count += 1
-            total_count += 1
-            prev_name = name
-            prev_url_namespace = url_namespace
-
-        # Clear out all screenshots for each test run
-        try:
-            os.mkdir(function_path)
-            return take_screenshot
-        except FileExistsError:
-            [f.unlink() for f in Path(function_path).glob("*") if f.is_file()]
-            return take_screenshot
-
-    def login_user(self):
-
-        login_screenshot = folder_path + 'login.png'
-
-        self.browser.get(self.live_server_url + '/login/')
-        username_elem = self.browser.find_element_by_id('id_username')
-        self.send_keys_with_tabs(
-            [self.user.username, self.user.password], username_elem)
-
-        login_button = self.wait_for(
-            lambda: self.browser.find_element_by_id('login'))
-        self.wait_for(lambda: self.screenshot_submit(
-            path=login_screenshot, button=login_button))
-
-    # @pytest.mark.skip()
+    @pytest.mark.skip()
     def test_intake_add_referral(self):
         """
             Test adding and approving a Client's Referral
         """
+
         function_name = sys._getframe().f_code.co_name
         take_screenshot = self.screenshot_flow(function_name)
 
@@ -227,8 +176,8 @@ class AddClientTest(FunctionalTest):
             "/html/body/main[@class='container mx-auto']/div[@class='jumbotron']/div[@class='card']/div[@class='card-body rounded']/table[@class='table']/tbody/tr[1]/td[4]")
         assert elem.text == 'Approved'
         take_screenshot()
-
-    # @pytest.mark.skip()
+# //*[@id="model-table"]/tbody/tr[1]/td[1]/a
+    @pytest.mark.skip()
     def test_drug_court_user_intake_note(self):
         """
             Test Client Note Creation
